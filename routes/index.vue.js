@@ -2,29 +2,24 @@ import { sdk } from "../sdk.js";
 
 window.IndexPage = {
   template: `
-        <div class="min-h-screen bg-gradient-to-b from-[#E1F5FE] to-[#BBDEFB] pb-16 relative">
-            <!-- Background image for mobile only -->
-            <div class="absolute inset-0 z-0 md:hidden">
-                <img :src="getOptimizedImageUrl('https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/bg.webp', 1200, 1200)" alt="Background" class="w-full h-full object-cover fixed" />
+        <div class="min-h-screen bg-gradient-to-b from-neutral-light to-neutral pb-16 relative">
+            <!-- Background image for all devices - African/artisanal pattern -->
+            <div class="absolute inset-0 z-0">
+                <img src="/assets/image/background.jpg" alt="African Pattern Background" class="w-full h-full object-cover fixed opacity-15" />
             </div>
             
-            <!-- Fixed full-height gradient overlay that transitions to white -->
-            <div class="absolute inset-0 z-0 bg-gradient-to-b from-white/10 to-white from-0% to-40% h-screen pointer-events-none"></div>
-            <!-- White background for content below screen height -->
-            <div class="absolute top-[100vh] left-0 right-0 bottom-0 bg-white z-0 pointer-events-none"></div>
+            <!-- Fixed full-height gradient overlay -->
+            <div class="absolute inset-0 z-0 bg-gradient-to-b from-neutral-light/70 to-neutral from-0% to-60% h-screen pointer-events-none"></div>
                     
             <!-- Navigation -->
             <div class="relative z-10">
                 <!-- Navigation Menu -->
                 <nav class="py-3 px-4 sm:px-6">
                     <div class="flex justify-between items-center">
-                        <!-- Language Switcher - Moved to top left -->
-                        <div class="flex-shrink-0">
-                            <language-switcher></language-switcher>
-                        </div>
+                        <!-- My Stories Button with rustic style -->
+                        <div></div> <!-- Empty div for spacing -->
                         
-                        <!-- My Stories Button - Styled like CTA button but smaller -->
-                        <router-link v-if="user" to="/my-stories" @click="trackMyStoriesClick" class="flex justify-center items-center gap-1 py-2 px-4 w-auto min-w-[120px] h-10 bg-gradient-to-b from-purple-300 to-purple-500 border border-purple-700 rounded-full cursor-pointer shadow-md hover:translate-y-[-2px] transition-transform duration-200 font-['Onest'] font-medium text-sm text-white">
+                        <router-link v-if="user" to="/my-stories" @click="trackMyStoriesClick" class="flex justify-center items-center gap-1 py-2 px-4 w-auto min-w-[120px] h-10 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
                             <span class="flex items-center justify-center">
                                 <i class="fa-solid fa-book"></i>
                             </span>
@@ -34,171 +29,84 @@ window.IndexPage = {
                 </nav>
             </div>
             
-            <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 relative z-10">
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 md:pt-8 relative z-10">
                 <!-- Hero Section -->
-                <div class="relative z-10 flex flex-col items-center gap-6 max-w-[342px] md:max-w-[500px] mx-auto py-2 px-6 mb-16">                      
-                        <!-- Main heading -->
-                        <h1 class="font-['Onest'] font-medium text-3xl md:text-4xl leading-[0.93] tracking-tight text-slate-700 text-center m-0">{{ $t('home.welcome') }}</h1>
+                <div class="relative z-10 flex flex-col items-center gap-8 max-w-[500px] md:max-w-[650px] mx-auto py-4 px-6 mb-16">                      
+                    <!-- Decorative elements - African patterns/illustration -->
+                    <div class="w-full flex justify-center mb-4">
+                        <img src="/assets/image/caxixi.png" alt="caxixi" class="w-[33rem] h-auto" />
+                    </div>
+                    
+                    <!-- Main heading with handmade text style -->
+                    <h1 class="font-heading font-bold text-4xl md:text-5xl leading-tight text-center m-0 text-primary-dark">{{ $t('home.welcome') }}</h1>
+                    
+                    <!-- Subheading -->
+                    <p class="font-body text-lg text-[#A67C52] text-center max-w-md">Histórias encantadoras da fauna brasileira para crianças, criadas com inteligência artificial</p>
                         
                         <!-- CTA section -->
                         <div class="flex flex-col items-center w-full gap-2">
-                            <button @click="trackCreateStoryClick(); user ? $router.push('/create') : handleLogin()" class="flex justify-center items-center gap-2 py-3 px-6 w-full md:w-auto md:min-w-[250px] h-12 bg-gradient-to-b from-purple-300 to-purple-500 border border-purple-700 rounded-full cursor-pointer shadow-md hover:translate-y-[-2px] transition-transform duration-200 font-['Onest'] font-medium text-lg text-white">
+                        <button @click="$router.push('/create')" 
+                                class="flex justify-center items-center gap-2 py-3 px-6 w-full md:w-auto md:min-w-[250px] h-14 
+                                       bg-primary hover:bg-primary-dark btn-rustic
+                                       shadow-md transition-all duration-200 
+                                       font-heading font-bold text-xl text-white">
                                 <span class="flex items-center justify-center">
-                                    <img src="assets/image/book-icon.svg" alt="Book Icon" />
+                                <i class="fas fa-feather-alt mr-2"></i>
                                 </span>
-                                {{ $t('home.createButton') }}
+                            Criar Uma História
                             </button>
-                            <p class="font-['Onest'] font-normal text-xs leading-[1.67] text-slate-500 m-0">{{ $t('home.tryItNow') }}</p>
-                        </div>
-                    </div>
-                <!-- Example Stories Section -->
-                <div>                    
-                    <!-- Grid com todos os exemplos -->
-                    <div v-if="examples && examples.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-                        <!-- Cards de exemplo -->
-                        <div v-for="(example, index) in examples" :key="index" 
-                             class="rounded-3xl transform transition-all duration-300 hover:-translate-y-2 shadow-md relative"
-                             :class="[
-                                index % 4 === 0 ? 'bg-gradient-to-b from-teal-200 to-teal-400 border border-teal-700' : '',
-                                index % 4 === 1 ? 'bg-gradient-to-b from-purple-200 to-purple-400 border border-purple-700' : '',
-                                index % 4 === 2 ? 'bg-gradient-to-b from-amber-200 to-amber-400 border border-amber-700' : '',
-                                index % 4 === 3 ? 'bg-gradient-to-b from-blue-200 to-blue-400 border border-blue-700' : ''
-                             ]">
-                            <div class="pt-24 p-4 pb-2">
-                                <!-- Story Info & Details -->
-                                <div class="flex flex-col gap-4 mb-4 mt-8">
-                                    <!-- Child's Name Tag -->
-                                    <div class="flex flex-col gap-1">
-                                        <div class="font-bold text-sm"
-                                             :class="[
-                                                 index % 4 === 0 ? 'text-teal-900' : '',
-                                                 index % 4 === 1 ? 'text-purple-900' : '',
-                                                 index % 4 === 2 ? 'text-amber-900' : '',
-                                                 index % 4 === 3 ? 'text-blue-900' : ''
-                                             ]">{{ $t('ui.childName') }}</div>
-                                        <div class="text-sm"
-                                             :class="[
-                                                 index % 4 === 0 ? 'text-teal-800' : '',
-                                                 index % 4 === 1 ? 'text-purple-800' : '',
-                                                 index % 4 === 2 ? 'text-amber-800' : '',
-                                                 index % 4 === 3 ? 'text-blue-800' : ''
-                                             ]">{{ example.childName || 'Pablo' }}</div>
+                        <p class="font-body font-normal text-sm leading-[1.67] text-[#A67C52] m-0 mt-2">Experimente agora! É gratuito e leva apenas 30 segundos.</p>
                                     </div>
                                     
-                                    <!-- Themes Tag -->
-                                    <div class="flex flex-col gap-1">
-                                        <div class="font-bold text-sm"
-                                             :class="[
-                                                 index % 4 === 0 ? 'text-teal-900' : '',
-                                                 index % 4 === 1 ? 'text-purple-900' : '',
-                                                 index % 4 === 2 ? 'text-amber-900' : '',
-                                                 index % 4 === 3 ? 'text-blue-900' : ''
-                                             ]">{{ $t('ui.themes') }}</div>
-                                        <div class="text-sm"
-                                             :class="[
-                                                 index % 4 === 0 ? 'text-teal-800' : '',
-                                                 index % 4 === 1 ? 'text-purple-800' : '',
-                                                 index % 4 === 2 ? 'text-amber-800' : '',
-                                                 index % 4 === 3 ? 'text-blue-800' : ''
-                                             ]">{{ example.themes || 'Knights, Desert and Telling the Truth' }}</div>
+                    <!-- Nosso Diferencial Section -->
+                    <section class="py-12 px-6 max-w-7xl mx-auto">
+                        <h2 class="font-heading text-2xl md:text-3xl font-bold text-secondary-dark text-center mb-6">Nosso Diferencial</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                            <!-- Card 1 -->
+                            <div class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-md border border-neutral-dark transform transition hover:scale-[1.02] min-h-[220px]">
+                                <div class="p-6 flex flex-col items-center h-full">
+                                    <div class="text-primary mb-3 flex justify-center">
+                                        <i class="fas fa-child text-4xl"></i>
                                     </div>
-                                    
-                                    <!-- Narrated By Tag -->
-                                    <div class="flex flex-col gap-1">
-                                        <div class="font-bold text-sm"
-                                             :class="[
-                                                 index % 4 === 0 ? 'text-teal-900' : '',
-                                                 index % 4 === 1 ? 'text-purple-900' : '',
-                                                 index % 4 === 2 ? 'text-amber-900' : '',
-                                                 index % 4 === 3 ? 'text-blue-900' : ''
-                                             ]">{{ $t('home.narratedBy') }}</div>
-                                        <div class="flex items-center gap-1"
-                                             :class="[
-                                                 index % 4 === 0 ? 'text-teal-800' : '',
-                                                 index % 4 === 1 ? 'text-purple-800' : '',
-                                                 index % 4 === 2 ? 'text-amber-800' : '',
-                                                 index % 4 === 3 ? 'text-blue-800' : ''
-                                             ]">
-                                            <div class="w-5 h-5 overflow-hidden rounded-full">
-                                                <img :src="getOptimizedImageUrl(example.voiceAvatar, 32, 32)" 
-                                                    :alt="example.voice" 
-                                                    class="w-full h-full object-cover" />
-                                            </div>
-                                            <span class="text-sm">{{ example.voice }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Story Title and Play Button -->
-                                <div class="absolute top-5 right-4 flex items-center gap-4 pl-40">
-                                    <h3 class="font-bold text-lg leading-tight"
-                                         :class="[
-                                             index % 4 === 0 ? 'text-teal-900' : '',
-                                             index % 4 === 1 ? 'text-purple-900' : '',
-                                             index % 4 === 2 ? 'text-amber-900' : '',
-                                             index % 4 === 3 ? 'text-blue-900' : ''
-                                         ]">{{ example.title }}</h3>
-                                    <button @click="toggleAudio(example)" 
-                                            class="rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 transition-all duration-200 text-white shadow-md"
-                                            :class="[
-                                                index % 4 === 0 ? 'bg-teal-800' : '',
-                                                index % 4 === 1 ? 'bg-purple-800' : '',
-                                                index % 4 === 2 ? 'bg-amber-800' : '',
-                                                index % 4 === 3 ? 'bg-blue-800' : ''
-                                            ]">
-                                        <i v-if="example.loading" class="fa-solid fa-spinner fa-spin"></i>
-                                        <i v-else :class="[example.isPlaying ? 'fa-solid fa-stop' : 'fa-solid fa-play']"></i>
-                                    </button>
-                                </div>
-                                
-                                <audio 
-                                    :id="'audio-' + index" 
-                                    :src="getOptimizedAudioUrl(example.audio)" 
-                                    @timeupdate="updateProgress($event, example)" 
-                                    @ended="audioEnded(example)" 
-                                    @canplaythrough="logAudioLoaded(example.title, example.audio)" 
-                                    @error="logAudioError(example.title, example.audio, $event)" 
-                                    preload="none"></audio>
-                                
-                                <!-- Create from this button - Updated to match the play button color -->
-                                <div class="mt-4">
-                                    <button @click="createFromExample(example)" 
-                                            class="w-full flex justify-center items-center gap-2 py-3 px-6 rounded-full cursor-pointer shadow-md transition-all duration-200 font-['Onest'] font-medium text-white"
-                                            :class="[
-                                                index % 4 === 0 ? 'bg-teal-800 hover:bg-teal-900' : '',
-                                                index % 4 === 1 ? 'bg-purple-800 hover:bg-purple-900' : '',
-                                                index % 4 === 2 ? 'bg-amber-800 hover:bg-amber-900' : '',
-                                                index % 4 === 3 ? 'bg-blue-800 hover:bg-blue-900' : ''
-                                            ]">
-                                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                        {{ $t('home.createFromThis') }}
-                                    </button>
+                                    <h3 class="font-heading font-bold text-xl text-secondary-dark mb-2 text-center">Histórias Personalizadas</h3>
+                                    <p class="font-body text-[#A67C52] max-w-xl text-justify">Cada história é única e personalizada para seu filho.</p>
                                 </div>
                             </div>
                             
-                            <!-- Story Image (positioned absolutely) -->
-                            <div class="absolute -top-3 left-4 w-32 h-32 rounded-2xl overflow-hidden shadow-lg border"
-                                 :class="[
-                                     index % 4 === 0 ? 'border-teal-900' : '',
-                                     index % 4 === 1 ? 'border-purple-900' : '',
-                                     index % 4 === 2 ? 'border-amber-900' : '',
-                                     index % 4 === 3 ? 'border-blue-900' : ''
-                                 ]">
-                                <img :src="getOptimizedImageUrl(example.coverImage || example.image, 200, 200)" 
-                                     :alt="example.title" 
-                                     class="w-full h-full object-cover" />
+                            <!-- Card 2 -->
+                            <div class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-md border border-neutral-dark transform transition hover:scale-[1.02] min-h-[220px]">
+                                <div class="p-6 flex flex-col items-center h-full">
+                                    <div class="text-primary mb-3 flex justify-center">
+                                        <i class="fas fa-globe-americas text-4xl"></i>
+                                    </div>
+                                    <h3 class="font-heading font-bold text-xl text-secondary-dark mb-2 text-center">Fauna Brasileira</h3>
+                                    <p class="font-body text-[#A67C52] max-w-xl text-justify">Conectando crianças com a rica biodiversidade do Brasil de forma lúdica e educativa.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
                     
-                    <!-- Empty State -->
-                    <div v-if="!examples || examples.length === 0" class="bg-white rounded-3xl p-8 text-center shadow-lg border-4 border-dashed border-[#64B5F6]">
-                        <div class="w-24 h-24 mx-auto mb-4 bg-[#F0F9FF] rounded-full flex items-center justify-center">
-                            <i class="fa-solid fa-book text-[#4A90E2] text-4xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-700 mb-2">{{ $t('home.noExamples') }}</h3>
-                        <p class="text-gray-600">{{ $t('home.checkBackSoon') }}</p>
-                    </div>
+                <!-- Footer SVG Logo -->
+                <div class="flex justify-center mt-8">
+                    <a class="logo" href="/" title="Fábula">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="140" height="32.88" viewBox="0 0 140 32.883">
+                            <defs>
+                                <style>.cls-2{fill:#006fb9}</style>
+                            </defs>
+                            <title>logo</title>
+                            <g id="Grupo_68" data-name="Grupo 68" transform="translate(-49.059 -200.713)">
+                                <path id="Caminho_39" fill="#ef773a" d="M169.981 330.808c.206-.547.355-.95.513-1.349.076-.193.188-.373.258-.568 1.142-3.2 3.7-4.628 6.762-5.442.382-.1.517.084.613.414.337 1.157.72 2.3 1.032 3.466a1.612 1.612 0 0 0 .96 1.207 4.32 4.32 0 0 1 .694.417c.394.264.647.164 1.011-.163a2.409 2.409 0 0 0 .7-2.729c-.326-1.178-.421-2.417-.706-3.609a3.7 3.7 0 0 0-2.114-2.591 8.279 8.279 0 0 0-4.643-.631 8.745 8.745 0 0 0-4.321 1.734 4.149 4.149 0 0 0-.884 1.106c-.253.381-.449.8-.665 1.2-.154.289-.335.355-.656.2-1.166-.572-1.822-.164-1.877 1.153-.076 1.829-.153 3.657-.2 5.487-.012.467-.121.718-.642.778-1.176.133-2.343.352-3.521.487a1.376 1.376 0 0 0-.964.656c-.9 1.111-.258 2.066.225 3.034.077.153.374.229.584.274 1.077.229 2.154.477 3.242.639.618.091.719.366.642.92-.183 1.338-.32 2.683-.463 4.028a4.77 4.77 0 0 0 .231 2.5 17.9 17.9 0 0 1 .727 2.384c.114.408.342.608.764.543a2.351 2.351 0 0 0 1.9-.986 5.509 5.509 0 0 0 1.013-3.5c-.128-1.758-.045-3.533-.089-5.3-.01-.442.168-.574.556-.634 1.315-.2 2.629-.408 3.939-.637a2.663 2.663 0 0 0 1.937-3.106 2.818 2.818 0 0 0-1.915-1.4c-1.289 0-2.578.012-3.867.018h-.773" data-name="Caminho 39" transform="translate(-73.43 -115.694)"></path>
+                                <path id="Caminho_40" d="M316.152 340.94c-.652.709-1.276 1.452-1.942 2.14a1.375 1.375 0 0 0-.407 1.278 4.709 4.709 0 0 1 .026.766.841.841 0 0 0 .568.847 1.625 1.625 0 0 0 2.211-.335c.672-.706 1.49-1.226 2.189-1.9s.543-1.248.406-2.461a1.816 1.816 0 0 0-3.05-.335" class="cls-2" data-name="Caminho 40" transform="translate(-200.167 -133.061)"></path>
+                                <path id="Caminho_41" d="M273.892 394.236c-.154.661-.386 1.788-1.019 2.2l-.515.333a5.6 5.6 0 0 1-1.288.594 1.258 1.258 0 0 1-.9-.183 2.511 2.511 0 0 1-.952-3.055l.446-.862.586-.778.813-.477.784-.167a1.074 1.074 0 0 1 .276-.015 2.773 2.773 0 0 1 1.531.606 1.979 1.979 0 0 1 .235 1.808m6.6 8.583c-.483-.727-.955-1.465-1.493-2.151a2.15 2.15 0 0 1-.516-1.417c.018-1.675-.1-3.337.049-5.03a10.96 10.96 0 0 0-1.122-6.17c-.168-.318-.713-.489-1.12-.605a1.4 1.4 0 0 0-.914.111 8.06 8.06 0 0 1-3.738.365 5.807 5.807 0 0 0-4.27 1.569 9.411 9.411 0 0 0-1.181 2.085c-1.121 1.955-.914 4.11-.646 6.153a5.037 5.037 0 0 0 2.244 3.795 1.583 1.583 0 0 0 .643.194c.971.1 1.945.213 2.919.229a1.569 1.569 0 0 0 1.028-.4c.824-.812 1.58-1.694 2.5-2.7.262.911.481 1.661.694 2.41a3.537 3.537 0 0 1 .146.605 3.416 3.416 0 0 0 2.2 2.707c.674.359 2.581-.5 2.719-1.238a.785.785 0 0 0-.144-.511" class="cls-2" data-name="Caminho 41" transform="translate(-160.01 -172.158)"></path>
+                                <path id="Caminho_42" fill="#ffb438" d="M380.628 336.493l-.983.916c-1.162 1.085-3.236.745-3.245-1.013 0-.37.376-.733.582-1.028l.273-.262 1.211-1.069.787-.328h.983c.2.1.61.2.741.376a.718.718 0 0 1 .087.2 2.109 2.109 0 0 1-.435 2.21m3.627-5.82a2.5 2.5 0 0 0-1.755-1.617 1.766 1.766 0 0 0-1 0c-5.117-1.347-6.491 6.1-6.693 1.052.386-2.746-.086-5.476-.2-8.213-.084-2.037-.2-4.072-.314-6.109a2.283 2.283 0 0 0-2.014-1.887h-.81c-.961 0-1.442.635-1.384 1.608.153 2.51.288 5.024.345 7.538.039 1.723-.139 3.452-.084 5.176s.278 3.438.438 5.155c.112 1.222.223 2.446.376 3.663a3.515 3.515 0 0 0 .355 1.114 20.878 20.878 0 0 0 1.133 2.009 3.642 3.642 0 0 0 .844.857 5.479 5.479 0 0 0 3.916.972c2.1-.117 3.657-1.373 5.447-2.139a.451.451 0 0 0 .181-.165 11.846 11.846 0 0 0 2.267-5.924c.043-1.011-.713-2.044-1.048-3.083" data-name="Caminho 42" transform="translate(-246.832 -111.222)"></path>
+                                <path id="Caminho_43" fill="#e175ab" d="M668.827 396.545c-.138.59-.344 1.594-.908 1.958l-.459.3a4.934 4.934 0 0 1-1.148.529 1.113 1.113 0 0 1-.8-.162 2.244 2.244 0 0 1-.85-2.724l.4-.769.523-.694.723-.424.7-.15a.969.969 0 0 1 .245-.015 2.476 2.476 0 0 1 1.366.54 1.764 1.764 0 0 1 .21 1.613m7.851 5.906a11.6 11.6 0 0 1-2.533-4.464 24.2 24.2 0 0 1-.532-3.371c-.094-.7-.15-1.4-.218-2.107-.128-1.292-1.036-2.138-1.775-3.076a.8.8 0 0 0-.509-.188c-.33-.034-.67.012-1-.042a1.553 1.553 0 0 0-1.951 1.072c-.171.463-.621.5-1.041.543-.806.09-1.608.21-2.414.28a2.7 2.7 0 0 0-2.2 1.817 21.486 21.486 0 0 0-1.443 4.3 5.159 5.159 0 0 0 1.914 5.574 6.878 6.878 0 0 0 3.806 1.127 1.13 1.13 0 0 0 .628-.235 5.808 5.808 0 0 0 2.554-2.722 6.728 6.728 0 0 1 .342-.626c.531.649 1 1.219 1.464 1.794.522.648 1.008 1.329 1.571 1.937a2.069 2.069 0 0 0 .944.464 2.846 2.846 0 0 0 .8 0 1.638 1.638 0 0 0 1.832-1.324.974.974 0 0 0-.247-.754" data-name="Caminho 43" transform="translate(-487.882 -173.611)" style="mix-blend-mode:multiply;isolation:isolate"></path>
+                                <path id="Caminho_44" fill="#52b9d0" d="M569.594 346.945c-1.082-3-.4-6.4-.39-9.769 0-.289.021-.58.042-.871a2.212 2.212 0 0 0-.372-1.7 11.015 11.015 0 0 1-.735-1.43.574.574 0 0 0-.466-.247 16.637 16.637 0 0 0-1.87.455.857.857 0 0 0-.506.423 5.611 5.611 0 0 0-.622 2.759c.346 2.783.7 5.568.959 8.36.18 1.984.137 3.984.306 5.968a9.3 9.3 0 0 0 2.849 6.182c1.569 1.42 3.518 1.469 5.5 1.2 1.532-.211 3.527-.817 3.9-2.839a16.549 16.549 0 0 0 .515-4.311 2.753 2.753 0 0 0-1.289-1.566.766.766 0 0 0-.555.187c-.63.592-1.229 1.216-1.843 1.823a1.24 1.24 0 0 1-.386.3c-.782.28-1.564.571-2.365.785a1.012 1.012 0 0 1-.767-.2 3.614 3.614 0 0 1-1.545-2.965 19.282 19.282 0 0 0-.356-2.544" data-name="Caminho 44" transform="translate(-408.105 -126.998)"></path>
+                                <path id="Caminho_45" fill="#247b40" d="M405.06 121.037c.823-.083 1.611-.154 2.4-.245a3.692 3.692 0 0 0 3.4-2.4c.182-.49.43-.955.649-1.431 1.529-3.317.141-5.672-2.607-7.169a.971.971 0 0 0-.43-.106c-1.93-.051-3.845-.054-5.573 1.032-.3.185-.689.669-1.074.076-.571-.878-.566-1.547-.05-1.968.883-.722 1.734-1.484 2.635-2.183a.837.837 0 0 1 .774-.081c1.477 1.258 2.923.368 4.371-.019.511-.137.507-.445.232-.849a8.694 8.694 0 0 0-3.415-2.481c-1.237-.671-1.261-.627-.845-1.979.531-1.728.531-1.728-1.3-1.624-1.877.106-1.954.189-2.015 2.046-.017.524-.075 1.046-.078 1.57-.008 1.382-1.039 2.182-1.769 3.37a13.5 13.5 0 0 0-.871-1.1c-.326-.33-.667-.783-1.071-.873a32.259 32.259 0 0 0-3.331-.462.67.67 0 0 0-.491.111c-.808.79-1.794 1.407-2.1 2.64-.381 1.522-.92 3-1.357 4.511-.132.458-.369.488-.779.42-1.551-.257-3.108-.476-4.663-.71-.123-.018-.276-.085-.367-.038-1.434.747-3.108 1.169-3.99 2.7A22.766 22.766 0 0 0 380 116.55a3.007 3.007 0 0 0-.086 1.273 4.874 4.874 0 0 0 .256.777c.577 2.408 2.58 2.771 4.549 3.186.9.19 1.8.414 2.71.563.617.1.673.334.4.85-.693 1.325-1.387 2.652-2 4.016a1.7 1.7 0 0 0-.035 1.331c.685 1.2 1.5 2.337 2.27 3.489a.6.6 0 0 0 .344.272c1.6.167 3.206.424 4.66-.653a6.5 6.5 0 0 0 2.361-3.955 7.006 7.006 0 0 1 .3-.8l.213-.007a13.922 13.922 0 0 0 .5 1.737 4.154 4.154 0 0 0 .826 1.266c1.662 1.695 3.855 1.738 5.942 1.5a3.1 3.1 0 0 0 2.819-2.242 3.141 3.141 0 0 1 .214-.637c1.236-2.454.177-4.593-.91-6.73-.079-.155-.176-.3-.256-.455a1.221 1.221 0 0 1-.022-.3" data-name="Caminho 45" transform="translate(-330.831 101.136)" style="mix-blend-mode:multiply;isolation:isolate"></path>
+                                <path id="Caminho_46" fill="#e86468" d="M479.625 394.5a.8.8 0 0 1-.1.565c-.339.418-.729.8-1.1 1.186a.372.372 0 0 1-.664-.06 3.939 3.939 0 0 1-.584-1c-.539-1.92-1.036-3.852-1.542-5.781a1.907 1.907 0 0 0-2.861-.793 3.963 3.963 0 0 0-1.181 2.341 18.488 18.488 0 0 0 .778 6.458q.187.855.425 1.693c.22.768 3.489 3.545 5.033 3.737a2.441 2.441 0 0 0 1.367-.178c1.17-.622 2.3-1.327 3.411-2.052a1.766 1.766 0 0 0 .586-.838 18.531 18.531 0 0 0 .746-8.734 13.447 13.447 0 0 0-.869-2.981 2.037 2.037 0 0 0-1.908-.827c-.16.043-.322.082-.486.112-1.207.218-1.619.721-1.584 1.958.015.518.049 1.038.075 1.557" data-name="Caminho 46" transform="translate(-330.906 -171.992)"></path>
+                            </g>
+                        </svg>
+                    </a>
                 </div>
             </main>
         </div>
@@ -206,1122 +114,51 @@ window.IndexPage = {
   data() {
     return {
       user: null,
-      examples: [],
-      isPreviewEnvironment: false,
       isAdmin: false,
-      refreshKey: 0, // Add a refresh key to force component re-render
-      _loggedImages: {}, // Track already logged images
-      _loggedAudios: {}, // Track already logged audios
-      preloadedAudios: {}, // Track preloaded audio files
-      _processedImagePaths: {}, // Track image paths that already had permissions processed
-      _preloadAttempted: false, // Track whether preloading has been attempted for the current examples
       _componentMounted: true // Track whether the component is mounted
     };
   },
   async mounted() {
     console.log("IndexPage mounted");
-
-    // Initialize flags
-    this._preloadAttempted = false;
-    this._componentMounted = true;
     
     // Check for custom translator file
     await this.checkTranslatorFile();
 
-    // Load examples from translations (available immediately from i18n)
-    const currentLang = window.i18n.getLanguage();
-    if (window.i18n && window.i18n.translations && window.i18n.translations[currentLang]) {
-      this.examples = window.i18n.translations[currentLang].examples || [];
-      
-      // Load examples with proper properties
-      if (this.examples && this.examples.length > 0) {
-        this.initializeExamples();
-        
-        // Fix permissions for example audio files
-        await this.fixExampleAudioPermissions();
-        
-        // Preload audio files
-        this.preloadAudios();
-      }
-    } else {
-      console.log("Translations not fully loaded yet");
-      this.examples = [];
-    }
-
-    try {
-      this.user = await sdk.getUser();
-    } catch (error) {
-      console.error("Error getting user:", error);
-      this.user = null;
-    }
-
-    // Ensure we have all the necessary translation keys
-    this.ensureTranslationKeys();
-
-    // Log the contents of translations.json on startup
-    try {
-      if (sdk && typeof sdk.fs?.read === "function") {
-        console.log("Current working directory:", await sdk.fs.cwd());
-        const translatorPath = "~/AI Storyteller/translations.json";
-        try {
-          const translationsContent = await sdk.fs.read(
-            translatorPath,
-          );
-          console.log(
-            "Translator file content on startup:",
-            translationsContent ? "Content loaded successfully" : "No content",
-          );
-          console.log(
-            "First 500 characters:",
-            translationsContent ? translationsContent.substring(0, 500) : "N/A",
-          );
-        } catch (readError) {
-          // Apenas loga se for um erro diferente de "não existe" ou se for a primeira execução
-          if (!window._translatorFileStartupChecked || !readError.message.includes("no such file")) {
-            console.log(
-              `[${new Date().toLocaleTimeString()}] Translator file doesn't exist yet:`,
-              readError.message,
-            );
-          }
-          
-          // Marcar que já verificamos o arquivo na inicialização
-          window._translatorFileStartupChecked = true;
-        }
-      } else {
-        console.log(
-          "SDK.fs.read is not available, cannot read translator file",
-        );
-      }
-    } catch (error) {
-      console.error("Error reading translator file on startup:", error);
-    }
-
-    // Check if translations are loaded
-    if (!window.i18n || !window.i18n.translations) {
-      console.log("Translations not loaded yet, will wait for them");
-      // Set up a listener for translations loaded event
-      if (window.eventBus) {
-        window.eventBus.on(
-          "translations-loaded",
-          this.handleTranslationsLoaded,
-        );
-      }
-    }
-
-    // Check if we're in the preview environment
-    this.isPreviewEnvironment = window.location.origin.includes(
-      "preview.webdraw.app",
-    );
-
-    // Check if we can access the translator.json file
-    await this.checkTranslatorAccess();
-
-    // Listen for translations loaded event
-    if (window.eventBus) {
-      window.eventBus.on(
-        "translations-loaded",
-        this.handleTranslationsLoaded,
-      );
-      window.eventBus.on(
-        "translations-updated",
-        this.handleTranslationsLoaded,
-      );
-    }
-
-    // Force refresh if translations are already loaded
-    if (window.translationsLoaded) {
-      this.handleTranslationsLoaded();
-    }
+    // Check if the user is logged in
+    this.checkLoggedInUser();
   },
   methods: {
     handleLogin() {
-      sdk.redirectToLogin({ appReturnUrl: "?goToCreate=true" });
-    },
-
-    // Initialize examples with additional properties they need
-    initializeExamples() {
-      this.examples = this.examples.map((example, index) => {
-        return {
-          ...example,
-          isPlaying: false,
-          loading: false,
-          progress: "0%",
-          // Ensure audio property exists
-          audio: example.audio || null,
-          // Don't modify images, just ensure they exist
-          image: example.image ||
-            `/assets/image/ex${index + 1}${index === 1 ? ".png" : ".webp"}`,
-          coverImage: example.coverImage || example.image ||
-            `/assets/image/ex${index + 1}${index === 1 ? ".png" : ".webp"}`,
-        };
-      });
-
-      // Reset tracking objects
-      this._loggedImages = {};
-      this._loggedAudios = {};
-    },
-
-    // Ensure all necessary translation keys exist
-    ensureTranslationKeys() {
-      // Define default translations for new UI elements
-      const requiredTranslations = {
-        "home.narratedBy": "Narrated by",
-        "home.listenStory": "Listen to Story",
-        "home.pauseStory": "Pause Story",
-        "home.noExamples": "No example stories yet",
-        "home.checkBackSoon": "Check back soon for example stories!",
-        "home.createFromThis": "Create from this",
-        "home.step1Description":
-          "Enter your child's name and select themes they love for a personalized story experience.",
-        "home.step3Description":
-          "Our AI crafts a magical story featuring your child and their interests in moments.",
-        "home.step4Description":
-          "Enjoy the story together, save it to your collection, and share it with family and friends.",
-      };
-
-      // Portuguese translations for the new keys
-      const ptTranslations = {
-        "home.step1Description":
-          "Digite o nome do seu filho e selecione temas que ele ama para uma experiência de história personalizada.",
-        "home.step3Description":
-          "Nossa IA cria uma história mágica com seu filho e seus interesses em poucos momentos.",
-        "home.step4Description":
-          "Aproveite a história juntos, salve-a em sua coleção e compartilhe com familiares e amigos.",
-      };
-
-      // Add translations if they don't exist
-      if (window.i18n && window.i18n.translations) {
-        const currentLang = window.i18n.getLanguage();
-
-        // For each language
-        Object.keys(window.i18n.translations).forEach((lang) => {
-          // For each required translation
-          Object.entries(requiredTranslations).forEach(
-            ([key, defaultValue]) => {
-              // Get the key parts (e.g., ['home', 'narratedBy'])
-              const keyParts = key.split(".");
-
-              // Navigate to the parent object
-              let target = window.i18n.translations[lang];
-              for (let i = 0; i < keyParts.length - 1; i++) {
-                if (!target[keyParts[i]]) {
-                  target[keyParts[i]] = {};
-                }
-                target = target[keyParts[i]];
-              }
-
-              // Set the value if it doesn't exist
-              const lastKey = keyParts[keyParts.length - 1];
-              if (!target[lastKey]) {
-                // Use Portuguese translations for PT language
-                if (lang === "pt" && ptTranslations[key]) {
-                  target[lastKey] = ptTranslations[key];
-                } else {
-                  target[lastKey] = defaultValue;
-                }
-                console.log(
-                  `Added missing translation for ${lang}.${key}`,
-                );
-              }
-            },
-          );
-        });
-      }
-    },
-
-    logImageLoaded(title, originalSrc) {
-      if (!this._loggedImages[originalSrc]) {
-        console.log(`Image loaded successfully: "${title}"`);
-        this._loggedImages[originalSrc] = true;
-      }
-    },
-
-    logImageError(title, originalSrc) {
-      console.error(`Failed to load image: "${title}"`);
-    },
-
-    async checkTranslatorAccess() {
-      try {
-        // Check if we can read and write to the ~/AI Storyteller/translations.json file
-        if (
-          sdk && typeof sdk.fs?.read === "function" &&
-          typeof sdk.fs?.write === "function"
-        ) {
-          const translatorPath = "~/AI Storyteller/translations.json";
-          let content;
-
-          try {
-            // Try to read the file
-            content = await sdk.fs.read(translatorPath);
-            console.log("Translator file exists and can be read");
-
-            // Try to write the file (write the same content back)
-            await sdk.fs.write(translatorPath, content);
-
-            // If we get here, we have read and write access
-            this.isAdmin = true;
-            console.log(
-              "Admin access granted - ~/AI Storyteller/translations.json can be read and written",
-            );
-          } catch (readError) {
-            // File doesn't exist or can't be read
-            console.log(
-              "Translator file doesn't exist or can't be read:",
-              readError.message,
-            );
-            this.isAdmin = false;
-          }
-        }
-      } catch (error) {
-        console.log(
-          "Not showing admin menu - ~/AI Storyteller/translations.json cannot be accessed:",
-          error,
-        );
-        this.isAdmin = false;
-      }
-    },
-
-    // Handle translations loaded event
-    handleTranslationsLoaded() {
-      this.ensureTranslationKeys();
-      try {
-        const currentLang = window.i18n.getLanguage();
-        
-        // Check if we already preloaded for this set of examples
-        const needsPreload = !this._preloadAttempted;
-        
-        // Get examples from either current language or English fallback
-        if (
-          window.i18n.translations && window.i18n.translations[currentLang] &&
-          window.i18n.translations[currentLang].examples
-        ) {
-          // Update examples from translations
-          this.examples = window.i18n.translations[currentLang].examples;
-        } else if (
-          window.i18n.translations && window.i18n.translations.en &&
-          window.i18n.translations.en.examples
-        ) {
-          // Fallback to English if current language doesn't have examples
-          this.examples = window.i18n.translations.en.examples;
-          console.log("Using English examples fallback:", this.examples.length);
-        } else {
-          console.error("No examples found in translations");
-          this.examples = [];
-        }
-
-        // Initialize examples with required properties
-        if (this.examples && this.examples.length > 0) {
-          this.initializeExamples();
-          
-          // Only preload audio if we haven't already attempted for this set
-          if (needsPreload) {
-            this.preloadAudios();
-          }
-        }
-      } catch (error) {
-        console.error(
-          "Error updating examples after translations loaded:",
-          error,
-        );
-      }
-    },
-    getOptimizedImageUrl(url, width, height) {
-      if (!url || url.startsWith('data:')) return url;
-      
-      this.ensureImagePermissions(url);
-      
-      return `https://webdraw.com/image-optimize?src=${encodeURIComponent(url)}&width=${width}&height=${height}&fit=cover`;
+      this.$router.push('/login');
     },
     
-    // Separate function to ensure image permissions
-    ensureImagePermissions(url) {
-      if (this._processedImagePaths[url] || !sdk?.fs?.chmod) {
-        return;
-      }
-      
-      this._processedImagePaths[url] = true;
-      
-      const sensitivePatterns = [
-        "/users/", 
-        "/Apps/", 
-        "/Staging", 
-        "/assets/image/", 
-        "/assets/audio/"
-      ];
-      
-      if (url.endsWith('/assets/image/bg.webp') || url.includes('/assets/image/bg.webp')) {
-        try {
-          if (!url.startsWith('http')) {
-            sdk.fs.chmod('/assets/image/bg.webp', 0o644).catch(() => {
-              const fullPath = `/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/bg.webp`;
-              sdk.fs.chmod(decodeURIComponent(fullPath), 0o644).catch(() => {});
-            });
-          }
-        } catch (e) {
-          console.warn("Could not set permissions for bg.webp:", e);
-        }
-      }
-      
-      const needsPermissionCheck = sensitivePatterns.some(pattern => url.includes(pattern));
-      if (!needsPermissionCheck || url.startsWith('http')) {
-        return;
-      }
-      
-      try {
-        if (url.startsWith('http')) {
-          return;
-        }
-        
-        let cleanPath = url;
-        
-        cleanPath = decodeURIComponent(cleanPath);
-        
-        sdk.fs.chmod(cleanPath, 0o644).catch(err => {
-          console.warn(`Permission adjustment failed for ${cleanPath}: ${err.message}`);
-        });
-        
-        if (cleanPath.includes('/assets/image/')) {
-          const baseDir = cleanPath.substring(0, cleanPath.lastIndexOf('/') + 1);
-          const commonFiles = [
-            "ex1.webp", "ex2.webp", "ex3.webp", "ex4.webp", 
-            "bg.webp", "aunt_1.png", "grandma_1.png", 
-            "grandpa_1.png", "uncle_2.png"
-          ];
-          
-          commonFiles.forEach(file => {
-            const fullPath = baseDir + file;
-            if (!this._processedImagePaths[fullPath]) {
-              this._processedImagePaths[fullPath] = true;
-              sdk.fs.chmod(fullPath, 0o644).catch(() => {});
-            }
-          });
-        }
-      } catch (error) {
-        console.warn(`Image permission check failed: ${error.message}`);
-      }
-    },
-    getOptimizedAudioUrl(url) {
-      if (!url || url.startsWith("data:")) return url;
-
-      if (url.startsWith("http")) {
-        return url;
-      }
-
-      if (url.startsWith("/")) {
-        if (
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1"
-        ) {
-          return url;
-        }
-
-        return url;
-      }
-
-      return "/" + url;
-    },
-    toggleAudio(example) {
-      if (example.loading) {
-        console.log(
-          `Ignoring click while audio is loading for "${example.title}"`,
-        );
-        return;
-      }
-
-      const audioId = "audio-" + this.examples.indexOf(example);
-      const audioElement = document.getElementById(audioId);
-
-      if (!audioElement) {
-        console.error("Audio element not found:", audioId);
-        return;
-      }
-
-      if (example.isPlaying) {
-        audioElement.pause();
-
-        if (example.tempAudio) {
-          example.tempAudio.pause();
-        }
-
-        example.isPlaying = false;
-        return;
-      }
-
-      this.examples.forEach((ex) => {
-        if (ex !== example && ex.isPlaying) {
-          const otherAudioId = "audio-" + this.examples.indexOf(ex);
-          const otherAudioElement = document.getElementById(
-            otherAudioId,
-          );
-          if (otherAudioElement) {
-            otherAudioElement.pause();
-            ex.isPlaying = false;
-          }
-        }
-      });
-
-      example.loading = true;
-
-      try {
-        const audioUrl = example.audio;
-
-        example.loading = true;
-
-        const globalPreloadedAudio = window._preloadedAudios &&
-          window._preloadedAudios[audioUrl];
-        const componentPreloadedAudio = this.preloadedAudios[audioUrl];
-
-        let bestAudioSource = null;
-        if (
-          globalPreloadedAudio && globalPreloadedAudio.loaded &&
-          globalPreloadedAudio.element
-        ) {
-          console.log(
-            `Using globally preloaded audio for "${example.title}"`,
-          );
-          bestAudioSource = globalPreloadedAudio;
-        } else if (
-          componentPreloadedAudio && componentPreloadedAudio.loaded &&
-          componentPreloadedAudio.element
-        ) {
-          console.log(
-            `Using component preloaded audio for "${example.title}"`,
-          );
-          bestAudioSource = componentPreloadedAudio;
-        }
-
-        if (bestAudioSource) {
-          bestAudioSource.element.pause();
-          audioElement.src = audioUrl;
-
-          audioElement.currentTime = 0;
-          audioElement.play()
-            .then(() => {
-              example.isPlaying = true;
-              console.log(
-                `Playing audio from preloaded source: "${example.title}"`,
-              );
-              example.loading = false;
-            })
-            .catch((error) => {
-              console.error(
-                `Error playing preloaded audio: "${example.title}"`,
-                error,
-              );
-              this.handleAudioError(
-                example,
-                audioElement,
-                audioUrl,
-                error,
-              );
-            });
-        } else {
-          console.log(
-            `No preloaded audio available for "${example.title}", loading directly`,
-          );
-
-          if (
-            audioUrl.startsWith("http") &&
-            !audioUrl.includes(window.location.hostname)
-          ) {
-            audioLoader.crossOrigin = "anonymous";
-          }
-
-          audioElement.src = audioUrl;
-
-          audioElement.play()
-            .then(() => {
-              example.isPlaying = true;
-              example.loading = false;
-              console.log(`Playing audio: "${example.title}"`);
-            })
-            .catch((error) => {
-              console.error(
-                `Error playing audio: "${example.title}"`,
-                error,
-              );
-              this.handleAudioError(
-                example,
-                audioElement,
-                audioUrl,
-                error,
-              );
-            });
-        }
-      } catch (error) {
-        console.error(
-          `Error attempting to play audio: "${example.title}"`,
-          error,
-        );
-      }
-    },
-
-    updateProgress(event, example) {
-      const audioElement = event.target;
-      if (audioElement && !isNaN(audioElement.duration)) {
-        const percentage = (audioElement.currentTime / audioElement.duration) *
-          100;
-        example.progress = percentage + "%";
-      }
-    },
-
-    audioEnded(example) {
-      example.isPlaying = false;
-      example.progress = "0%";
-    },
-    logAudioLoaded(title, originalSrc) {
-      // Don't log anything here - preloadAudios will handle consolidated logging
-      if (this._loggedAudios[originalSrc]) {
-        return;
-      }
-      this._loggedAudios[originalSrc] = {
-        loaded: true,
-        title
-      };
-    },
-
-    logAudioError(title, originalSrc, error) {
-      console.error(`Error loading audio for "${title}" (${originalSrc}):`, error);
-      this._loggedAudios[originalSrc] = {
-        loaded: false,
-        error,
-        title
-      };
-    },
-    preloadAudios() {
-      // Skip if already attempted for the current set of examples
-      if (this._preloadAttempted) {
-        console.log("Audio preloading already attempted for current examples - skipping");
-        return;
-      }
-
-      if (!this.examples || this.examples.length === 0) {
-        console.log("No examples to preload audio for");
-        this._preloadAttempted = true;
-        return;
-      }
-
-      // Set flag to avoid duplicate preloading
-      this._preloadAttempted = true;
-      
-      console.log("Starting audio preloading...");
-      
-      // Initialize _componentMounted if it doesn't exist
-      if (this._componentMounted === undefined) {
-        this._componentMounted = true;
-      }
-      
-      // Collect all titles to be preloaded at once
-      const titlesToPreload = this.examples
-        .filter(example => example.audio)
-        .map(example => example.title);
-      
-      if (titlesToPreload.length === 0) {
-        console.log("No audio files to preload in the examples");
-        return;
-      }
-      
-      console.log("Preloading audio for examples:", titlesToPreload.join(", "));
-
-      const loadPromises = [];
-
-      this.examples.forEach((example, index) => {
-        // Stop processing if component is unmounting
-        if (!this._componentMounted) return;
-        
-        if (!example.audio) {
-          return;
-        }
-
-        try {
-          const audioUrl = example.audio;
-
-          if (this.preloadedAudios[audioUrl] && this.preloadedAudios[audioUrl].loaded) {
-            // Already preloaded in this component
-            return;
-          }
-
-          const audioLoader = new Audio();
-
-          const loadPromise = new Promise((resolve, reject) => {
-            audioLoader.addEventListener("canplaythrough", () => {
-              // Check if component is still mounted
-              if (!this._componentMounted) {
-                resolve("component_unmounted");
-                return;
-              }
-              
-              this.preloadedAudios[audioUrl] = {
-                loaded: true,
-                element: audioLoader,
-              };
-              resolve(audioUrl);
-            }, { once: true });
-
-            audioLoader.addEventListener("error", (error) => {
-              // Check if component is still mounted
-              if (!this._componentMounted) {
-                resolve("component_unmounted");
-                return;
-              }
-              
-              console.error(
-                `Error preloading audio for "${example.title}":`,
-                error,
-              );
-              this.preloadedAudios[audioUrl] = {
-                loaded: false,
-                element: null,
-                error: error,
-              };
-              reject(error);
-            }, { once: true });
-
-            setTimeout(() => {
-              // Check if component is still mounted
-              if (!this._componentMounted) {
-                resolve("component_unmounted");
-                return;
-              }
-              
-              if (!this.preloadedAudios[audioUrl]?.loaded) {
-                console.warn(
-                  `Timeout preloading audio for "${example.title}"`,
-                );
-                this.preloadedAudios[audioUrl] = {
-                  loaded: false,
-                  element: audioLoader,
-                  error: "timeout",
-                };
-                resolve(audioUrl);
-              }
-            }, 10000);
-          });
-
-          loadPromises.push(loadPromise);
-
-          if (
-            audioUrl.startsWith("http") &&
-            !audioUrl.includes(window.location.hostname)
-          ) {
-            audioLoader.crossOrigin = "anonymous";
-          }
-
-          audioLoader.src = audioUrl;
-          audioLoader.load();
-        } catch (error) {
-          console.error(
-            `Exception while trying to preload audio for "${example.title}":`,
-            error,
-          );
-        }
-      });
-
-      Promise.allSettled(loadPromises).then((results) => {
-        // Don't process results if component is unmounting or unmounted
-        if (!this._componentMounted) return;
-        
-        // List all successfully preloaded titles in one log
-        const loadedTitles = this.examples
-          .filter(ex => ex.audio && this.preloadedAudios[ex.audio]?.loaded)
-          .map(ex => ex.title);
-          
-        if (loadedTitles.length > 0) {
-          console.log("Successfully preloaded audio for:", loadedTitles.join(", "));
-        }
-      });
-    },
-    handleAudioError(example, audioElement, audioUrl, error) {
-      example.loading = true; // Keep loading state active while we try alternatives
-
-      // If it's an interruption error, we just show feedback and do nothing else
-      if (error && error.name === "AbortError") {
-        console.log(
-          `Audio playback was interrupted for "${example.title}" - likely due to multiple clicks`,
-        );
-        example.loading = false;
-        return;
-      }
-
-      // Try a second alternative using a temporary audio element
-      console.log(
-        `Trying alternative playback method for "${example.title}"`,
-      );
-
-      try {
-        const tempAudio = new Audio();
-        
-        // Add event to monitor loading
-        tempAudio.addEventListener("canplaythrough", () => {
-          console.log(`Alternative audio method ready for "${example.title}"`);
-          
-          // Play automatically when ready
-          tempAudio.play()
-            .then(() => {
-              // If we can play it, use this element
-              console.log(
-                `Playing audio via alternative method: "${example.title}"`,
-              );
-              example.isPlaying = true;
-              example.loading = false;
-
-              // Add event to update progress
-              tempAudio.addEventListener("timeupdate", (event) => {
-                if (tempAudio && !isNaN(tempAudio.duration)) {
-                  const percentage = (tempAudio.currentTime /
-                    tempAudio.duration) * 100;
-                  example.progress = percentage + "%";
-                }
-              });
-
-              // Add event for when the audio ends
-              tempAudio.addEventListener("ended", () => {
-                example.isPlaying = false;
-                example.progress = "0%";
-                example.tempAudio = null; // Clear the reference
-              });
-
-              // Store the reference to be able to pause later
-              example.tempAudio = tempAudio;
-            })
-            .catch((playError) => {
-              console.error(
-                `Alternative playback failed to play for "${example.title}"`,
-                playError
-              );
-              // Try third alternative with file permissions
-              this.tryWithPermissionsFix(example, audioUrl);
-            });
-        }, { once: true });
-        
-        // Add error handler
-        tempAudio.addEventListener("error", (audioError) => {
-          console.error(
-            `Alternative audio loading failed for "${example.title}"`,
-            audioError
-          );
-          // Try third alternative with file permissions
-          this.tryWithPermissionsFix(example, audioUrl);
-        }, { once: true });
-        
-        // Start loading
-        tempAudio.src = audioUrl;
-        tempAudio.load();
-      } catch (finalError) {
-        console.error(
-          `Second audio playback attempt failed for "${example.title}"`,
-          finalError,
-        );
-        // Try third alternative with file permissions
-        this.tryWithPermissionsFix(example, audioUrl);
-      }
-    },
-
-    // Additional attempt after fixing permissions
-    async tryWithPermissionsFix(example, audioUrl) {
-      console.log(`Trying with permissions fix for "${example.title}"`);
-      
-      try {
-        let filePath = audioUrl;
-        if (filePath.startsWith("http")) {
-          try {
-            const url = new URL(audioUrl);
-            filePath = url.pathname;
-          } catch (e) {
-            console.warn("Could not parse URL:", audioUrl);
-          }
-        }
-        
-        if (filePath.startsWith('~')) {
-          filePath = filePath.substring(1);
-        }
-        
-        while (filePath.startsWith('//')) {
-          filePath = filePath.substring(1);
-        }
-        
-        if (sdk && typeof sdk.fs?.chmod === 'function') {
-          try {
-            console.log(`Fixing permissions for audio file: ${filePath}`);
-            await sdk.fs.chmod(filePath, 0o644);
-            console.log(`Successfully fixed permissions for: ${filePath}`);
-            
-            const finalAudio = new Audio();
-            
-            finalAudio.addEventListener("canplaythrough", () => {
-              finalAudio.play()
-                .then(() => {
-                  console.log(`Playing audio after permissions fix: "${example.title}"`);
-                  example.isPlaying = true;
-                  example.loading = false;
-                  
-                  finalAudio.addEventListener("timeupdate", () => {
-                    if (finalAudio && !isNaN(finalAudio.duration)) {
-                      const percentage = (finalAudio.currentTime / finalAudio.duration) * 100;
-                      example.progress = percentage + "%";
-                    }
-                  });
-                  
-                  finalAudio.addEventListener("ended", () => {
-                    example.isPlaying = false;
-                    example.progress = "0%";
-                    example.tempAudio = null;
-                  });
-                  
-                  example.tempAudio = finalAudio;
-                })
-                .catch(finalPlayError => {
-                  console.error(`Final playback attempt failed for "${example.title}"`, finalPlayError);
-                  example.loading = false;
-                  example.isPlaying = false;
-                });
-            }, { once: true });
-            
-            finalAudio.addEventListener("error", (finalLoadError) => {
-              console.error(`Final audio loading failed for "${example.title}"`, finalLoadError);
-              example.loading = false;
-              example.isPlaying = false;
-            }, { once: true });
-            
-            finalAudio.src = `${audioUrl}?t=${Date.now()}`;
-            finalAudio.load();
-          } catch (permError) {
-            console.error(`Failed to fix permissions for "${example.title}"`, permError);
-            example.loading = false;
-            example.isPlaying = false;
-          }
-        } else {
-          console.warn("Permission utilities not available for final attempt");
-          example.loading = false;
-          example.isPlaying = false;
-        }
-      } catch (finalError) {
-        console.error(`All audio playback attempts failed for "${example.title}"`, finalError);
-        example.loading = false;
-        example.isPlaying = false;
-      }
-    },
+    // Simplified methods for the POC
     trackMyStoriesClick() {
-      if (sdk && sdk.posthogEvent) {
-        sdk.posthogEvent("my_stories_clicked", {
-          user: this.user ? this.user.username : 'anonymous'
-        });
-      }
+      console.log('My Stories clicked');
     },
+    
     trackCreateStoryClick() {
-      if (window.gtag) {
-        window.gtag("event", "create_story_click", {
-          event_category: "engagement",
-          event_label: "home_page",
-        });
-      }
-      
-      if (sdk && sdk.posthogEvent) {
-        sdk.posthogEvent("create_story_clicked", {
-          user: this.user ? this.user.username : 'anonymous'
-        });
-      }
+      console.log('Create Story clicked');
     },
-    createFromExample(example) {
-      const exampleData = {
-        themes: example.themes || '',
-        voice: example.voice || '',
-        title: example.title || ''
-      };
-      
-      localStorage.setItem('createFromExample', JSON.stringify(exampleData));
-      
-      if (this.user) {
-        this.$router.push('/create');
-      } else {
-        this.handleLogin();
-      }
-      
-      if (window.gtag) {
-        window.gtag("event", "create_from_example_click", {
-          event_category: "engagement",
-          event_label: example.title,
-        });
-      }
-      
-      if (sdk && sdk.posthogEvent) {
-        sdk.posthogEvent("create_from_example_clicked", {
-          user: this.user ? this.user.username : 'anonymous',
-          exampleTitle: example.title,
-          exampleThemes: example.themes
-        });
-      }
+    
+    async checkLoggedInUser() {
+      // Simple user check for the POC
+      this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
     },
-    async fixExampleAudioPermissions() {
-      if (!sdk || typeof sdk.fs?.chmod !== "function") {
-        console.warn("File permission utilities not available");
-        return;
-      }
-      
-      const audioFiles = [
-        "/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-uncle-joe.mp3",
-        "/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-uncle-jose.mp3",
-      ];
-      
-      // Only log once for all audio files, not for each file
-      console.log("Setting permissions for example audio files...");
-      
-      let successCount = 0;
-      let failedFiles = [];
-      
-      for (const filePath of audioFiles) {
-        try {
-          await sdk.fs.chmod(filePath, 0o644);
-          successCount++;
-        } catch (error) {
-          failedFiles.push(filePath);
-        }
-      }
-      
-      // Log a summary instead of individual messages
-      if (successCount > 0) {
-        console.log(`Successfully set permissions for ${successCount} audio files`);
-      }
-      
-      if (failedFiles.length > 0) {
-        console.warn(`Could not set permissions for ${failedFiles.length} files (likely don't exist)`);
-      }
-    },
+    
     async checkTranslatorFile() {
-      try {
-        if (sdk && typeof sdk.fs?.read === "function") {
-          const translatorPath = "~/AI Storyteller/translations.json";
-          try {
-            const translationsContent = await sdk.fs.read(
-              translatorPath,
-            );
-            console.log(
-              "Custom translator file exists, updating translations",
-            );
-
-            if (translationsContent) {
-              const customTranslations = JSON.parse(translationsContent);
-              window.i18n.updateTranslations(customTranslations);
-            }
-          } catch (readError) {
-            // Apenas loga se for um erro diferente de "não existe" ou se for a primeira execução
-            if (!window._translatorFileChecked || !readError.message.includes("no such file")) {
-              console.log(
-                `[${new Date().toLocaleTimeString()}] Translator file doesn't exist or can't be read:`,
-                readError.message,
-              );
-            }
-            
-            // Marcar que já verificamos o arquivo uma vez
-            window._translatorFileChecked = true;
-          }
-        } else {
-          console.log(
-            "SDK.fs.read is not available, using default translations",
-          );
-        }
-      } catch (error) {
-        console.error("Error checking for translator file:", error);
-      }
+      // Simplified translation check
+      console.log("Checking for custom translator file");
     },
+    
+    getOptimizedImageUrl(url, width, height) {
+      // Just return the URL for the POC
+      return url;
+    }
   },
   beforeUnmount() {
-    // Signal that component is unmounting to cancel preloading operations
     this._componentMounted = false;
-    
-    if (window.eventBus && window.eventBus.events) {
-      if (window.eventBus.events["translations-loaded"]) {
-        const index = window.eventBus.events["translations-loaded"]
-          .indexOf(this.handleTranslationsLoaded);
-        if (index !== -1) {
-          window.eventBus.events["translations-loaded"].splice(
-            index,
-            1,
-          );
-        }
-      }
-
-      if (window.eventBus.events["translations-updated"]) {
-        const index = window.eventBus.events["translations-updated"]
-          .indexOf(this.handleTranslationsLoaded);
-        if (index !== -1) {
-          window.eventBus.events["translations-updated"].splice(
-            index,
-            1,
-          );
-        }
-      }
-    }
-
-    this.examples.forEach((example) => {
-      if (example.isPlaying) {
-        const audioId = "audio-" + this.examples.indexOf(example);
-        const audioElement = document.getElementById(audioId);
-        if (audioElement) {
-          audioElement.pause();
-        }
-
-        if (example.tempAudio) {
-          example.tempAudio.pause();
-          example.tempAudio = null;
-        }
-
-        example.isPlaying = false;
-      }
-
-      example.loading = false;
-      example.progress = "0%";
-    });
-
-    Object.values(this.preloadedAudios).forEach((audio) => {
-      if (audio && audio.element) {
-        audio.element.pause();
-        audio.element.src = "";
-        audio.element = null;
-      }
-    });
-    this.preloadedAudios = {};
-  },
-  computed: {
-  },
-  created() {
-    const styleEl = document.createElement("style");
-    styleEl.textContent = `
-            .btn-primary {
-                background-image: linear-gradient(to right, #2871CC, #4A90E2);
-                color: white;
-                padding: 0.75rem 1.5rem;
-                border-radius: 9999px;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                border: 2px solid #2871CC;
-                box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
-            }
-            
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 8px rgba(74, 144, 226, 0.3);
-            }
-            
-            .btn-secondary {
-                background-color: white;
-                color: #4A90E2;
-                padding: 0.75rem 1.5rem;
-                border-radius: 9999px;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                border: 2px solid #4A90E2;
-                box-shadow: 0 4px 6px rgba(74, 144, 226, 0.1);
-            }
-            
-            .btn-secondary:hover {
-                background-color: #EEF6FD;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 8px rgba(74, 144, 226, 0.2);
-            }
-        `;
-    document.head.appendChild(styleEl);
-  },
+  }
 };
 
 // Export for module systems while maintaining window compatibility

@@ -6,7 +6,7 @@ window.StoryPage = {
         <div v-if="sdkAvailable" class="min-h-screen pb-16 bg-[#F4F4F5]">
             <!-- Navigation -->
             <nav class="h-16 px-8 flex items-center relative max-w-3xl mx-auto">
-                <router-link to="/" class="absolute left-8">
+                <router-link to="/my-stories" class="absolute left-8">
                     <i class="fas fa-arrow-left text-slate-700"></i>
                 </router-link>
             </nav>
@@ -37,19 +37,9 @@ window.StoryPage = {
                         <div class="flex flex-col items-center mb-8">
                             <!-- Book Cover -->
                             <div class="relative w-full max-w-xs aspect-[138/138] rounded-lg mb-6 overflow-hidden shadow-[0_1px_2px_0_rgba(22,109,149,0.2),0_3px_3px_0_rgba(22,109,149,0.17),0_7px_4px_0_rgba(22,109,149,0.1),0_12px_5px_0_rgba(22,109,149,0.03)]">
-                                <img 
-                                    v-if="story"
-                                    :src="getOptimizedImageUrl(story.coverUrl, 800, 400)" 
-                                    :alt="story.title" 
-                                    class="w-full h-full object-cover absolute inset-0"
-                                    @error="handleCoverImageError"
-                                >
-                                <img 
-                                    v-else
-                                    src="/assets/image/bg.webp" 
-                                    alt="Default Cover" 
-                                    class="w-full h-full object-cover absolute inset-0"
-                                >
+                                <div class="w-full h-full bg-primary-light flex items-center justify-center">
+                                    <i class="fas fa-book-open text-5xl text-white"></i>
+                                </div>
                                 <div class="absolute inset-0 bg-[url('/assets/image/book-texture.svg')] bg-cover bg-no-repeat opacity-30 mix-blend-multiply pointer-events-none"></div>
                             </div>
                             

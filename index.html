@@ -4,46 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="/">
-    <title>AI Storytime: Crie histórias com a imaginação do seu filho</title>
-    <!-- Preloading Audio Files -->
-    <!-- English audio files -->
+    <title>Fábula - Histórias da Fauna Brasileira</title>
+    
+    <!-- Commenting out preloaded audio files for the POC
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-grandpa2.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-grandma.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-aunt.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-grandpa.mp3" as="audio" type="audio/mpeg" crossorigin>
-    <!-- Portuguese audio files -->
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-grandpa-pt2.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-grandma-pt.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-aunt-pt.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/sample/audio-grandpa-pt.mp3" as="audio" type="audio/mpeg" crossorigin>
-    <!-- Voice preview files -->
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/uncle_2.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/grandpa_1.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/aunt_1.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/grandma_1.mp3" as="audio" type="audio/mpeg" crossorigin>
-    <!-- Portuguese voice preview files -->
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/uncle_2pt.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/grandpa_1pt.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/aunt_1pt.mp3" as="audio" type="audio/mpeg" crossorigin>
     <link rel="preload" href="https://fs.webdraw.com/users/043b6c01-d97c-47e9-9285-fc4eee62b919/Apps/Staging%20AI%20Storyteller/assets/audio/preview/grandma_1pt.mp3" as="audio" type="audio/mpeg" crossorigin>
-    <!-- Google Fonts - Onest -->
-    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+    -->
+    
+    <!-- Google Fonts for African/Artisanal Theme - Baloo 2 for headings and Montserrat for body text -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              // Updated color palette based on client's brand colors
+              primary: {
+                DEFAULT: '#E7710A', // vibrant orange
+                light: '#F09D56',   // lighter orange
+                dark: '#C65A00',    // darker orange
+              },
+              secondary: {
+                DEFAULT: '#17557A', // deep blue
+                light: '#2580B3',   // lighter blue
+                dark: '#0E3B56',    // darker blue
+              },
+              accent: {
+                DEFAULT: '#E79700', // golden amber
+                light: '#FFB733',   // lighter amber
+                dark: '#C27B00',    // darker amber
+              },
+              tertiary: {
+                DEFAULT: '#87D9D5', // light turquoise
+                light: '#B0E9E6',   // lighter turquoise
+                dark: '#5DBFBA',    // darker turquoise
+              },
+              neutral: {
+                DEFAULT: '#F8F9FA', // very light gray/almost white
+                light: '#FFFFFF',   // white
+                dark: '#DEE2E6',    // light gray
+              }
+            },
+            fontFamily: {
+              'heading': ['hero-new', 'Helvetica', 'Arial', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'],
+              'body': ['hero-new', 'Helvetica', 'Arial', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'],
+            },
+          }
+        }
+      }
+    </script>
+    
     <!-- Vue.js CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- Vue Router CDN -->
     <script src="https://unpkg.com/vue-router@4"></script>
+    
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#ffffff">
-    <meta name="description" content="Transforme a imaginação do seu filho em histórias onde ele é o protagonista! AI Storytime cria contos personalizados e narrados em segundos. Experimente grátis!">
+    <meta name="theme-color" content="#BC5215">
+    <meta name="description" content="Crie histórias encantadoras sobre a fauna brasileira onde seu filho é o personagem principal!">
     <link rel="manifest" href="manifest.json">
     
     <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="AI Storytime: Crie histórias com a imaginação do seu filho">
-    <meta property="og:description" content="Transforme a imaginação do seu filho em histórias onde ele é o protagonista! AI Storytime cria contos personalizados e narrados em segundos. Experimente grátis!">
+    <meta property="og:title" content="Fábula - Histórias da Fauna Brasileira">
+    <meta property="og:description" content="Crie histórias encantadoras sobre a fauna brasileira onde seu filho é o personagem principal!">
     <meta property="og:image" content="/assets/image/seo-img-pt.jpg">
     <meta property="og:type" content="website">
     
@@ -53,13 +96,13 @@
         function updateMetaTags(lang) {
             const metaTags = {
                 en: {
-                    title: "AI Storytime: Create stories with your child's imagination",
-                    description: "Turn your child's imagination into stories where they're the hero! AI Storytime creates personalized, narrated tales in seconds. Try it for free!",
+                    title: "Fábula - Brazilian Fauna Stories",
+                    description: "Create enchanting stories about Brazilian fauna where your child is the main character!",
                     image: "/assets/image/seo-img-en.jpg"
                 },
                 pt: {
-                    title: "AI Storytime: Crie histórias com a imaginação do seu filho",
-                    description: "Transforme a imaginação do seu filho em histórias onde ele é o protagonista! AI Storytime cria contos personalizados e narrados em segundos. Experimente grátis!",
+                    title: "Fábula - Histórias da Fauna Brasileira",
+                    description: "Crie histórias encantadoras sobre a fauna brasileira onde seu filho é o personagem principal!",
                     image: "/assets/image/seo-img-pt.jpg"
                 }
             };
@@ -102,7 +145,7 @@
     </script>
     
     <style>
-        /* Initial loading animation styles */
+        /* Initial loading animation styles - simplified */
         .initial-loader {
             position: fixed;
             top: 0;
@@ -110,12 +153,11 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            /* Skeleton pulse animation with whiter colors */
-            background: linear-gradient(90deg, #ffffff 25%, #f8f8f8 50%, #ffffff 75%);
-            background-size: 200% 100%;
-            animation: pulse 1.5s ease-in-out infinite;
+            /* Static background color updated to match new primary color */
+            background: #E7710A;
         }
         
+        /* Remove unused animation */
         @keyframes pulse {
             0% {
                 background-position: 0% 0;
@@ -124,9 +166,31 @@
                 background-position: -200% 0;
             }
         }
+        
+        /* Fun, playful button styles - removed rotation */
+        .btn-rustic {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transform: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-rustic:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Create custom text styles with a handmade feel */
+        .text-handmade {
+            font-family: 'Baloo 2', cursive;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
     </style>
 </head>
-<body class="bg-gray-50 font-['Onest']">
+<body class="bg-neutral-light font-body">
     <!-- Initial loading animation (shown before Vue loads) -->
     <div id="initial-loader" class="initial-loader">
         <!-- No content, just the animated background -->

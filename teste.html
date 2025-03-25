@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="token" content="dd24cd45-b1e6-407e-ba6b-a571f6c7beef">
+  <title>AI Image Generator - Transform Your Images</title>
+  <meta name="description" content="Generate your images with AI tools. Professional results in seconds.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,casino,close,content_copy,delete,description,download,error,replay,send,tune,upload_file" />
+  <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography/dist/typography.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png"
+    href="https://data.decoassets.com/webdraw/3b7c9348-d107-482f-b712-b1a25f04d209/image-gen-icon.png">
+  <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+</head>
+
+<style>
+  * {
+    scrollbar-width: 0;
+
+    .element::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .material-symbols-rounded {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 16
+  }
+
+  .filled {
+    font-variation-settings:
+      'FILL' 1
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  /* Add v-cloak to hide Vue content until it's ready */
+  [v-cloak] {
+    display: none;
+  }
+
+  /* Styling for the loading screen */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .icon-container {
+    position: relative;
+  }
+
+  .spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(107, 114, 128, 0.3);
+    border-radius: 50%;
+    border-top-color: #6B7280;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<body class="min-h-screen relative bg-white">
+  <!-- Add loading overlay that will be shown until Vue is ready -->
+  <div id="loading-overlay" class="flex flex-col gap-2 loading-overlay">
+    <div class="icon-container">
+      <img src="https://data.decoassets.com/webdraw/3b7c9348-d107-482f-b712-b1a25f04d209/image-gen-icon.png"
+        class="w-12 h-12" />
+      <div class="spinner-overlay">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <p class="text-gray-600">Loading</p>
+  </div>
+
+  <img src="https://data.decoassets.com/webdraw/9f88433a-e808-4ea1-be03-df89fe3d2e23/image-gen-bg.png"
+    class="hidden lg:block w-full h-[100vh]" />
+  <div id="app" v-cloak
+    class="w-full m-auto max-h-[1024px] flex flex-col lg:flex-row lg:justify-center mx-auto sm:px-4 sm:py-8 absolute top-0 bottom-0">
+    <div
+      class="w-full max-w-[1440px] mx-auto sm:flex flex-col lg:flex-row sm:gap-4 sm:justify-center h-screen sm:h-auto">
+      <!-- Mobile Header with Toggle -->
+      <header class="lg:hidden px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2 items-center">
+          <img src="https://data.decoassets.com/webdraw/3b7c9348-d107-482f-b712-b1a25f04d209/image-gen-icon.png"
+            class="w-6 h-6" />
+          <h1 class="text-xl">Image Generator</h1>
+        </div>
+        <button v-if="generationHistory.length > 0"
+          @click="currentMobileView = currentMobileView === 'create' ? 'library' : 'create'"
+          :class="currentMobileView === 'create' ? 'text-gray-900 bg-gray-100' : 'text-white bg-green-600'"
+          class="text-sm px-4 py-2 rounded-full">
+          {{ currentMobileView === 'create' ? 'My library' : '+ Create new' }}
+        </button>
+      </header>
+
+      <!-- Left Panel -->
+      <div
+        class="bg-white sm:rounded-lg sm:shadow-lg px-4 lg:max-w-[400px] w-full h-[calc(100vh-80px)] lg:h-full scrollbar-none overflow-y-auto flex flex-col"
+        v-show="!isMobile || currentMobileView === 'create'">
+        <!-- Desktop Header -->
+        <header class="text-centerblock hidden lg:block flex-none">
+          <h1 class="text-xl text-gray-800 py-4 flex justify-between lg:justify-center items-center gap-2">
+            <div class="flex items-center gap-2">
+              <img src="https://data.decoassets.com/webdraw/3b7c9348-d107-482f-b712-b1a25f04d209/image-gen-icon.png"
+                class="block w-6 h-6" />
+              Image Generator
+            </div>
+          </h1>
+        </header>
+
+        <!-- Mobile Examples Carousel -->
+        <div class="lg:hidden flex flex-col flex-1 overflow-hidden" v-if="!previewUrl">
+          <div class="flex-1 overflow-x-auto overflow-y-hidden scrollbar-none mr-[-16px] mb-4">
+            <div class="flex gap-2 h-full">
+              <div v-for="example in examples" :key="example.id" class="relative flex-none w-[80vw] md:w-[40vw] h-full">
+                <div class="h-full">
+                  <img :src="example.src" class="w-full h-full object-cover rounded-lg" :alt="example.prompt"
+                    loading="lazy" />
+                  <!-- Always visible prompt overlay -->
+                  <div
+                    class="absolute inset-0 rounded-lg bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-3">
+                    <div class="text-white w-full">
+                      <button @click="applyExample(example)" class="flex items-center gap-2 w-full">
+                        <span class="material-symbols-rounded text-lg">content_copy</span>
+                        <p class="text-sm text-left leading-relaxed flex-1">{{ example.prompt }}</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Prompt Section -->
+        <div class="flex-none">
+          <div class="flex items-center justify-center w-full flex-col">
+            <div class="w-full flex h-full p-3 border rounded-lg">
+              <div class="w-full flex flex-col">
+                <webdraw-textarea ref="imageGenerationTextarea" v-model="generationPrompt"
+                  class="mb-8 w-full resize-none focus:outline-none" :style="{
+                                  'min-height': '120px',
+                                  'border': 'none',
+                                  'outline': 'none'
+                                }"
+                  placeholder="Photo of a cat floating in space wearing an astronaut suit, with the earth in the background">
+                </webdraw-textarea>
+                <!-- Controls inside textarea -->
+                <div class="flex relative justify-between mr-2" style="top: -38px; height: 0px;">
+                  <div class="flex space-x-1 h-7">
+                    <span @click="toggleSettings" class="flex flex-col lg:hidden items-center rounded-lg h-7 p-0">
+                      <span
+                        class="material-symbols-rounded cursor-pointer !text-lg text-gray-500 inline-block bg-gray-50 hover:bg-gray-200 rounded-full px-1.5 h-7">
+                        tune
+                      </span>
+                    </span>
+                    <span class="text-sm text-gray-500 inline-block bg-gray-50 rounded-full px-3 py-1 h-7">
+                      {{ size }}
+                    </span>
+                  </div>
+                  <span @click="shufflePrompt" class="flex flex-col items-center px-2 rounded-lg">
+                    <span
+                      class="material-symbols-rounded cursor-pointer !text-lg text-green-500 inline-block bg-green-50 hover:bg-green-200 rounded-full px-1.5 h-7">
+                      casino
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- Generate button outside -->
+            <button @click="processImage" :disabled="isProcessing"
+              :class="{'opacity-50 cursor-not-allowed': isProcessing}"
+              class="bg-green-600 w-full text-center justify-center text-white px-4 py-2 rounded-full hover:bg-green-700 flex items-center gap-2 mt-4">
+              Generate
+            </button>
+          </div>
+        </div>
+
+        <!-- Settings Tab - Desktop -->
+        <div class="hidden lg:flex-col lg:flex">
+          <div class="flex justify-between items-center h-12 cursor-pointer border-t border-gray-200 mt-4 px-2"
+            @click="toggleSettings">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-rounded text-xl text-gray-600">tune</span>
+              <span class="text-xs font-semibold text-gray-600">SETTINGS</span>
+            </div>
+            <span class="text-gray-400">{{ isSettingsOpen ? '-' : '+' }}</span>
+          </div>
+
+          <!-- Desktop Settings Content -->
+          <div v-if="isSettingsOpen">
+            <div class="space-y-6">
+              <!-- Image Size -->
+              <div>
+                <label class="block text-gray-700 text-sm font-semibold mb-2">Image Size</label>
+                <select v-model="size" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                  <option value="1024x1024">Square (1024x1024)</option>
+                  <option value="1792x1024">Landscape (1792x1024)</option>
+                  <option value="1024x1792">Portrait (1024x1792)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Settings Modal -->
+        <div v-if="isSettingsOpen && isMobile" class="fixed inset-0 bg-white z-50 flex flex-col">
+          <!-- Header -->
+          <div class="px-4 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2">
+              <button @click="toggleSettings" class="flex items-center gap-2">
+                <span class="material-symbols-rounded">arrow_back</span>
+              </button>
+              <span class="text-base font-medium">Settings</span>
+            </div>
+          </div>
+
+          <!-- Scrollable Content Area -->
+          <div class="flex-1 overflow-y-auto">
+            <div class="p-4">
+              <div class="space-y-6">
+                <!-- Mobile Settings Content -->
+                <!-- Image Size -->
+                <div>
+                  <label class="block text-gray-700 text-sm font-semibold mb-2">Image Size</label>
+                  <select v-model="size" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="1024x1024">Square (1024x1024)</option>
+                    <option value="1792x1024">Landscape (1792x1024)</option>
+                    <option value="1024x1792">Portrait (1024x1792)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Button -->
+          <div class="border-t border-gray-100 p-4 bg-white">
+            <button @click="applySettings"
+              class="w-full bg-green-600 text-white px-4 py-3 rounded-full hover:bg-green-700 flex items-center justify-center font-medium">
+              Apply Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Section (Right Panel) -->
+      <div
+        class="bg-white lg:h-full m-auto w-full sm:rounded-lg sm:shadow-lg p-6 flex flex-col gap-2 overflow-y-auto scrollbar-none transition-all duration-300"
+        v-show="!isMobile || currentMobileView === 'library'">
+        <!-- Generated Images Section -->
+        <div v-if="generationHistory.length > 0" class="flex-1">
+          <div v-for="(result, resultIndex) in generationHistory" :key="result.index" class="flex-none mb-6">
+            <!-- Prompt Section -->
+            <div class="flex justify-between p-1 mb-2">
+              <h2 class="text-lg text-gray-400 truncate sm:max-width-[40vw]">
+                {{ result.prompt }}
+              </h2>
+              <div class="flex items-center gap-4">
+                <span @click="copyPrompt(result.prompt)"
+                  class="material-symbols-rounded cursor-pointer text-gray-500 hover:text-gray-700">
+                  content_copy
+                </span>
+                <span @click="regeneratePrompt(result.prompt)"
+                  class="material-symbols-rounded cursor-pointer text-gray-500 hover:text-gray-700">
+                  replay
+                </span>
+                <span @click="deleteGeneration(result.index)"
+                  class="material-symbols-rounded cursor-pointer text-red-500 hover:text-red-700">
+                  delete
+                </span>
+              </div>
+            </div>
+
+            <!-- Images/Loading Section -->
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:flex lg:flex-row gap-2">
+              <!-- Loading State -->
+              <template v-if="isProcessing && resultIndex === 0">
+                <div v-for="n in 1" :key="n"
+                  class="relative flex justify-center items-center bg-gray-100 rounded-lg flex-1" 
+                  :style="{ aspectRatio: getAspectRatioValue }">
+                  <svg class="animate-spin h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                </div>
+              </template>
+
+              <!-- Error State -->
+              <template v-else-if="result.error">
+                <div class="w-full p-4 text-center text-red-500">
+                  {{ result.error }}
+                </div>
+              </template>
+
+              <!-- Generated Images -->
+              <template v-else>
+                <div v-for="(image, indexImage) in result.images" :key="indexImage"
+                  class="relative flex justify-center items-center flex-1">
+                  <img v-if="typeof image.data === 'string'" :src="image.data"
+                    class="rounded-lg w-full h-auto object-contain" :style="{ maxHeight: '512px' }" loading="lazy"
+                    @error="handleImageError(result, indexImage)">
+                  <div v-else class="rounded-lg w-full flex items-center justify-center bg-gray-100"
+                    :style="{ aspectRatio: result.settings.size ? result.settings.size.replace('x', '/') : '16/9', maxHeight: '512px' }">
+                    <img :src="`https://fs.webdraw.com${image.filepath}`"
+                      class="w-full h-auto object-contain rounded-lg" loading="lazy"
+                      @error="handleImageError(result, indexImage)" @load="markImageLoaded(result, indexImage)">
+                  </div>
+                  <span @click="downloadResult(image, indexImage)"
+                    class="material-symbols-rounded absolute bottom-2 right-2 cursor-pointer text-white bg-black/50 rounded-full p-1 hover:bg-black/70">
+                    download
+                  </span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Examples Grid -->
+        <div class="hidden lg:block h-full" v-if="!previewUrl || generationHistory.length > 0 || processing">
+          <div class="text-center h-full flex flex-col justify-center" :class="{
+                    'p-6 border border-gray-100 rounded-lg mt-8': generationHistory.length > 0 || processing
+                }">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-1">Get Inspired</h2>
+            <p class="text-gray-400 mb-8">Type a prompt, tweak the settings, and generate. You can also provide an image
+              for reference. See what's possible below. </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-for="example in examples" :key="example.id" class="relative">
+                <div class="aspect-[3/4] overflow-hidden rounded-lg">
+                  <img :src="example.src" class="w-full h-full object-cover" :alt="example.prompt" loading="lazy" />
+                  <!-- Modified overlay to always show -->
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t rounded-lg from-black/80 via-black/10 to-transparent flex items-end p-3">
+                    <div class="text-white w-full">
+                      <button @click="applyExample(example)" class="flex items-left gap-2 transition-colors">
+                        <span class="material-symbols-rounded text-lg">content_copy</span>
+                        <p class="text-sm text-left leading-relaxed">{{ example.prompt }}</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    import { SDK } from "https://webdraw.com/webdraw-sdk@v1";
+    import WebdrawTextarea from 'https://assets.webdraw.app/vue/textarea.js'
+
+    const { createApp, ref, onMounted } = Vue;
+    createApp({
+      components: { 'webdraw-textarea': WebdrawTextarea },
+      setup() {
+        const imageGenerationTextarea = ref(null);
+        return { imageGenerationTextarea };
+      },
+      data() {
+        return {
+          sdk: null,
+          generationPrompt: '',
+          activeTab: '',
+          isDragging: false,
+          size: '1792x1024', // DALL-E 3 size replacing aspectRatio and stylePreset
+          outputFormat: 'png',
+          isSettingsOpen: false,
+          isMobile: false,
+          currentMobileView: 'create',
+          examples: [
+            {
+              id: 1,
+              src: "https://data.decoassets.com/webdraw/480cac28-68c2-488c-a870-dd677a29a934/bhsd.png",
+              prompt: "Architecture illustration style and minimalist art style",
+              settings: {
+                size: "1792x1024"
+              }
+            },
+            {
+              id: 2,
+              src: "https://data.decoassets.com/webdraw/57d8f52b-d728-434a-8e5a-7e189c7bd105/Generated-Image-2-from-Webdraw.png",
+              prompt: "Astronaut in a white space suit lying peacefully on a bed of blooming pink roses",
+              settings: {
+                size: "1792x1024"
+              }
+            },
+            {
+              id: 3,
+              src: "https://data.decoassets.com/webdraw/041d6ca4-2356-4136-854f-a7049a702e97/AI-Image-3-from-Rafael-Valls.png",
+              prompt: "An image of a person sitting on a hill looking into the sky",
+              settings: {
+                size: "1792x1024"
+              }
+            }
+          ],
+          generationHistory: [],
+          uploadedImage: null,
+          imagePreview: null,
+          isProcessing: false,
+          placeholder: "Photo of a cat floating in space wearing an astronaut suit, with the earth in the background"
+        }
+      },
+      computed: {
+        getAspectRatioValue() {
+          if (this.size) {
+            const [width, height] = this.size.split('x');
+            return `${width}/${height}`;
+          }
+          return '16/9'; // Default aspect ratio
+        }
+      },
+      methods: {
+        applyExample(example) {
+          this.generationPrompt = example.prompt;
+          this.size = example.settings.size || "1792x1024";
+          if (this.isMobile) {
+            this.currentMobileView = 'create';
+          }
+        },
+        async handleFileUpload(event) {
+          const file = event.target.files[0];
+          if (file) {
+            this.uploadedImage = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.imagePreview = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+        handleFileDrop(event) {
+          this.isDragging = false;
+          const file = event.dataTransfer.files[0];
+          if (file && file.type.startsWith('image/')) {
+            this.uploadedImage = file;
+            this.handleFileUpload({
+              target: {
+                files: [file]
+              }
+            });
+          }
+        },
+        clearImage() {
+          this.uploadedImage = null;
+          this.imagePreview = null;
+          if (this.$refs.fileInput) {
+            this.$refs.fileInput.value = '';
+          }
+        },
+        toggleSettings() {
+          this.isSettingsOpen = !this.isSettingsOpen;
+        },
+        checkMobile() {
+          this.isMobile = window.innerWidth < 1024; // Changed from 640 to 1024 for tablets
+        },
+        async processImage() {
+          if (this.isProcessing) return;
+          this.isProcessing = true;
+
+          const initialResult = {
+            index: Date.now(),
+            prompt: this.generationPrompt || this.placeholder,
+            images: [],
+            settings: {
+              size: this.size
+            },
+            error: null
+          };
+
+          this.generationHistory.unshift(initialResult);
+
+          if (this.isMobile) {
+            this.currentMobileView = 'library';
+          }
+
+          // Get current working directory for saving history
+          const cwd = await this.sdk.fs.cwd();
+          let inputFilePath = null;
+
+          // Save input image if provided
+          if (this.uploadedImage) {
+            try {
+              // Create inputs directory if it doesn't exist
+              try {
+                await this.sdk.fs.mkdir(`${cwd}/inputs`);
+              } catch (error) {
+                // Directory might already exist, continue
+              }
+
+              const base64Image = await this.convertFileToBase64(this.uploadedImage);
+              const inputFileName = `inputs/${Date.now()}-${this.uploadedImage.name}`;
+              inputFilePath = `${cwd}/${inputFileName}`;
+
+              // Save the base64 image
+              await this.sdk.fs.write(inputFilePath, base64Image, { encoding: 'base64' });
+            } catch (error) {
+              console.error('Error saving input image:', error);
+            }
+          }
+
+          try {
+            // With DALL-E, we only generate one image at a time
+            const processedPrompt = await this.imageGenerationTextarea.getProcessedContent(this.generationPrompt);
+            
+            let requestBody = {
+              model: 'openai:dall-e-3',
+              prompt: processedPrompt.prompt || this.generationPrompt || this.placeholder,
+              n: 1,
+              size: this.size
+            };
+
+            try {
+              const response = await this.sdk.ai.generateImage(requestBody);
+              if (response.images && response.images.length > 0) {
+                // Store both the base64 image data and the filepath
+                initialResult.images.push({
+                  data: `data:image/${this.outputFormat};base64,${response.images[0]}`,
+                  filepath: response.filepath
+                });
+              }
+            } catch (error) {
+              console.error('Request failed:', error);
+              throw error;
+            }
+
+            // Save history to filesystem
+            if (initialResult.images.length > 0) {
+              const historyItem = {
+                index: initialResult.index,
+                prompt: initialResult.prompt,
+                filepaths: initialResult.images.map(img => img.filepath),
+                inputFilePath: inputFilePath,
+                settings: initialResult.settings,
+                timestamp: new Date().toISOString()
+              };
+
+              try {
+                // Get existing history or create new
+                let history = [];
+                try {
+                  const historyData = await this.sdk.fs.read(`${cwd}/image-generator-history.json`);
+                  history = JSON.parse(historyData);
+                } catch (error) {
+                  // File might not exist yet
+                }
+
+                // Add new item and save
+                history.unshift(historyItem);
+                await this.sdk.fs.write(
+                  `${cwd}/image-generator-history.json`,
+                  JSON.stringify(history.slice(0, 10)), // Keep last 10 generations
+                  { encoding: 'utf-8' }
+                );
+              } catch (error) {
+                console.error('Error saving generation history:', error);
+              }
+            }
+
+          } catch (error) {
+            console.error('Error processing image:', error);
+
+            let errorMessage = 'An error occurred while generating the image.';
+            if (error.message && error.message.includes('content moderation')) {
+              errorMessage = 'Your request was flagged by our content moderation system. Please modify your prompt and try again.';
+            }
+
+            initialResult.error = errorMessage;
+
+            if (initialResult.images.length === 0) {
+              this.generationHistory = this.generationHistory.filter(item => item.index !== initialResult.index);
+              alert(errorMessage);
+            }
+          } finally {
+            this.isProcessing = false;
+          }
+        },
+        async convertFileToBase64(file) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        },
+        safeJSONParse(response) {
+          if (response.status < 400 && response.status >= 200) {
+            return JSON.parse(response.body);
+          }
+          throw typeof response.body === "string" ? { message: response.body } : response.body;
+        },
+        downloadResult(image, index) {
+          let url;
+          if (typeof image.data === 'string') {
+            url = image.data;
+          } else {
+            url = `https://fs.webdraw.com${image.filepath}`;
+          }
+
+          if (url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `generated_image_${index + 1}_${Date.now()}.${this.outputFormat}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        },
+        async deleteGeneration(index) {
+          this.generationHistory = this.generationHistory.filter(
+            (item) => item.index !== index
+          );
+
+          try {
+            const cwd = await this.sdk.fs.cwd();
+            let history = [];
+            try {
+              const historyData = await this.sdk.fs.read(`${cwd}/image-generator-history.json`);
+              history = JSON.parse(historyData);
+              history = history.filter(item => item.index !== index);
+              await this.sdk.fs.write(
+                `${cwd}/image-generator-history.json`,
+                JSON.stringify(history),
+                { encoding: 'utf-8' }
+              );
+            } catch (error) {
+              console.error('Error updating history after deletion:', error);
+            }
+          } catch (error) {
+            console.error('Error deleting from history:', error);
+          }
+
+          if (this.generationHistory.length === 0 && this.isMobile) {
+            this.currentMobileView = 'create';
+          }
+        },
+        async copyPrompt(prompt) {
+          try {
+            await navigator.clipboard.writeText(prompt);
+            this.generationPrompt = prompt;
+            if (this.isMobile) {
+              this.currentMobileView = 'create';
+            }
+          } catch (err) {
+            console.error('Failed to copy text:', err);
+          }
+        },
+        regeneratePrompt(prompt) {
+          this.generationPrompt = prompt;
+          this.processImage();
+        },
+        applySettings() {
+          this.isSettingsOpen = false;
+        },
+        shufflePrompt() {
+          const prompts = [
+            "A mystical forest with glowing mushrooms and floating lanterns",
+            "A steampunk city with flying machines and copper buildings",
+            "An underwater palace made of coral and pearls",
+            "A cosmic cafe floating in space with alien customers",
+            "A dragon's library filled with ancient scrolls and magical artifacts",
+            "A cyberpunk street market at night with neon signs",
+            "A floating island with waterfalls flowing into the sky",
+            "A crystal cave with rainbow reflections and magical creatures",
+            "A time-traveling train station between different eras",
+            "A garden where musical instruments grow like plants"
+          ];
+          this.generationPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+        },
+        async loadHistory() {
+          try {
+            const cwd = await this.sdk.fs.cwd();
+            const data = await this.sdk.fs.read(`${cwd}/image-generator-history.json`);
+            const history = JSON.parse(data);
+
+            // Convert history format to match the current app's format
+            this.generationHistory = history.map(item => {
+              return {
+                index: item.index,
+                prompt: item.prompt,
+                images: item.filepaths.map(filepath => ({
+                  filepath: filepath,
+                  loaded: false,
+                  error: false
+                })),
+                settings: item.settings || { size: "1792x1024" },
+                error: null
+              };
+            });
+
+          } catch (error) {
+            console.error('Error reading generation history:', error);
+            this.generationHistory = [];
+          }
+        },
+        markImageLoaded(result, imageIndex) {
+          const image = result.images[imageIndex];
+          image.loaded = true;
+          image.loadedUrl = `https://fs.webdraw.com${image.filepath}`;
+        },
+        handleImageError(result, imageIndex) {
+          const image = result.images[imageIndex];
+          image.error = true;
+          console.error('Error loading image:', image.filepath || image.data);
+        }
+      },
+      mounted() {
+        this.sdk = SDK;
+        this.checkMobile();
+        window.addEventListener('resize', this.checkMobile);
+
+        // Load history from filesystem
+        this.loadHistory();
+
+        // Hide loading overlay when Vue is ready
+        document.getElementById('loading-overlay').style.display = 'none';
+      },
+      beforeDestroy() {
+        window.removeEventListener('resize', this.checkMobile);
+      }
+    }).mount('#app');
+  </script>
+</body>
+
+</html>

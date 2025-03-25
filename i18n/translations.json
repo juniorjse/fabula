@@ -1,10 +1,10 @@
 {
   "en": {
     "ui": {
-      "appName": "AI Storytime",
+      "appName": "Fábula",
       "loading": "Loading...",
       "error": "Error",
-      "back": "Back to Home",
+      "back": "Back",
       "save": "Save",
       "cancel": "Cancel",
       "delete": "Delete",
@@ -59,9 +59,9 @@
       "signUp": "Sign Up"
     },
     "home": {
-      "welcome": "Bring your child's imagination to life in personalized stories",
-      "tagline": "Transform your ideas into captivating stories with the power of artificial intelligence.",
-      "createButton": "Create new story!",
+      "welcome": "Discover Brazilian Wildlife Through Enchanting Stories",
+      "tagline": "Create personalized stories featuring Brazilian fauna where your child is the protagonist.",
+      "createButton": "Create a new story!",
       "myStoriesButton": "My stories",
       "signInToCreate": "Sign in to create a story",
       "freeStories": "3 stories for free",
@@ -96,6 +96,8 @@
       "title": "Create a Story",
       "nameLabel": "Child's Name",
       "namePlaceholder": "Enter the child's name",
+      "animalLabel": "Favorite Brazilian Animal",
+      "locationLabel": "Story Location",
       "interestsLabel": "Interests or Themes",
       "interestsPlaceholder": "e.g., Space, Dinosaurs, Princesses",
       "interestsHelp": "What is your child interested in? Add up to 6 themes.",
@@ -106,7 +108,7 @@
       "pausePreview": "Pause voice preview",
       "voiceSelected": "Voice selected: {name}",
       "voiceRequired": "Please select a voice to continue",
-      "createButton": "Create new story!",
+      "createButton": "Create Story",
       "generatingTitle": "Creating Your Story...",
       "generatingPlot": "Creating Plot",
       "generatingStory": "Writing Story",
@@ -120,7 +122,7 @@
       "listen": "Listen",
       "saveAndShare": "Save & Share",
       "startOver": "Start Over",
-      "fillAllFields": "Please fill in all fields and select a voice before creating a story.",
+      "fillAllFields": "Please fill in all fields to continue",
       "warningTitle": "Missing Information"
     },
     "myStories": {
@@ -264,10 +266,10 @@
   },
   "pt": {
     "ui": {
-      "appName": "Contador de Histórias IA",
+      "appName": "Fábula",
       "loading": "Carregando...",
       "error": "Erro",
-      "back": "Voltar para Início",
+      "back": "Voltar",
       "save": "Salvar",
       "cancel": "Cancelar",
       "delete": "Excluir",
@@ -278,7 +280,7 @@
       "listen": "Ouvir",
       "retry": "Tentar Novamente",
       "errorLoading": "Erro ao Carregar",
-      "returnHome": "Voltar para Início",
+      "returnHome": "Voltar para a Página Inicial",
       "storyText": "Texto da História:",
       "downloadAudio": "Baixar Áudio",
       "shareStory": "Compartilhar História",
@@ -322,13 +324,13 @@
       "signUp": "Cadastrar"
     },
     "home": {
-      "welcome": "Crie histórias com a imaginação do seu filho",
-      "tagline": "Transforme suas ideias em histórias cativantes com o poder da inteligência artificial.",
-      "createButton": "Criar nova história!",
+      "welcome": "Descubra a Fauna Brasileira em Histórias Encantadoras",
+      "tagline": "Crie histórias personalizadas com animais da fauna brasileira onde seu filho é o protagonista.",
+      "createButton": "Criar uma história!",
       "myStoriesButton": "Minhas histórias",
       "signInToCreate": "Faça login para criar uma história",
       "freeStories": "3 histórias grátis",
-      "tryItNow": "Teste agora gratuitamente. Leva 30 segundos!",
+      "tryItNow": "Experimente agora! É gratuito e leva apenas 30 segundos.",
       "examples": "Exemplos",
       "result": "Resultado",
       "listenAgain": "Ouvir Novamente",
@@ -359,6 +361,8 @@
       "title": "Criar uma História",
       "nameLabel": "Nome da Criança",
       "namePlaceholder": "Digite o nome da criança",
+      "animalLabel": "Animal Brasileiro Favorito",
+      "locationLabel": "Local da História",
       "interestsLabel": "Interesses ou Temas",
       "interestsPlaceholder": "ex: Espaço, Dinossauros, Princesas",
       "interestsHelp": "O que seu filho gosta? Adicione até 6 temas.",
@@ -369,7 +373,7 @@
       "pausePreview": "Pausar prévia da voz",
       "voiceSelected": "Voz selecionada: {name}",
       "voiceRequired": "Por favor, selecione uma voz para continuar",
-      "createButton": "Criar nova história!",
+      "createButton": "Criar História",
       "generatingTitle": "Criando Sua História...",
       "generatingPlot": "Criando Enredo",
       "generatingStory": "Escrevendo História",
@@ -383,7 +387,7 @@
       "listen": "Ouvir",
       "saveAndShare": "Salvar e Compartilhar",
       "startOver": "Recomeçar",
-      "fillAllFields": "Por favor, preencha todos os campos e selecione uma voz antes de criar uma história.",
+      "fillAllFields": "Por favor, preencha todos os campos para continuar",
       "warningTitle": "Informações Ausentes"
     },
     "myStories": {
