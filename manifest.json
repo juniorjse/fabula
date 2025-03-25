@@ -1,0 +1,10 @@
+{
+    "name": "AI Storytime",
+    "short_name": "AI Storytime",
+    "description": "Turn your child's imagination into stories where they're the hero!",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": []
+} 

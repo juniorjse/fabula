@@ -1,0 +1,22 @@
+{
+  "name": "ai-storyteller",
+  "version": "1.0.0",
+  "description": "Create bedtime stories for your kids with AI",
+  "main": "index.html",
+  "scripts": {
+    "start": "browser-sync start --server --files '**/*.html, **/*.js, **/*.css' --port 3000 --no-notify --single",
+    "dev": "npm start"
+  },
+  "keywords": [
+    "ai",
+    "storyteller",
+    "bedtime-stories",
+    "kids"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.29.3",
+    "ngrok": "^5.0.0-beta.2"
+  }
+}

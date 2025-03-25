@@ -1,4 +1,4 @@
-# Fabula
+# AI Storytime
 
 Create bedtime stories for your kids with one click using AI. Built with [Webdraw](https://webdraw.com).
 
