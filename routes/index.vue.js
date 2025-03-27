@@ -19,7 +19,7 @@ window.IndexPage = {
                         <!-- My Stories Button with rustic style -->
                         <div></div> <!-- Empty div for spacing -->
                         
-                        <router-link v-if="user" to="/my-stories" @click="trackMyStoriesClick" class="flex justify-center items-center gap-1 py-2 px-4 w-auto min-w-[120px] h-10 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
+                        <router-link to="/my-stories" @click="trackMyStoriesClick" class="flex justify-center items-center gap-1 py-2 px-4 w-auto min-w-[120px] h-10 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
                             <span class="flex items-center justify-center">
                                 <i class="fa-solid fa-book"></i>
                             </span>

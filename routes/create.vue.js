@@ -42,7 +42,7 @@ window.CreatePage = {
         <div v-if="screen === 'form'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark">
           <div class="mb-8 text-center">
             <h1 class="font-heading font-bold text-3xl text-secondary-dark mb-2">Criar Uma História</h1>
-            <p class="text-neutral-dark font-body">Personalize a história com o nome do seu filho e suas preferências</p>
+            <p class="text-black font-body">Personalize a história com o nome do seu filho e suas preferências</p>
           </div>
           
           <!-- Input Form -->
@@ -114,14 +114,12 @@ window.CreatePage = {
         <!-- Loading Screen - Shown when generating story -->
         <div v-if="screen === 'generating'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark text-center">
           <div class="mb-8">
-            <div class="w-24 h-24 mx-auto mb-4 relative">
-              <div class="absolute inset-0 rounded-full bg-primary/20 animate-ping"></div>
-              <div class="absolute inset-4 rounded-full bg-primary/40 animate-pulse"></div>
-              <div class="absolute inset-8 rounded-full bg-primary/60 animate-pulse"></div>
+            <div class="w-24 h-24 mx-auto mb-4 relative overflow-hidden rounded-full">
+              <div class="absolute inset-0 rounded-full bg-primary/20 animate-pulse duration-1000"></div>
+              <div class="absolute inset-4 rounded-full bg-primary/40 animate-pulse duration-2000"></div>
               <i class="fas fa-feather-alt text-primary text-4xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
             </div>
             <h2 class="font-heading font-bold text-2xl text-secondary-dark">Criando Sua História...</h2>
-            <p class="text-neutral-dark mt-2 font-body">Aguarde enquanto nossa inteligência artificial personaliza uma história especial</p>
           </div>
           
           <!-- Progress Status -->
@@ -138,7 +136,7 @@ window.CreatePage = {
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-neutral-dark">Criando Enredo</span>
+                <span class="font-body text-black">Criando Enredo</span>
               </div>
               
               <div class="flex items-center gap-3">
@@ -152,7 +150,7 @@ window.CreatePage = {
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-neutral-dark">Escrevendo História</span>
+                <span class="font-body text-black">Escrevendo História</span>
               </div>
               
               <div class="flex items-center gap-3">
@@ -166,7 +164,7 @@ window.CreatePage = {
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-neutral-dark">Criando Ilustração</span>
+                <span class="font-body text-black">Criando Ilustração</span>
               </div>
               
               <div class="flex items-center gap-3">
@@ -180,7 +178,7 @@ window.CreatePage = {
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-neutral-dark">Gerando Narração</span>
+                <span class="font-body text-black">Gerando Narração</span>
               </div>
             </div>
           </div>
@@ -212,15 +210,15 @@ window.CreatePage = {
               <div v-if="audioSource" class="flex flex-col gap-2 mb-6">
                 <!-- Progress Bar -->
                 <div class="w-full relative">
-                  <div class="w-full h-1 bg-neutral rounded-full cursor-pointer" @click="seekAudio">
+                  <div class="w-full h-1 bg-neutral-dark rounded-full cursor-pointer" @click="seekAudio">
                     <div class="h-1 bg-primary rounded-full" :style="{ width: audioProgress + '%' }"></div>
                   </div>
                 </div>
                 
                 <!-- Time Display -->
                 <div class="flex justify-between w-full">
-                  <span class="text-xs text-neutral-dark opacity-50">{{ formatTime(audioCurrentTime) }}</span>
-                  <span class="text-xs text-neutral-dark opacity-50">{{ formatTime(audioDuration) }}</span>
+                  <span class="text-xs text-black">{{ formatTime(audioCurrentTime) }}</span>
+                  <span class="text-xs text-black">{{ formatTime(audioDuration) }}</span>
                 </div>
                 
                 <!-- Controls -->
@@ -241,22 +239,19 @@ window.CreatePage = {
                 </div>
                 
                 <!-- Audio loading message -->
-                <div v-if="audioLoading" class="text-center text-xs text-neutral-dark mt-2">
+                <div v-if="audioLoading" class="text-center text-xs text-black font-medium mt-2">
                   Preparando áudio... por favor aguarde
                 </div>
               </div>
               
-              <!-- Divider -->
-              <div class="border-b border-neutral-dark my-4"></div>
-              
-              <!-- Story Text -->
-              <div class="prose prose-sm md:prose-base text-neutral-dark font-body">
-                <div v-html="formattedStory"></div>
+              <!-- Story Text com espaçamento superior -->
+              <div class="prose prose-sm md:prose-base text-black font-body mt-8 max-w-full">
+                <div v-html="formattedStory" class="text-black space-y-4 px-2"></div>
               </div>
               
               <!-- Action Buttons -->
               <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                <button @click="goBack" class="btn-rustic bg-neutral hover:bg-neutral-dark text-secondary-dark font-heading font-bold py-3 px-6 flex-1 flex items-center justify-center gap-2">
+                <button @click="goBack" class="btn-rustic bg-neutral hover:bg-neutral-dark text-secondary font-heading font-bold py-3 px-6 flex-1 flex items-center justify-center gap-2">
                   <i class="fas fa-plus"></i> Criar Nova História
                 </button>
                 
@@ -282,6 +277,18 @@ window.CreatePage = {
           </audio>
         </div>
       </main>
+      
+      <style>
+        .duration-1000 {
+          animation-duration: 3s !important;
+        }
+        .duration-1500 {
+          animation-duration: 3.5s !important;
+        }
+        .duration-2000 {
+          animation-duration: 4s !important;
+        }
+      </style>
     </div>
   `,
   data() {
@@ -494,99 +501,99 @@ window.CreatePage = {
             this.taskStatus.audio = "processing";
             
             try {
-              console.log("Starting audio generation...");
-              
+        console.log("Starting audio generation...");
+        
               // Prepare the audio text - start with the title followed by the story
               const audioText = `${storyObject.title}. ${storyObject.plot}`;
-              
-              console.log(`Audio text length: ${audioText.length} characters`);
-              
+        
+        console.log(`Audio text length: ${audioText.length} characters`);
+
               // Generate audio using the SDK
-              const audioResponse = await sdk.ai.generateAudio({
-                model: "elevenlabs:tts",
-                prompt: audioText,
-                providerOptions: {
-                  elevenLabs: {
+        const audioResponse = await sdk.ai.generateAudio({
+          model: "elevenlabs:tts",
+          prompt: audioText,
+          providerOptions: {
+            elevenLabs: {
                     voiceId: "IKne3meq5aSn9XLyUdCD", // Uncle Joe voice
-                    model_id: "eleven_turbo_v2_5",
-                    optimize_streaming_latency: 0,
+              model_id: "eleven_turbo_v2_5",
+              optimize_streaming_latency: 0,
                     output_format: "mp3", // Specify MP3 format explicitly
-                    voice_settings: {
-                      speed: 1.0,
-                      similarity_boost: 0.85,
-                      stability: 0.75,
-                      style: 0,
-                    },
-                  },
-                },
-              });
-              
+              voice_settings: {
+                speed: 1.0,
+                similarity_boost: 0.85,
+                stability: 0.75,
+                style: 0,
+              },
+            },
+          },
+        });
+
               console.log("Audio generation response:", audioResponse);
               
               // Process the audio response
-              let audioPath = null;
-              
-              if (audioResponse.filepath && audioResponse.filepath.length > 0) {
-                audioPath = audioResponse.filepath[0];
-              } else if (audioResponse.audios && audioResponse.audios.length > 0) {
-                audioPath = audioResponse.audios[0];
-              } else if (audioResponse.url) {
-                audioPath = audioResponse.url;
+        let audioPath = null;
+
+        if (audioResponse.filepath && audioResponse.filepath.length > 0) {
+          audioPath = audioResponse.filepath[0];
+        } else if (audioResponse.audios && audioResponse.audios.length > 0) {
+          audioPath = audioResponse.audios[0];
+        } else if (audioResponse.url) {
+          audioPath = audioResponse.url;
               } else if (audioResponse.audio && typeof audioResponse.audio === 'string') {
                 // Handle base64 encoded audio
                 audioPath = `data:audio/mp3;base64,${audioResponse.audio}`;
-              }
-              
+        }
+
               // Set the audio source
-              let fullAudioUrl = null;
-              if (audioPath) {
-                if (!audioPath.startsWith('http') && !audioPath.startsWith('data:')) {
-                  fullAudioUrl = `https://fs.webdraw.com${audioPath.startsWith('/') ? '' : '/'}${audioPath}`;
-                } else {
-                  fullAudioUrl = audioPath;
-                }
+        let fullAudioUrl = null;
+        if (audioPath) {
+          if (!audioPath.startsWith('http') && !audioPath.startsWith('data:')) {
+            fullAudioUrl = `https://fs.webdraw.com${audioPath.startsWith('/') ? '' : '/'}${audioPath}`;
+          } else {
+            fullAudioUrl = audioPath;
+          }
                 console.log("Final audio source:", fullAudioUrl);
-                
-                // Set permissions for the audio file immediately
-                try {
+
+          // Set permissions for the audio file immediately
+          try {
                   if (!audioPath.startsWith('data:')) {
-                    await this.setFilePermissions(audioPath);
-                    console.log("Set permissions for audio file:", audioPath);
+            await this.setFilePermissions(audioPath);
+            console.log("Set permissions for audio file:", audioPath);
                   }
-                } catch (permError) {
-                  console.warn("Error setting permissions for audio file:", permError);
-                }
-                
-                // Set audio source immediately but mark as loading
-                this.audioSource = fullAudioUrl;
-                this.audioLoading = true;
-                
+          } catch (permError) {
+            console.warn("Error setting permissions for audio file:", permError);
+          }
+
+          // Set audio source immediately but mark as loading
+          this.audioSource = fullAudioUrl;
+          this.audioLoading = true;
+
                 // Wait a bit to allow the file to be processed
-                await new Promise(resolve => setTimeout(resolve, 4000));
-                
+          await new Promise(resolve => setTimeout(resolve, 4000));
+
                 // Only perform additional checks for network URLs, not data URLs
                 if (!fullAudioUrl.startsWith('data:')) {
-                  const isAudioReady = await this.checkAudioReady(fullAudioUrl, 2, 3000);
-                  
-                  if (isAudioReady) {
-                    console.log("Audio file is confirmed ready");
-                    this.audioLoading = false;
+          const isAudioReady = await this.checkAudioReady(fullAudioUrl, 2, 3000);
+
+          if (isAudioReady) {
+            console.log("Audio file is confirmed ready");
+            this.audioLoading = false;
                     this.taskStatus.audio = "done";
-                  } else {
-                    console.log("Audio file not immediately available, will continue checking in background");
+          } else {
+            console.log("Audio file not immediately available, will continue checking in background");
                     // Mark as done but continue checking in background
                     this.taskStatus.audio = "done";
-                    // Start background checking
-                    this.startBackgroundAudioCheck(fullAudioUrl);
-                  }
-                } else {
+            // Start background checking
+            this.startBackgroundAudioCheck(fullAudioUrl);
+          }
+              } else {
                   // For data URLs, we're ready immediately
-                  this.audioLoading = false;
+            this.audioLoading = false;
                   this.taskStatus.audio = "done";
                 }
-              } else {
+        } else {
                 console.warn("Audio was generated but the source format is not recognized.");
-                this.taskStatus.audio = "error";
+          this.taskStatus.audio = "error";
               }
             } catch (audioError) {
               console.error("Error generating audio:", audioError);
@@ -604,16 +611,39 @@ window.CreatePage = {
       }
     },
     
-    generateMockStory() {
-      return `Era uma vez ${this.childName}, uma criança muito curiosa que adorava conhecer os animais da natureza brasileira. Em uma viagem especial à ${this.selectedLocation.name}, ${this.childName} estava muito animado para explorar este lugar maravilhoso.\n\nEnquanto caminhava entre as árvores, observando as flores e ouvindo os sons da natureza, ${this.childName} viu algo se movendo entre as folhagens. Para sua surpresa, era um ${this.selectedAnimal.name} que o observava com olhos curiosos!\n\n"Olá," disse ${this.childName} gentilmente. "Não vou machucar você."\n\nPara sua surpresa, o ${this.selectedAnimal.name} se aproximou e começou a falar! "Olá, ${this.childName}! Meu nome é Tiba, e sou o guardião desta parte da ${this.selectedLocation.name}. Estou procurando ajuda para proteger nossa casa."\n\n${this.childName} ficou maravilhado. "Eu adoraria ajudar! O que está acontecendo?"\n\nTiba explicou que as nascentes de água estavam secando porque algumas pessoas estavam desmatando áreas importantes. "Precisamos mostrar a elas como a natureza é importante para todos nós."\n\nAssim, ${this.childName} e Tiba embarcaram em uma grande aventura, conversando com outros animais e aprendendo sobre o delicado equilíbrio da natureza na ${this.selectedLocation.name}. Juntos, eles plantaram sementes, limparam trilhas e até mesmo conversaram com visitantes sobre a importância de preservar o ambiente.\n\nNo final do dia, Tiba presenteou ${this.childName} com uma semente mágica. "Plante esta semente em seu jardim. Ela crescerá e lembrará você da nossa amizade e da importância de cuidar da natureza."\n\n${this.childName} voltou para casa cheio de histórias incríveis para contar e com um novo propósito: ajudar a proteger os animais e a natureza brasileira. E toda vez que olhava para a pequena árvore que crescia de sua semente mágica, lembrava-se de seu amigo ${this.selectedAnimal.name} e da aventura maravilhosa que tiveram na ${this.selectedLocation.name}.`;
-    },
-    
     formatStoryText(text) {
       if (!text) return "";
       
-      // Split by paragraphs and wrap in <p> tags
+      // Split by paragraphs and wrap in <p> tags with improved styling
       const paragraphs = text.split("\n\n");
-      return paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join("");
+      return paragraphs.map(p => {
+        // Add special styling for dialogue (text starting with quotes)
+        const formattedText = p.replace(/("[^"]+?")/g, '<span class="text-secondary-dark font-medium italic">$1</span>');
+        
+        // Add proper line breaks
+        return `<p class="mb-6 leading-relaxed">${formattedText.replace(/\n/g, '<br>')}</p>`;
+      }).join("");
+    },
+    
+    generateMockStory() {
+      // Create a story with properly formatted paragraphs using double line breaks
+      return `Era uma vez ${this.childName}, uma criança muito curiosa que adorava conhecer os animais da natureza brasileira. Em uma viagem especial à ${this.selectedLocation.name}, ${this.childName} estava muito animado para explorar este lugar maravilhoso.
+
+Enquanto caminhava entre as árvores, observando as flores e ouvindo os sons da natureza, ${this.childName} viu algo se movendo entre as folhagens. Para sua surpresa, era um ${this.selectedAnimal.name} que o observava com olhos curiosos!
+
+"Olá," disse ${this.childName} gentilmente. "Não vou machucar você."
+
+Para sua surpresa, o ${this.selectedAnimal.name} se aproximou e começou a falar! "Olá, ${this.childName}! Meu nome é Tiba, e sou o guardião desta parte da ${this.selectedLocation.name}. Estou procurando ajuda para proteger nossa casa."
+
+${this.childName} ficou maravilhado. "Eu adoraria ajudar! O que está acontecendo?"
+
+Tiba explicou que as nascentes de água estavam secando porque algumas pessoas estavam desmatando áreas importantes. "Precisamos mostrar a elas como a natureza é importante para todos nós."
+
+Assim, ${this.childName} e Tiba embarcaram em uma grande aventura, conversando com outros animais e aprendendo sobre o delicado equilíbrio da natureza na ${this.selectedLocation.name}. Juntos, eles plantaram sementes, limparam trilhas e até mesmo conversaram com visitantes sobre a importância de preservar o ambiente.
+
+No final do dia, Tiba presenteou ${this.childName} com uma semente mágica. "Plante esta semente em seu jardim. Ela crescerá e lembrará você da nossa amizade e da importância de cuidar da natureza."
+
+${this.childName} voltou para casa cheio de histórias incríveis para contar e com um novo propósito: ajudar a proteger os animais e a natureza brasileira. E toda vez que olhava para a pequena árvore que crescia de sua semente mágica, lembrava-se de seu amigo ${this.selectedAnimal.name} e da aventura maravilhosa que tiveram na ${this.selectedLocation.name}.`;
     },
     
     goBack() {
@@ -644,8 +674,48 @@ window.CreatePage = {
       savedStories.push(newStory);
       localStorage.setItem("savedStories", JSON.stringify(savedStories));
       
+      // Set proper permissions for image and audio files if they are filesystem URLs
+      try {
+        // Set permissions for image file if it's a filesystem URL
+        if (this.storyImage && this.storyImage.includes('fs.webdraw.com')) {
+          const imagePath = this.storyImage.replace('https://fs.webdraw.com', '');
+          await this.setFileAccess(imagePath);
+        }
+        
+        // Set permissions for audio file if it's a filesystem URL
+        if (this.audioSource && this.audioSource.includes('fs.webdraw.com')) {
+          const audioPath = this.audioSource.replace('https://fs.webdraw.com', '');
+          await this.setFileAccess(audioPath);
+        }
+        } catch (error) {
+        console.error("Error setting file permissions:", error);
+      }
+      
       // Redirect to my stories page
       this.$router.push("/my-stories");
+    },
+
+    // Method to set file permissions using chmod
+    async setFileAccess(filepath) {
+      if (!filepath) return;
+      
+      try {
+        console.log(`Setting public permissions for file: ${filepath}`);
+        
+        // If the SDK's chmod method is available, use it to set file permissions to public (0o644)
+        if (sdk && sdk.fs && typeof sdk.fs.chmod === 'function') {
+          await sdk.fs.chmod(filepath, 0o644);
+          console.log(`Successfully set public permissions for: ${filepath}`);
+        } else if (sdk && sdk.fs && typeof sdk.fs.setPublic === 'function') {
+          // Alternative method if available
+          await sdk.fs.setPublic(filepath);
+          console.log(`Used setPublic method for: ${filepath}`);
+        } else {
+          console.warn(`File permission methods not available for: ${filepath}`);
+        }
+      } catch (error) {
+        console.error(`Error setting permissions for file: ${error.message}`);
+      }
     },
 
     getRandomFallbackImage() {
@@ -679,7 +749,7 @@ window.CreatePage = {
     
     // Audio playback methods
     toggleAudio() {
-      const audioPlayer = this.$refs.audioPlayer;
+              const audioPlayer = this.$refs.audioPlayer;
       if (!audioPlayer) {
         console.error("Audio player element not found");
         return;
@@ -696,11 +766,11 @@ window.CreatePage = {
         return;
       }
 
-      if (this.isPlaying) {
-        audioPlayer.pause();
-        this.isPlaying = false;
+        if (this.isPlaying) {
+          audioPlayer.pause();
+          this.isPlaying = false;
         console.log("Audio paused");
-      } else {
+        } else {
         // Make sure the audio source is set and prepared
         if (!audioPlayer.querySelector('source') || audioPlayer.querySelector('source').src !== this.audioSource) {
           console.log("Audio sources not set up properly, preparing audio");
@@ -709,13 +779,13 @@ window.CreatePage = {
         
         // Try to play the audio
         console.log("Attempting to play audio...");
-        audioPlayer.play()
-          .then(() => {
-            console.log("Audio playback started successfully");
+            audioPlayer.play()
+              .then(() => {
+                console.log("Audio playback started successfully");
             this.isPlaying = true;
-          })
-          .catch(error => {
-            console.error("Error playing audio:", error);
+              })
+              .catch(error => {
+                console.error("Error playing audio:", error);
             
             // Try direct access without proxy if we get specific errors
             if (error.name === "NotSupportedError" || error.name === "AbortError") {
@@ -726,12 +796,12 @@ window.CreatePage = {
               directAudioPlayer.onloadedmetadata = () => {
                 console.log("Direct audio player loaded metadata successfully");
                 directAudioPlayer.play()
-                  .then(() => {
+            .then(() => {
                     console.log("Direct audio playback started successfully");
                     // Replace our audio player with this one
                     this.audioCurrentTime = directAudioPlayer.currentTime;
                     this.audioDuration = directAudioPlayer.duration;
-                    this.isPlaying = true;
+              this.isPlaying = true;
                     
                     // Setup timeupdate event
                     directAudioPlayer.ontimeupdate = () => {
@@ -741,7 +811,7 @@ window.CreatePage = {
                     
                     // Setup ended event
                     directAudioPlayer.onended = () => {
-                      this.isPlaying = false;
+                this.isPlaying = false;
                       this.audioProgress = 0;
                       this.audioCurrentTime = 0;
                     };
@@ -779,7 +849,7 @@ window.CreatePage = {
       container.style.textAlign = 'center';
       
       container.innerHTML = `
-        <p style="margin-bottom: 10px;">Não foi possível reproduzir o áudio automaticamente. Use o player abaixo:</p>
+        <p style="margin-bottom: 10px; color: #000000; font-weight: 500;">Não foi possível reproduzir o áudio automaticamente. Use o player abaixo:</p>
         <audio controls style="width: 100%;" crossorigin="anonymous">
           <source src="${this.audioSource}" type="audio/mp3">
           <source src="${this.audioSource}" type="audio/mpeg">
@@ -843,23 +913,23 @@ window.CreatePage = {
     downloadAudio() {
       if (!this.audioSource) {
         alert("Não há áudio disponível para download.");
-        return;
+              return;
       }
       
       // If audio is still loading, show a message
       if (this.audioLoading) {
         alert("O áudio ainda está sendo preparado. Por favor, tente novamente em alguns instantes.");
-        return;
-      }
-      
-      try {
+          return;
+        }
+
+        try {
         // Create a temporary link element
         const link = document.createElement('a');
         
         // If the audio source is a data URL, use it directly
         if (this.audioSource.startsWith('data:')) {
           link.href = this.audioSource;
-        } else {
+            } else {
           // For network URLs, try to ensure they're accessible
           link.href = this.audioSource;
         }
@@ -885,7 +955,7 @@ window.CreatePage = {
         })
           .then(() => console.log('Successful share'))
           .catch((error) => console.log('Error sharing:', error));
-      } else {
+        } else {
         alert('Compartilhamento não disponível neste navegador.');
       }
     },
@@ -928,9 +998,9 @@ window.CreatePage = {
       // If the audio is still loading, show message
       if (this.audioLoading) {
         console.log("Audio is still loading, will prepare when ready");
-        return;
-      }
-      
+          return;
+        }
+
       // For network URLs, check if they're accessible first
       if (!this.audioSource.startsWith('data:')) {
         try {
@@ -941,7 +1011,7 @@ window.CreatePage = {
           
           if (!response.ok) {
             console.warn(`Audio file not accessible, status: ${response.status}. Will use proxy.`);
-          } else {
+            } else {
             console.log("Audio file is directly accessible, no need for proxy");
           }
         } catch (error) {
@@ -1019,13 +1089,21 @@ window.CreatePage = {
         // If the path doesn't start with /, add it
         const normalizedPath = filepath.startsWith('/') ? filepath : `/${filepath}`;
         
-        // Set the file to be publicly accessible
-        await sdk.fs.setPublic(normalizedPath);
-        console.log(`Successfully set permissions for file: ${normalizedPath}`);
-        return true;
+        // Check if setPublic method exists before calling it
+        if (sdk && sdk.fs && typeof sdk.fs.setPublic === 'function') {
+          // Set the file to be publicly accessible
+          await sdk.fs.setPublic(normalizedPath);
+          console.log(`Successfully set permissions for file: ${normalizedPath}`);
+          return true;
+      } else {
+          // Method not available, but we'll consider it a non-critical error
+          console.log(`File permission setting not available for: ${normalizedPath}`);
+          return true; // Return true anyway so the process continues
+        }
       } catch (error) {
+        // Log the error but don't let it stop the process
         console.error(`Error setting permissions for file: ${error.message}`);
-        return false;
+        return true; // Return true anyway to allow the process to continue
       }
     },
     
@@ -1074,9 +1152,9 @@ window.CreatePage = {
           clearInterval(this.audioCheckInterval);
           console.warn("Background audio check stopped after maximum attempts");
           this.audioLoading = false;
-          return;
-        }
-        
+            return;
+          }
+
         try {
           const response = await fetch(url, { 
             method: 'HEAD',

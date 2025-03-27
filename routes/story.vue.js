@@ -6,38 +6,65 @@ window.StoryPage = {
         <div v-if="sdkAvailable" class="min-h-screen pb-16 bg-[#F4F4F5]">
             <!-- Navigation -->
             <nav class="h-16 px-8 flex items-center relative max-w-3xl mx-auto">
-                <router-link to="/my-stories" class="absolute left-8">
-                    <i class="fas fa-arrow-left text-slate-700"></i>
-                </router-link>
+                <div class="flex justify-between items-center w-full">
+                    <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200">
+                        <i class="fas fa-arrow-left mr-1"></i> Voltar
+                    </router-link>
+                    <router-link to="/create" class="flex items-center gap-1 py-2 px-4 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
+                        <i class="fas fa-plus mr-1"></i> Nova História
+                    </router-link>
+                </div>
             </nav>
 
             <!-- Loading State -->
-            <div v-if="loading" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh]">
-                <div class="w-16 h-16 border-4 border-[#BBDEFB] border-t-[#4A90E2] rounded-full animate-spin mb-6"></div>
-                <p class="text-xl text-[#4A90E2] font-medium">{{ $t('story.loadingStory') }}</p>
-                <p v-if="fileCheckMessage" class="text-sm text-[#64748B] mt-2">{{ fileCheckMessage }}</p>
+            <div v-if="loading" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh] bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark">
+                <div class="relative w-20 h-20 mb-6">
+                    <div class="absolute inset-0 rounded-full bg-primary/20 animate-pulse duration-3000"></div>
+                    <div class="absolute inset-3 rounded-full bg-primary/40 animate-pulse duration-4000"></div>
+                    <i class="fas fa-feather-alt text-primary text-2xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                </div>
+                <p class="text-xl text-secondary-dark font-medium">{{ $t('story.loadingStory') }}</p>
+                <p v-if="fileCheckMessage" class="text-sm text-black mt-2">{{ fileCheckMessage }}</p>
             </div>
 
             <!-- Error State -->
-            <div v-else-if="error" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh]">
-                <div class="bg-red-100 border border-red-300 text-red-700 px-8 py-6 rounded-xl mb-6">
-                    <h3 class="text-xl font-medium mb-2">{{ $t('story.errorLoadingStory') }}</h3>
-                    <p>{{ error }}</p>
+            <div v-else-if="error" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh] bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark">
+                <div class="relative w-20 h-20 mb-6">
+                    <i class="fas fa-exclamation-circle text-5xl text-secondary-dark absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                    <div class="absolute inset-0 rounded-full bg-primary/10"></div>
+                    <div class="absolute inset-3 rounded-full bg-primary/20"></div>
                 </div>
-                <router-link to="/" class="bg-[#0EA5E9] text-white px-6 py-3 rounded-full hover:bg-[#0284C7] font-medium">
-                    {{ $t('ui.returnHome') }}
-                </router-link>
+                <h3 class="text-xl font-medium mb-2 text-secondary-dark">{{ $t('story.errorLoadingStory') }}</h3>
+                <p class="text-center mb-6 text-black">{{ error }}</p>
+                <p class="text-center text-gray-700 mb-6">Isso pode ocorrer quando a história não está mais disponível ou os arquivos de mídia não podem ser acessados.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                    <router-link to="/" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200">
+                        <i class="fas fa-home mr-1"></i> Voltar ao Início
+                    </router-link>
+                    <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
+                        <i class="fas fa-book mr-1"></i> Minhas Histórias
+                    </router-link>
+                </div>
             </div>
 
             <!-- Story Display -->
-            <main v-else class="max-w-4xl mx-auto">
-                <div class="px-6 md:p-8">                    
+            <main v-else class="max-w-4xl mx-auto bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark">
+                <div class="px-6 md:p-8 relative">                    
                     <!-- Story Content -->
                     <div class="mb-8">
                         <div class="flex flex-col items-center mb-8">
                             <!-- Book Cover -->
                             <div class="relative w-full max-w-xs aspect-[138/138] rounded-lg mb-6 overflow-hidden shadow-[0_1px_2px_0_rgba(22,109,149,0.2),0_3px_3px_0_rgba(22,109,149,0.17),0_7px_4px_0_rgba(22,109,149,0.1),0_12px_5px_0_rgba(22,109,149,0.03)]">
-                                <div class="w-full h-full bg-primary-light flex items-center justify-center">
+                                <div v-if="story && (story.imageUrl || story.image || story.imageBase64)" class="w-full h-full bg-tertiary">
+                                    <img 
+                                        :src="story.imageUrl || story.image || story.imageBase64" 
+                                        :alt="story ? formatTitle(story.title) : ''" 
+                                        class="w-full h-full object-cover" 
+                                        @error="handleCoverImageError" 
+                                    />
+                                </div>
+                                <div v-else class="w-full h-full bg-tertiary flex items-center justify-center">
                                     <i class="fas fa-book-open text-5xl text-white"></i>
                                 </div>
                                 <div class="absolute inset-0 bg-[url('/assets/image/book-texture.svg')] bg-cover bg-no-repeat opacity-30 mix-blend-multiply pointer-events-none"></div>
@@ -45,7 +72,7 @@ window.StoryPage = {
                             
                             <!-- Author and Title -->
                             <div class="text-center w-full">
-                                <h1 class="text-2xl font-semibold text-[#334155] mb-4">{{ story ? formatTitle(story.title) : '' }}</h1>
+                                <h1 class="text-2xl font-semibold text-[#A67C52] mb-4">{{ story ? formatTitle(story.title) : '' }}</h1>
                             </div>
                         </div>
 
@@ -53,56 +80,58 @@ window.StoryPage = {
                         <div v-if="story" class="flex flex-col gap-2 mb-6">
                             <!-- Progress Bar -->
                             <div class="w-full relative">
-                                <div class="w-full h-1 bg-[#CBD5E1] rounded-full cursor-pointer" @click="seekAudio($event)">
-                                    <div class="h-1 bg-[#C084FC] rounded-full" :style="{ width: audioProgress + '%' }"></div>
+                                <div class="w-full h-1 bg-neutral-dark rounded-full cursor-pointer" @click="seekAudio($event)">
+                                    <div class="h-1 bg-primary rounded-full" :style="{ width: audioProgress + '%' }"></div>
                                 </div>
                             </div>
                             
                             <!-- Time Display -->
                             <div class="flex justify-between w-full">
-                                <span class="text-xs text-[#64748B] opacity-50">{{ formatTime(currentTime) }}</span>
-                                <span class="text-xs text-[#64748B] opacity-50">{{ formatTime(duration) }}</span>
+                                <span class="text-xs text-secondary-dark opacity-80">{{ formatTime(currentTime) }}</span>
+                                <span class="text-xs text-secondary-dark opacity-80">{{ formatTime(duration) }}</span>
                             </div>
                             
                             <!-- Controls -->
-                            <div class="flex justify-center items-center gap-4 mt-4">
-                                <button @click="shareStory" class="w-10 h-10 rounded-full bg-[#14B8A6] flex items-center justify-center">
-                                    <i class="fas fa-share-alt text-[#F3FBFF]"></i>
+                            <div class="flex justify-center items-center gap-4 mt-1">
+                                <button @click="shareStory" class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white">
+                                    <i class="fas fa-share-alt"></i>
                                 </button>
                                 
-                                <button @click="toggleAudio" class="w-16 h-16 rounded-full bg-[#C084FC] border border-[#D8B4FE] shadow-md flex items-center justify-center p-4">
-                                    <i :class="isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play'" class="text-[#F3FBFF] text-xl"></i>
+                                <button @click="toggleAudio" class="w-16 h-16 rounded-full bg-primary border border-primary-dark shadow-md flex items-center justify-center p-4 text-white">
+                                    <i :class="isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play'" class="text-xl"></i>
                                 </button>
                                 
-                                <button @click="scrollToText" class="w-10 h-10 rounded-full bg-[#F59E0B] flex items-center justify-center">
-                                    <i class="fas fa-file-alt text-[#F3FBFF]"></i>
+                                <button @click="scrollToText" class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center text-white">
+                                    <i class="fas fa-file-alt"></i>
                                 </button>
                             </div>
                             
                             <audio ref="audioPlayer" :src="story.audioUrl" @timeupdate="updateProgress" @ended="audioEnded" @loadedmetadata="onAudioLoaded"></audio>
                         </div>
-                        <div v-else class="mb-6">
+                        <div v-else class="mb-4">
                             <!-- Placeholder for audio player when story is not loaded -->
                         </div>
                         
-                        <!-- Story Text -->
-                        <div class="border border-b border-gray-200 w-full my-8"/>
                         <!-- Story Text Container -->
-                        <div class="mt-6 story-text-container">
-                            <div v-if="story" class="w-full text-slate-600 text-sm">
-                                <div v-if="hasHtmlContent(story.story)" v-html="story.story" class="prose prose-sky max-w-none"></div>
-                                <div v-else class="whitespace-pre-wrap">{{ story.story }}</div>
+                        <div class="story-text-container">
+                            <div v-if="story" class="w-full text-secondary-dark text-sm">
+                                <div v-if="hasHtmlContent(getStoryText())" v-html="getStoryText()" class="prose prose-sky max-w-none"></div>
+                                <div v-else-if="getStoryText()" class="whitespace-pre-wrap">{{ getStoryText() }}</div>
+                                <div v-else class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-yellow-700">
+                                    <p class="font-medium">O texto desta história não pôde ser carregado</p>
+                                    <p class="text-xs mt-2">Informações de depuração: content={{!!story.content}}, story={{!!story.story}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                        <a @click.prevent="downloadAudio" class="bg-gradient-to-b from-purple-300 to-purple-500 border border-purple-700 text-white px-6 py-3 rounded-full shadow-md hover:translate-y-[-2px] transition-transform duration-200 font-medium flex items-center justify-center gap-2 cursor-pointer">
+                        <a @click.prevent="downloadAudio" class="bg-primary hover:bg-primary-dark btn-rustic text-white px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer">
                             <i class="fa-solid fa-download"></i>
                             {{ $t('ui.downloadAudio') }}
                         </a>
-                        <router-link to="/create" class="border border-purple-700 text-purple-700 px-6 py-3 rounded-full hover:bg-purple-50 shadow-md hover:translate-y-[-2px] transition-transform duration-200 font-medium flex items-center justify-center gap-2">
+                        <router-link to="/create" class="bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-plus"></i>
                             {{ $t('ui.createNewStory') }}
                         </router-link>
@@ -110,7 +139,7 @@ window.StoryPage = {
                         <button 
                             v-if="isAdmin && translationsFileExists" 
                             @click="addAsExample" 
-                            class="border border-[#4A90E2] text-[#4A90E2] px-6 py-3 rounded-full hover:bg-[#F0F9FF] font-medium flex items-center justify-center gap-2"
+                            class="bg-secondary hover:bg-secondary-dark btn-rustic text-white px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2"
                             :disabled="addingAsExample"
                         >
                             <i class="fa-solid fa-bookmark"></i>
@@ -120,37 +149,37 @@ window.StoryPage = {
                     </div>
                     
                     <!-- Example Added Message -->
-                    <div v-if="exampleAddedMessage" class="mb-8 p-4 rounded-lg text-center" :class="exampleAddedMessage.startsWith('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
+                    <div v-if="exampleAddedMessage" class="mb-8 p-4 rounded-lg text-center btn-rustic" :class="exampleAddedMessage.startsWith('Error') ? 'bg-red-700 text-white' : 'bg-secondary text-white'">
                         {{ exampleAddedMessage }}
                     </div>
                     
                     <!-- Story Settings (Collapsible) -->
-                    <details v-if="story" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm mb-8 group">
-                        <summary class="text-slate-700 font-medium cursor-pointer flex items-center justify-between">
+                    <details v-if="story" class="bg-neutral-light/70 border border-neutral-dark rounded-lg p-4 shadow-sm mb-8 group">
+                        <summary class="text-secondary-dark font-medium cursor-pointer flex items-center justify-between">
                             <div class="flex items-center">
-                                <i class="fa-solid fa-gear mr-2 text-purple-500"></i>
+                                <i class="fa-solid fa-gear mr-2 text-primary"></i>
                                 {{ $t('ui.storySettings') }}
                             </div>
-                            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform duration-300"></i>
+                            <i class="fa-solid fa-chevron-down text-primary group-open:rotate-180 transition-transform duration-300"></i>
                         </summary>
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-100">
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-neutral-dark">
                             <div v-if="story.childName" class="space-y-2">
-                                <label class="block text-sm font-medium text-slate-500">{{ $t('ui.childName') }}</label>
-                                <div class="bg-slate-50 rounded-full px-4 py-2 text-slate-700">
+                                <label class="block text-sm font-medium text-secondary-dark">{{ $t('ui.childName') }}</label>
+                                <div class="bg-neutral rounded-full px-4 py-2 text-secondary-dark">
                                     {{ story.childName }}
                                 </div>
                             </div>
                             
                             <div v-if="story.themes || story.interests" class="space-y-2">
-                                <label class="block text-sm font-medium text-slate-500">{{ $t('ui.themes') }}</label>
-                                <div class="bg-slate-50 rounded-full px-4 py-2 text-slate-700">
+                                <label class="block text-sm font-medium text-secondary-dark">{{ $t('ui.themes') }}</label>
+                                <div class="bg-neutral rounded-full px-4 py-2 text-secondary-dark">
                                     {{ story.themes || story.interests }}
                                 </div>
                             </div>
 
                             <div v-if="story.voice" class="space-y-2">
-                                <label class="block text-sm font-medium text-slate-500">{{ $t('ui.voice') }}</label>
-                                <div class="bg-slate-50 rounded-full p-2 text-slate-700 flex items-center gap-2">
+                                <label class="block text-sm font-medium text-secondary-dark">{{ $t('ui.voice') }}</label>
+                                <div class="bg-neutral rounded-full p-2 text-secondary-dark flex items-center gap-2">
                                     <img v-if="typeof story.voice === 'object' && story.voice.avatar" :src="story.voice.avatar" class="w-8 h-8 rounded-full" />
                                     <span>{{ typeof story.voice === 'object' ? story.voice.name : story.voice }}</span>
                                 </div>
@@ -180,7 +209,7 @@ window.StoryPage = {
             leave-to-class="translate-y-[-100%] opacity-0"
         >
             <div v-if="showToast" class="fixed top-4 left-0 right-0 mx-auto w-auto max-w-xs z-50 flex justify-center">
-                <div class="bg-[#14B8A6] text-white px-3 py-2 rounded-full shadow-md flex items-center gap-2 border border-[#0D9488] text-sm">
+                <div class="bg-primary text-white px-3 py-2 rounded-full shadow-md flex items-center gap-2 border border-primary-dark text-sm btn-rustic">
                     <div class="bg-white bg-opacity-25 rounded-full w-5 h-5 flex-shrink-0 flex items-center justify-center">
                         <i class="fas fa-check text-white text-xs"></i>
                     </div>
@@ -224,8 +253,23 @@ window.StoryPage = {
     },
     computed: {
         fileUrl() {
-            // Get the file parameter from the route query
-            return this.$route.query.file || null;
+            // Se estamos vindo da página de criação, o URL do arquivo não é relevante
+            if (this.fromCreate) {
+                console.log("Vindo da página de criação, não precisamos de fileUrl");
+                return null;
+            }
+            
+            const fileParam = this.$route.query.file;
+            console.log("Parâmetro file da URL:", fileParam);
+            
+            // Se não temos o parâmetro de arquivo mas temos uma história no localStorage, vamos usar isso
+            if (!fileParam && localStorage.getItem("currentStory")) {
+                console.log("Não há parâmetro file mas temos história no localStorage");
+                return "localStorage"; // Um valor simbólico para indicar que devemos ler do localStorage
+            }
+            
+            // Se temos um arquivo especificado, usamos ele
+            return fileParam || null;
         },
         storyIndex() {
             // Get the index parameter from the route query
@@ -452,7 +496,28 @@ window.StoryPage = {
             this.coverReady = false;
             this.audioReady = false;
             
+            console.log("=== INÍCIO DO CARREGAMENTO DA HISTÓRIA ===");
+            console.log("ID da história a carregar:", this.storyId);
+            console.log("URL do arquivo:", this.fileUrl);
+            
+            // Verificando se fileUrl tem o valor simbólico para localStorage
+            if (this.fileUrl === "localStorage") {
+                console.log("Identificado marcador para carregar do localStorage");
+                // Processar do localStorage
+                return await this.loadStoryFromLocalStorage();
+            }
+            
+            // Verificar se há história guardada no localStorage apenas se não temos fileUrl
             if (!this.fileUrl) {
+                console.log("Sem fileUrl, tentando localStorage");
+                const hasLocalStorageStory = localStorage.getItem("currentStory") !== null;
+                if (hasLocalStorageStory) {
+                    return await this.loadStoryFromLocalStorage();
+                }
+            }
+            
+            if (!this.fileUrl) {
+                console.error("Nenhuma URL de arquivo ou história no localStorage");
                 this.error = this.$t('story.noStorySpecified');
                 this.loading = false;
                 return;
@@ -653,151 +718,247 @@ window.StoryPage = {
         
         // Fix permissions and verify accessibility of media files
         async verifyAndFixMediaFiles() {
+            console.log("[MÍDIA] Iniciando verificação de arquivos de mídia");
             this.fileCheckCurrentAttempt = 0;
             this.coverReady = false;
             this.audioReady = false;
             
             // Set permissions for both files first
+            console.log("[MÍDIA] Tentando corrigir permissões dos arquivos");
             await this.fixMediaPermissions();
             
             // Then verify they're accessible with retries
+            console.log("[MÍDIA] Verificando acessibilidade dos arquivos");
             await this.verifyMediaFilesAccessibility();
+            
+            console.log("[MÍDIA] Status final dos arquivos de mídia:");
+            console.log("[MÍDIA] - Imagem de capa pronta:", this.coverReady);
+            console.log("[MÍDIA] - Áudio pronto:", this.audioReady);
         },
         
         // Fix permissions for media files
         async fixMediaPermissions() {
             try {
                 // Fix permissions for cover image
-                if (this.story.coverUrl) {
+                if (this.story.coverUrl && !this.story.coverUrl.startsWith('data:')) {
+                    console.log("[MÍDIA] Verificando permissões da imagem de capa:", this.story.coverUrl);
                     this.fileCheckMessage = this.$t('story.preparingCover');
                     await this.fixFilePermissions(this.story.coverUrl);
+                } else if (this.story.coverUrl && this.story.coverUrl.startsWith('data:')) {
+                    console.log("[MÍDIA] Imagem de capa é data URL, não precisa de permissões");
+                    this.coverReady = true;
                 } else {
+                    console.log("[MÍDIA] Sem imagem de capa para verificar");
                     this.coverReady = true; // No cover to check
                 }
                 
                 // Fix permissions for audio file
-                if (this.story.audioUrl) {
+                if (this.story.audioUrl && !this.story.audioUrl.startsWith('data:')) {
+                    console.log("[MÍDIA] Verificando permissões do áudio:", this.story.audioUrl);
                     this.fileCheckMessage = this.$t('story.preparingAudio');
                     await this.fixFilePermissions(this.story.audioUrl);
+                } else if (this.story.audioUrl && this.story.audioUrl.startsWith('data:')) {
+                    console.log("[MÍDIA] Áudio é data URL, não precisa de permissões");
+                    this.audioReady = true;
                 } else {
+                    console.log("[MÍDIA] Sem áudio para verificar");
                     this.audioReady = true; // No audio to check
                 }
             } catch (error) {
-                console.warn("Error fixing media permissions:", error);
+                console.warn("[MÍDIA] Erro ao corrigir permissões de mídia:", error);
             }
         },
         
-        // Helper method to fix permissions for a file
+        // Fix permissions for a specific file
         async fixFilePermissions(fileUrl) {
-            if (!fileUrl || fileUrl.startsWith('data:')) return;
+            if (!fileUrl) return;
+            console.log(`[PERMISSÕES] Tentando corrigir permissões para arquivo: ${fileUrl}`);
             
             try {
-                // Extract the file path from the URL
-                let filePath = fileUrl;
-                
-                // If it's a full URL, extract the path
-                if (filePath.startsWith('http')) {
-                    try {
-                        const url = new URL(fileUrl);
-                        filePath = url.pathname;
-                    } catch (e) {
-                        console.warn("Could not parse URL:", fileUrl);
+                // Get the path without the domain if it's a URL
+                let filepath = fileUrl;
+                if (fileUrl.startsWith('http')) {
+                    // Extract the path from URLs like https://fs.webdraw.com/path/to/file
+                    const match = fileUrl.match(/https?:\/\/[^\/]+(\/.*)/);
+                    if (match && match[1]) {
+                        filepath = match[1];
+                        console.log(`[PERMISSÕES] Caminho extraído da URL: ${filepath}`);
+                    } else {
+                        console.log(`[PERMISSÕES] Não foi possível extrair o caminho da URL: ${fileUrl}`);
                         return;
                     }
                 }
                 
-                // Remove the leading ~ if present
-                if (filePath.startsWith('~')) {
-                    filePath = filePath.substring(1);
+                console.log(`[PERMISSÕES] Verificando disponibilidade de métodos SDK para ${filepath}`);
+                console.log(`[PERMISSÕES] SDK disponível: ${!!sdk}`);
+                console.log(`[PERMISSÕES] SDK.fs disponível: ${!!(sdk && sdk.fs)}`);
+                console.log(`[PERMISSÕES] chmod disponível: ${!!(sdk && sdk.fs && typeof sdk.fs.chmod === 'function')}`);
+                console.log(`[PERMISSÕES] setPublic disponível: ${!!(sdk && sdk.fs && typeof sdk.fs.setPublic === 'function')}`);
+                
+                // Try to use chmod if available to make the file publicly accessible
+                if (sdk && sdk.fs && typeof sdk.fs.chmod === 'function') {
+                    try {
+                        console.log(`[PERMISSÕES] Tentando aplicar chmod 644 para ${filepath}`);
+                        await sdk.fs.chmod(filepath, 0o644);
+                        console.log(`[PERMISSÕES] Permissões chmod 644 aplicadas com sucesso para ${filepath}`);
+                        return true;
+                    } catch (chmodError) {
+                        console.warn(`[PERMISSÕES] Erro ao usar chmod em ${filepath}:`, chmodError);
+                    }
                 }
                 
-                // Ensure the path doesn't start with double slashes
-                while (filePath.startsWith('//')) {
-                    filePath = filePath.substring(1);
+                // Fallback to setPublic if available
+                if (sdk && sdk.fs && typeof sdk.fs.setPublic === 'function') {
+                    try {
+                        console.log(`[PERMISSÕES] Tentando usar setPublic para ${filepath}`);
+                        await sdk.fs.setPublic(filepath);
+                        console.log(`[PERMISSÕES] Arquivo ${filepath} tornado público com sucesso`);
+                        return true;
+                    } catch (publicError) {
+                        console.warn(`[PERMISSÕES] Erro ao usar setPublic em ${filepath}:`, publicError);
+                    }
                 }
-                if (sdk && typeof sdk.fs?.chmod === 'function') {
-                    await sdk.fs.chmod(filePath, 0o644);
-                    console.log(`Successfully set permissions (0o644) for media file: ${filePath}`);
-                } else {
-                    console.warn("No permission setting method available");
-                }
+                
+                console.log(`[PERMISSÕES] Nenhum método disponível para configurar permissões para ${filepath}`);
+                return false;
             } catch (error) {
-                console.warn(`Could not set file permissions for ${fileUrl}:`, error);
+                console.error(`[PERMISSÕES] Erro ao configurar permissões para ${fileUrl}:`, error);
+                return false;
             }
         },
         
-        // Verify media files are accessible with retries
+        // Verify that media files are accessible
         async verifyMediaFilesAccessibility() {
+            console.log("[ACESSIBILIDADE] Iniciando verificação de acessibilidade dos arquivos de mídia");
             this.fileCheckCurrentAttempt = 0;
+            this.fileCheckMaxAttempts = 5;
+            const retryDelay = 1000;
             
-            while (this.fileCheckCurrentAttempt < this.fileCheckMaxAttempts) {
+            // If we already have a data URL for the image or no image, we don't need to check accessibility
+            if (!this.story.coverUrl || this.story.coverUrl.startsWith('data:') || this.story.imageBase64) {
+                console.log("[ACESSIBILIDADE] Imagem não precisa de verificação (data URL ou não existe)");
+                this.coverReady = true;
+            }
+            
+            // If we already have a data URL for the audio or no audio, we don't need to check accessibility
+            if (!this.story.audioUrl || this.story.audioUrl.startsWith('data:')) {
+                console.log("[ACESSIBILIDADE] Áudio não precisa de verificação (data URL ou não existe)");
+                this.audioReady = true;
+            }
+            
+            // If both are ready, we're done
+            if (this.coverReady && this.audioReady) {
+                console.log("[ACESSIBILIDADE] Todos os arquivos já estão prontos, não é necessário verificar");
+                return;
+            }
+            
+            // Try to verify accessibility with retries
+            for (let i = 0; i < this.fileCheckMaxAttempts; i++) {
+                this.fileCheckCurrentAttempt = i + 1;
+                console.log(`[ACESSIBILIDADE] Tentativa ${i + 1}/${this.fileCheckMaxAttempts}`);
                 
-                // Check cover image if needed
-                if (!this.coverReady && this.story.coverUrl) {
-                    this.fileCheckMessage = `${this.$t('story.verifyingCover')}`;
+                // Check cover image if not already ready
+                if (!this.coverReady && this.story.coverUrl && !this.story.coverUrl.startsWith('data:')) {
                     try {
-                        await this.checkFileAccessibility(this.story.coverUrl);
-                        this.coverReady = true;
+                        console.log(`[ACESSIBILIDADE] Verificando acessibilidade da imagem: ${this.story.coverUrl}`);
+                        this.fileCheckMessage = this.$t('story.checkingCover');
+                        const coverAccessible = await this.checkFileAccessibility(this.story.coverUrl);
+                        if (coverAccessible) {
+                            console.log("[ACESSIBILIDADE] Imagem de capa está acessível");
+                            this.coverReady = true;
+                        } else {
+                            console.log("[ACESSIBILIDADE] Imagem de capa não está acessível ainda");
+                        }
                     } catch (error) {
-                        console.warn(`Cover image not yet accessible (attempt ${this.fileCheckCurrentAttempt + 1}/${this.fileCheckMaxAttempts}):`, error);
+                        console.warn(`[ACESSIBILIDADE] Erro ao verificar imagem de capa (${i + 1}/${this.fileCheckMaxAttempts}):`, error);
                     }
                 }
                 
-                // Check audio file if needed
-                if (!this.audioReady && this.story.audioUrl) {
-                    this.fileCheckMessage = `${this.$t('story.verifyingAudio')}`;
+                // Check audio if not already ready
+                if (!this.audioReady && this.story.audioUrl && !this.story.audioUrl.startsWith('data:')) {
                     try {
-                        await this.checkFileAccessibility(this.story.audioUrl);
-                        this.audioReady = true;
+                        console.log(`[ACESSIBILIDADE] Verificando acessibilidade do áudio: ${this.story.audioUrl}`);
+                        this.fileCheckMessage = this.$t('story.checkingAudio');
+                        const audioAccessible = await this.checkFileAccessibility(this.story.audioUrl);
+                        if (audioAccessible) {
+                            console.log("[ACESSIBILIDADE] Áudio está acessível");
+                            this.audioReady = true;
+                        } else {
+                            console.log("[ACESSIBILIDADE] Áudio não está acessível ainda");
+                        }
                     } catch (error) {
-                        console.warn(`Audio file not yet accessible (attempt ${this.fileCheckCurrentAttempt + 1}/${this.fileCheckMaxAttempts}):`, error);
+                        console.warn(`[ACESSIBILIDADE] Erro ao verificar áudio (${i + 1}/${this.fileCheckMaxAttempts}):`, error);
                     }
                 }
                 
-                // If both files are ready or not needed, we're done
-                if ((this.coverReady || !this.story.coverUrl) && 
-                    (this.audioReady || !this.story.audioUrl)) {
-                    console.log("All media files are accessible!");
-                    return;
-                }
-                
-                // Increment attempt counter
-                this.fileCheckCurrentAttempt++;
-                
-                // If we've reached the maximum attempts, break out
-                if (this.fileCheckCurrentAttempt >= this.fileCheckMaxAttempts) {
-                    console.warn("Maximum verification attempts reached. Proceeding anyway.");
+                // If all files are accessible, we're done
+                if ((this.coverReady || !this.story.coverUrl) && (this.audioReady || !this.story.audioUrl)) {
+                    console.log("[ACESSIBILIDADE] Todos os arquivos estão acessíveis (ou não existem)");
                     break;
                 }
                 
                 // Wait before trying again
-                await new Promise(resolve => setTimeout(resolve, this.fileCheckAttemptDelay));
+                if (i < this.fileCheckMaxAttempts - 1) {
+                    console.log(`[ACESSIBILIDADE] Aguardando ${retryDelay}ms antes da próxima tentativa`);
+                    await new Promise(resolve => setTimeout(resolve, retryDelay));
+                }
             }
             
-            // Log the results after all attempts
+            // If we still can't access some files, we'll mark them as ready anyway
+            // so the user can see the content, but we'll add warnings
             if (!this.coverReady && this.story.coverUrl) {
-                console.warn("Could not confirm cover image is accessible after maximum attempts.");
+                console.warn("[ACESSIBILIDADE] Não foi possível acessar a imagem de capa após várias tentativas");
+                this.coverReady = true;
             }
             
             if (!this.audioReady && this.story.audioUrl) {
-                console.warn("Could not confirm audio file is accessible after maximum attempts.");
+                console.warn("[ACESSIBILIDADE] Não foi possível acessar o áudio após várias tentativas");
+                this.audioReady = true;
             }
         },
         
-        // Check if a file is accessible via fetch
+        // Check if a file is accessible
         async checkFileAccessibility(fileUrl) {
+            if (!fileUrl) {
+                console.error("[VERIFICAÇÃO] URL de arquivo não fornecida para verificação");
+                return Promise.reject(new Error("No file URL provided"));
+            }
+            
+            console.log(`[VERIFICAÇÃO] Verificando acessibilidade de: ${fileUrl}`);
+            
             try {
-                if (!fileUrl) return Promise.reject(new Error("No file URL provided"));
+                // Try a HEAD request first to minimize bandwidth
+                const response = await fetch(fileUrl, { 
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                });
                 
-                const response = await fetch(fileUrl, { method: 'HEAD' });
-                
-                if (!response.ok) {
-                    return Promise.reject(new Error(`File not accessible: ${response.status} ${response.statusText}`));
+                if (response.ok) {
+                    console.log(`[VERIFICAÇÃO] Arquivo acessível via HEAD: ${fileUrl}`);
+                    return true;
                 }
                 
-                return Promise.resolve(true);
+                console.warn(`[VERIFICAÇÃO] Arquivo não acessível via HEAD (status ${response.status}), tentando GET com Range`);
+                
+                // If HEAD failed, try a GET with Range header to just get a small piece
+                const rangeResponse = await fetch(fileUrl, { 
+                    headers: { 'Range': 'bytes=0-10' },
+                    cache: 'no-cache'
+                });
+                
+                if (rangeResponse.ok || rangeResponse.status === 206) {
+                    console.log(`[VERIFICAÇÃO] Arquivo acessível via GET com Range: ${fileUrl}`);
+                    return true;
+                }
+                
+                console.error(`[VERIFICAÇÃO] Arquivo não acessível: ${fileUrl}, status: ${rangeResponse.status}`);
+                const responseText = await rangeResponse.text();
+                console.error(`[VERIFICAÇÃO] Resposta da verificação:`, responseText.substring(0, 200));
+                
+                return false;
             } catch (error) {
-                return Promise.reject(error);
+                console.error(`[VERIFICAÇÃO] Erro ao verificar acessibilidade: ${fileUrl}`, error);
+                return false;
             }
         },
         toggleAudio() {
@@ -1106,7 +1267,7 @@ window.StoryPage = {
         
         hasHtmlContent(text) {
             // Simple check for HTML tags
-            return /<[a-z][\s\S]*>/i.test(text);
+            return text && /<[a-z][\s\S]*>/i.test(text);
         },
         formatTitle(title) {
             if (!title) return this.$t('story.untitledStory');
@@ -1322,12 +1483,137 @@ window.StoryPage = {
             }
         },
         handleCoverImageError(event) {
-            if (this.story && this.story.imageBase64) {
-                event.target.src = this.story.imageBase64;
+            console.error("Error loading cover image");
+            
+            // Try alternative image sources if available
+            if (this.story) {
+                if (event.target.src !== this.story.imageBase64 && this.story.imageBase64) {
+                    event.target.src = this.story.imageBase64;
+                    return;
+                } else if (event.target.src !== this.story.image && this.story.image) {
+                    event.target.src = this.story.image;
+                    return;
+                } else if (event.target.src !== this.story.imageUrl && this.story.imageUrl) {
+                    event.target.src = this.story.imageUrl;
+                    return;
+                }
+            }
+            
+            // If all image sources fail, show the fallback icon
+            const parentElement = event.target.parentElement;
+            if (parentElement) {
+                event.target.style.display = 'none'; 
+                parentElement.classList.add('flex', 'items-center', 'justify-center');
+                
+                // Create and append the icon if it doesn't exist
+                if (!parentElement.querySelector('.fallback-icon')) {
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-book-open text-5xl text-white fallback-icon';
+                    parentElement.appendChild(icon);
+                }
+            }
+        },
+        // Método para carregar uma história a partir do localStorage
+        async loadStoryFromLocalStorage() {
+            console.log("Executando loadStoryFromLocalStorage()");
+            const currentStoryJson = localStorage.getItem("currentStory");
+            
+            if (!currentStoryJson) {
+                console.error("Nenhuma história encontrada no localStorage");
+                this.error = "Nenhuma história encontrada no armazenamento local";
+                this.loading = false;
                 return;
             }
             
-            event.target.src = "/assets/image/bg.webp";
+            try {
+                const currentStory = JSON.parse(currentStoryJson);
+                console.log("História carregada do localStorage:", currentStory);
+                console.log("Estrutura da história do localStorage:", {
+                    id: currentStory.id,
+                    title: currentStory.title,
+                    content: typeof currentStory.content === 'string' ? 
+                        `${currentStory.content.substring(0, 50)}... (${currentStory.content.length} caracteres)` : 
+                        `tipo: ${typeof currentStory.content}`,
+                    story: typeof currentStory.story === 'string' ? 
+                        `${currentStory.story.substring(0, 50)}... (${currentStory.story.length} caracteres)` : 
+                        `tipo: ${typeof currentStory.story}`,
+                    audio: currentStory.audio,
+                    image: currentStory.image
+                });
+                
+                // Configura a história a partir do localStorage
+                this.story = {
+                    id: currentStory.id || null,
+                    title: currentStory.title || "",
+                    content: currentStory.content || "",
+                    // Usar content como story se story não estiver definido
+                    story: currentStory.content || currentStory.story || "",
+                    audioUrl: currentStory.audio || null,
+                    coverUrl: currentStory.image || "/assets/image/bg.webp",
+                    imageBase64: currentStory.imageBase64 || null,
+                    createdAt: currentStory.createdAt || new Date().toISOString(),
+                    updatedAt: currentStory.updatedAt || new Date().toISOString(),
+                    isNew: false,
+                    childName: currentStory.childName || "",
+                    themes: currentStory.animal || "",
+                    voice: ""
+                };
+                
+                console.log("História configurada:", this.story);
+                console.log("Texto da história:", this.story.story?.substring(0, 100) + "...");
+                console.log("Texto da história via getStoryText():", this.getStoryText()?.substring(0, 100) + "...");
+                
+                // Fix URLs for coverUrl and audioUrl if they're relative paths
+                if (this.story.coverUrl && !this.story.coverUrl.startsWith('http') && !this.story.coverUrl.startsWith('data:')) {
+                    this.story.coverUrl = `${this.BASE_FS_URL}${this.story.coverUrl.startsWith('/') ? '' : '/'}${this.story.coverUrl}`;
+                }
+                
+                if (this.story.audioUrl && !this.story.audioUrl.startsWith('http') && !this.story.audioUrl.startsWith('data:')) {
+                    this.story.audioUrl = `${this.BASE_FS_URL}${this.story.audioUrl.startsWith('/') ? '' : '/'}${this.story.audioUrl}`;
+                }
+                
+                console.log("URLs ajustadas:", {
+                    coverUrl: this.story.coverUrl,
+                    audioUrl: this.story.audioUrl
+                });
+                
+                // Fix permissions and verify accessibility of media files
+                if (this.story.coverUrl || this.story.audioUrl) {
+                    console.log("Verificando e corrigindo permissões de arquivos de mídia");
+                    await this.verifyAndFixMediaFiles();
+                } else {
+                    console.log("Nenhum arquivo de mídia para verificar");
+                    this.coverReady = true;
+                    this.audioReady = true;
+                }
+                
+                this.loading = false;
+                
+                // Initialize audio player
+                this.$nextTick(() => {
+                    if (this.$refs.audioPlayer && this.story.audioUrl) {
+                        console.log("Carregando player de áudio");
+                        this.$refs.audioPlayer.load();
+                    }
+                });
+                
+                return true;
+            } catch (error) {
+                console.error("Erro ao processar história do localStorage:", error);
+                this.error = `Erro ao processar história: ${error.message}`;
+                this.loading = false;
+                return false;
+            }
+        },
+        // Função utilitária para obter o texto da história de qualquer fonte disponível
+        getStoryText() {
+            if (!this.story) return "";
+            
+            // Prioridade: story.story > story.content > ""
+            return this.story.story || this.story.content || "";
         }
     }
 };
+
+// Export for module systems while maintaining window compatibility
+export default window.StoryPage;
