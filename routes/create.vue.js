@@ -445,47 +445,46 @@ window.CreatePage = {
             // Generate image using AI
             try {
               // Create image prompt from translation
-              const imagePrompt = `Create a cheerful and child-friendly illustration for a children's story titled "${storyObject.title}". Use bright, soft colors and a warm, engaging style. The image should depict a main scene from the story in a magical, inspiring way that's appropriate for young children.`;
+              const imagePrompt = `Create a hand-drawn, rustic illustration for a children's story titled "${storyObject.title}". 
+IMPORTANT DETAILS:
+- If the story mentions "Guará", it's referring to the Brazilian RED BIRD (Guará vermelho/Eudocimus ruber), NOT a wolf or dog
+- The child named "${this.childName}" must be depicted as a ${this.childName.toLowerCase().includes('a') && !['junior', 'jr'].includes(this.childName.toLowerCase()) ? 'girl' : 'boy'}
+- The style should resemble a hand-drawn children's book illustration with visible pencil/crayon strokes
+- Use a warm color palette with earthy tones like browns, soft reds, and yellows
+- The scene should show the main character interacting with elements of Brazilian riverside culture from ${this.selectedLocation.name}
+- Include visual elements of artisanal crafts, clay pottery, and traditional Brazilian riverside themes`;
               
               console.log("Starting image generation with prompt:", imagePrompt);
               
               // Generate the image using SDK
               const imageResult = await sdk.ai.generateImage({
-            model: "stability:ultra",
+                model: "replicate:recraft-ai/recraft-v3",
                 prompt: imagePrompt,
-            aspect_ratio: "1:1",
-            providerOptions: {
-              stability: {
-                negative_prompt: "ugly, deformed, disfigured, poor quality, low resolution, bad anatomy",
-                style_preset: "fantasy-art", // Using fantasy-art style which is perfect for children's stories
-                output_format: "webp",
-                aspect_ratio: "1:1",
-                seed: Math.floor(Math.random() * 4294967294)
-              }
-            }
-          });
+                providerOptions: {
+                  replicate: {
+                    size: "1024x1024",
+                    style: "digital_illustration/2d_art_poster",
+                    num_inference_steps: 50,
+                    guidance_scale: 7.5,
+                    prompt: imagePrompt
+                  }
+                }
+              });
               
               console.log("Image generation result:", imageResult);
               
               // Process the response
               if (imageResult && imageResult.images && imageResult.images.length > 0) {
-                // For stability:ultra model, the response structure is different
-            if (typeof imageResult.images[0] === 'string') {
-                  // It's a base64 string
-                  this.storyData.imageBase64 = `data:image/webp;base64,${imageResult.images[0]}`;
-                  this.storyImage = this.storyData.imageBase64;
-            } else {
-                  // It's a URL
-              this.storyImage = imageResult.images[0];
-                }
+                // Use the image URL from the response
+                this.storyImage = imageResult.images[0];
               } else if (imageResult && imageResult.url) {
                 // Fallback to URL if available
-            this.storyImage = imageResult.url;
+                this.storyImage = imageResult.url;
               } else if (imageResult && imageResult.filepath) {
                 // Use filepath if available
                 const baseUrl = "https://fs.webdraw.com";
                 this.storyImage = `${baseUrl}${imageResult.filepath.startsWith('/') ? '' : '/'}${imageResult.filepath}`;
-          } else {
+              } else {
                 // Use fallback image
                 this.storyImage = this.getRandomFallbackImage();
               }
@@ -1011,7 +1010,7 @@ ${this.childName} voltou para casa cheio de histórias incríveis para contar e 
           
           if (!response.ok) {
             console.warn(`Audio file not accessible, status: ${response.status}. Will use proxy.`);
-            } else {
+          } else {
             console.log("Audio file is directly accessible, no need for proxy");
           }
         } catch (error) {
