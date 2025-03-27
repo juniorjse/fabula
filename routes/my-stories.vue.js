@@ -32,7 +32,7 @@ window.MyStoriesPage = {
         
         <!-- Stories Grid -->
         <div v-if="stories.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div v-for="story in stories" :key="story.id" class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-lg border border-neutral-dark transform transition hover:scale-[1.02]">
+          <div v-for="story in stories" :key="story.id" class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-lg border border-neutral-dark card-rustic">
             <div class="flex flex-col h-full">
               <!-- Story Image -->
               <div class="h-48 overflow-hidden bg-tertiary flex items-center justify-center relative">
@@ -74,7 +74,7 @@ window.MyStoriesPage = {
                     </div>
                     
         <!-- Empty State -->
-        <div v-else class="bg-neutral-light/70 rounded-lg p-8 shadow-lg border border-neutral-dark text-center">
+        <div v-else class="bg-neutral-light/70 rounded-lg p-8 shadow-lg border border-neutral-dark text-center card-rustic">
           <div class="mb-8">
             <div class="w-24 h-24 mx-auto mb-4 relative">
               <i class="fas fa-book text-primary text-4xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>

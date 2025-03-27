@@ -17,7 +17,7 @@ window.StoryPage = {
             </nav>
 
             <!-- Loading State -->
-            <div v-if="loading" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh] bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark">
+            <div v-if="loading" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh] bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark card-rustic">
                 <div class="relative w-20 h-20 mb-6">
                     <div class="absolute inset-0 rounded-full bg-primary/20 animate-pulse duration-3000"></div>
                     <div class="absolute inset-3 rounded-full bg-primary/40 animate-pulse duration-4000"></div>
@@ -28,7 +28,7 @@ window.StoryPage = {
             </div>
 
             <!-- Error State -->
-            <div v-else-if="error" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh] bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark">
+            <div v-else-if="error" class="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[70vh] bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark card-rustic">
                 <div class="relative w-20 h-20 mb-6">
                     <i class="fas fa-exclamation-circle text-5xl text-secondary-dark absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
                     <div class="absolute inset-0 rounded-full bg-primary/10"></div>
@@ -49,7 +49,7 @@ window.StoryPage = {
             </div>
 
             <!-- Story Display -->
-            <main v-else class="max-w-4xl mx-auto bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark">
+            <main v-else class="max-w-4xl mx-auto bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark card-rustic">
                 <div class="px-6 md:p-8 relative">                    
                     <!-- Story Content -->
                     <div class="mb-8">
@@ -154,7 +154,7 @@ window.StoryPage = {
                     </div>
                     
                     <!-- Story Settings (Collapsible) -->
-                    <details v-if="story" class="bg-neutral-light/70 border border-neutral-dark rounded-lg p-4 shadow-sm mb-8 group">
+                    <details v-if="story" class="bg-neutral-light/70 border border-neutral-dark rounded-lg p-4 shadow-sm mb-8 group card-rustic">
                         <summary class="text-secondary-dark font-medium cursor-pointer flex items-center justify-between">
                             <div class="flex items-center">
                                 <i class="fa-solid fa-gear mr-2 text-primary"></i>

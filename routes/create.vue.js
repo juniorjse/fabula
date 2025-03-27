@@ -39,7 +39,7 @@ window.CreatePage = {
       <!-- Main Content -->
       <main class="max-w-4xl mx-auto px-4 pt-4 relative z-10">
         <!-- Form Content - Only shown when not generating story -->
-        <div v-if="screen === 'form'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark">
+        <div v-if="screen === 'form'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark card-rustic">
           <div class="mb-8 text-center">
             <h1 class="font-heading font-bold text-3xl text-secondary-dark mb-2">Criar Uma História</h1>
             <p class="text-black font-body">Personalize a história com o nome do seu filho e suas preferências</p>
@@ -61,7 +61,7 @@ window.CreatePage = {
             
             <!-- Brazilian Fauna Selection -->
             <div class="form-group">
-              <label class="block font-heading font-bold text-lg text-secondary-dark mb-2">Animal Favorito da Fauna Brasileira</label>
+              <label class="block font-heading font-bold text-lg text-secondary-dark mb-2">Elemento da Cultura Baiana</label>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <div v-for="animal in brazilianAnimals" :key="animal.id" 
                      @click="selectAnimal(animal)"
@@ -112,7 +112,7 @@ window.CreatePage = {
         </div>
         
         <!-- Loading Screen - Shown when generating story -->
-        <div v-if="screen === 'generating'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark text-center">
+        <div v-if="screen === 'generating'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark text-center card-rustic">
           <div class="mb-8">
             <div class="w-24 h-24 mx-auto mb-4 relative overflow-hidden rounded-full">
               <div class="absolute inset-0 rounded-full bg-primary/20 animate-pulse duration-1000"></div>
@@ -187,7 +187,7 @@ window.CreatePage = {
         <!-- Story Result Screen -->
         <div v-if="screen === 'result'" class="relative">
           <!-- Story Container -->
-          <div class="bg-neutral-light/90 rounded-lg p-8 shadow-lg border border-neutral-dark relative overflow-hidden">
+          <div class="bg-neutral-light/90 rounded-lg p-8 shadow-lg border border-neutral-dark relative overflow-hidden card-rustic">
             <div class="flex flex-col gap-8">
               <!-- Story Header -->
               <div class="flex flex-col items-center">
@@ -319,33 +319,33 @@ window.CreatePage = {
       brazilianAnimals: [
         {
           id: 1,
-          name: "Mico-Leão-Dourado",
-          icon: "fas fa-paw"
+          name: "Caxixi",
+          icon: "fas fa-drum"
         },
         {
           id: 2,
-          name: "Onça-Pintada",
-          icon: "fas fa-cat"
+          name: "Saveiro",
+          icon: "fas fa-ship"
         },
         {
           id: 3,
-          name: "Lobo-Guará",
-          icon: "fas fa-dog"
+          name: "Olaria",
+          icon: "fas fa-hands"
         },
         {
           id: 4,
-          name: "Tucano-Toco",
-          icon: "fas fa-kiwi-bird"
+          name: "Guará",
+          icon: "fas fa-feather-alt"
         },
         {
           id: 5,
-          name: "Arara-Azul",
-          icon: "fas fa-dove"
+          name: "Samba de Roda",
+          icon: "fas fa-music"
         },
         {
           id: 6,
-          name: "Boto-Cor-de-Rosa",
-          icon: "fas fa-fish"
+          name: "Cerâmica",
+          icon: "fas fa-paint-brush"
         }
       ],
       
@@ -353,33 +353,33 @@ window.CreatePage = {
       storyLocations: [
         {
           id: 1,
-          name: "Floresta Amazônica",
-          icon: "fas fa-tree"
+          name: "Maragogipinho",
+          icon: "fas fa-home"
         },
         {
           id: 2,
-          name: "Pantanal",
-          icon: "fas fa-water"
+          name: "Jaguaripe",
+          icon: "fas fa-map-marker-alt"
         },
         {
           id: 3,
-          name: "Cerrado",
-          icon: "fas fa-seedling"
+          name: "Rio",
+          icon: "fas fa-water"
         },
         {
           id: 4,
-          name: "Chapada Diamantina",
-          icon: "fas fa-mountain"
+          name: "Mangue",
+          icon: "fas fa-tree"
         },
         {
           id: 5,
-          name: "Litoral Brasileiro",
-          icon: "fas fa-umbrella-beach"
+          name: "Em Cima do Saveiro",
+          icon: "fas fa-anchor"
         },
         {
           id: 6,
-          name: "Mata Atlântica",
-          icon: "fas fa-leaf"
+          name: "Beira do Rio",
+          icon: "fas fa-umbrella-beach"
         }
       ]
     };
@@ -416,7 +416,7 @@ window.CreatePage = {
         this.taskStatus.plot = "processing";
         
         // Create the story title and plot first
-        const storyTitle = `${this.childName} e o ${this.selectedAnimal.name} na ${this.selectedLocation.name}`;
+        const storyTitle = `${this.childName} e o ${this.selectedAnimal.name} de ${this.selectedLocation.name}`;
         const storyPlot = this.generateMockStory();
         
         // Create a story object with title and plot
@@ -627,23 +627,23 @@ window.CreatePage = {
     
     generateMockStory() {
       // Create a story with properly formatted paragraphs using double line breaks
-      return `Era uma vez ${this.childName}, uma criança muito curiosa que adorava conhecer os animais da natureza brasileira. Em uma viagem especial à ${this.selectedLocation.name}, ${this.childName} estava muito animado para explorar este lugar maravilhoso.
+      return `Era uma vez ${this.childName}, uma criança muito curiosa que adorava conhecer as histórias e tradições da Bahia. Em uma viagem especial à ${this.selectedLocation.name}, ${this.childName} estava muito animado para explorar este lugar cheio de cultura e magia.
 
-Enquanto caminhava entre as árvores, observando as flores e ouvindo os sons da natureza, ${this.childName} viu algo se movendo entre as folhagens. Para sua surpresa, era um ${this.selectedAnimal.name} que o observava com olhos curiosos!
+Enquanto caminhava próximo ao rio, observando os saveiros passarem e sentindo a brisa mansa, ${this.childName} viu algo brilhando na margem. Para sua surpresa, era um ${this.selectedAnimal.name} de forma única e encantadora.
 
-"Olá," disse ${this.childName} gentilmente. "Não vou machucar você."
+"Olá," disse ${this.childName} gentilmente, tocando suavemente o objeto.
 
-Para sua surpresa, o ${this.selectedAnimal.name} se aproximou e começou a falar! "Olá, ${this.childName}! Meu nome é Tiba, e sou o guardião desta parte da ${this.selectedLocation.name}. Estou procurando ajuda para proteger nossa casa."
+Para sua surpresa, um velho oleiro surgiu de trás de uma pequena oficina e sorriu. "Vejo que você encontrou meu ${this.selectedAnimal.name} especial. Sabia que aqui em ${this.selectedLocation.name}, fazemos estes artesanatos há mais de cem anos?"
 
-${this.childName} ficou maravilhado. "Eu adoraria ajudar! O que está acontecendo?"
+${this.childName} ficou maravilhado. "Eu adoraria aprender! Como vocês fazem isso?"
 
-Tiba explicou que as nascentes de água estavam secando porque algumas pessoas estavam desmatando áreas importantes. "Precisamos mostrar a elas como a natureza é importante para todos nós."
+O oleiro, que se chamava Seu Tião, explicou que o barro vinha do mangue, e que cada peça contava uma história do rio, dos pescadores e da vida ribeirinha. "Nossos antepassados nos ensinaram a transformar o barro em arte, e nós passamos esse conhecimento de geração em geração."
 
-Assim, ${this.childName} e Tiba embarcaram em uma grande aventura, conversando com outros animais e aprendendo sobre o delicado equilíbrio da natureza na ${this.selectedLocation.name}. Juntos, eles plantaram sementes, limparam trilhas e até mesmo conversaram com visitantes sobre a importância de preservar o ambiente.
+Assim, ${this.childName} e Seu Tião embarcaram em uma grande aventura pelo rio em um saveiro colorido, conhecendo os segredos do mangue, os sons do samba de roda, e aprendendo como fazer miniaturas de barro. Juntos, eles moldaram pequenos caxixis, barquinhos e figuras que contavam histórias da Bahia.
 
-No final do dia, Tiba presenteou ${this.childName} com uma semente mágica. "Plante esta semente em seu jardim. Ela crescerá e lembrará você da nossa amizade e da importância de cuidar da natureza."
+No final do dia, Seu Tião presenteou ${this.childName} com um pequeno caxixi feito por suas próprias mãos. "Leve este caxixi como lembrança. Quando você o balançar, vai ouvir o som do rio e se lembrar de nós."
 
-${this.childName} voltou para casa cheio de histórias incríveis para contar e com um novo propósito: ajudar a proteger os animais e a natureza brasileira. E toda vez que olhava para a pequena árvore que crescia de sua semente mágica, lembrava-se de seu amigo ${this.selectedAnimal.name} e da aventura maravilhosa que tiveram na ${this.selectedLocation.name}.`;
+${this.childName} voltou para casa cheio de histórias incríveis para contar e com um novo tesouro: não apenas o caxixi, mas também as memórias das cores, dos sons e dos saberes da cultura baiana. E toda vez que balançava seu caxixi, lembrava-se do ${this.selectedAnimal.name} e da aventura maravilhosa que teve em ${this.selectedLocation.name}, onde o rio serpenteia e os saveiros navegam sob um céu de estrelas guias.`;
     },
     
     goBack() {

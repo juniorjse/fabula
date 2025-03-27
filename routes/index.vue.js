@@ -38,10 +38,10 @@ window.IndexPage = {
                     </div>
                     
                     <!-- Main heading with handmade text style -->
-                    <h1 class="font-heading font-bold text-4xl md:text-5xl leading-tight text-center m-0 text-primary-dark">{{ $t('home.welcome') }}</h1>
+                    <h1 class="font-heading font-bold text-3xl md:text-4xl leading-tight text-center m-0 text-primary-dark">{{ $t('home.welcome') }}</h1>
                     
                     <!-- Subheading -->
-                    <p class="font-body text-lg text-[#A67C52] text-center max-w-md">Histórias encantadoras da fauna brasileira para crianças, criadas com inteligência artificial</p>
+                    <p class="font-body text-lg text-[#A67C52] text-center max-w-md">Uma viagem até Maragogipinho e Jaguaripe, Bahia, que embarca pelo rio, seja ele na beira, no mangue ou em cima de um saveiro.</p>
                         
                         <!-- CTA section -->
                         <div class="flex flex-col items-center w-full gap-2">
@@ -55,33 +55,33 @@ window.IndexPage = {
                                 </span>
                             Criar Uma História
                             </button>
-                        <p class="font-body font-normal text-sm leading-[1.67] text-[#A67C52] m-0 mt-2">Experimente agora! É gratuito e leva apenas 30 segundos.</p>
+                        <p class="font-body font-normal text-sm leading-[1.67] text-[#A67C52] m-0 mt-2">Embarque em uma nova história! Das tradições, das gerações, do coração.</p>
                                     </div>
                                     
                     <!-- Nosso Diferencial Section -->
                     <section class="py-12 px-6 max-w-7xl mx-auto">
-                        <h2 class="font-heading text-2xl md:text-3xl font-bold text-secondary-dark text-center mb-6">Nosso Diferencial</h2>
+                        <h2 class="font-heading text-2xl md:text-3xl font-bold text-secondary-dark text-center mb-6">Conheça Nossa Arte</h2>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                             <!-- Card 1 -->
-                            <div class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-md border border-neutral-dark transform transition hover:scale-[1.02] min-h-[220px]">
+                            <div class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-md border border-neutral-dark card-rustic">
                                 <div class="p-6 flex flex-col items-center h-full">
                                     <div class="text-primary mb-3 flex justify-center">
-                                        <i class="fas fa-child text-4xl"></i>
+                                        <i class="fas fa-water text-4xl"></i>
                                     </div>
-                                    <h3 class="font-heading font-bold text-xl text-secondary-dark mb-2 text-center">Histórias Personalizadas</h3>
-                                    <p class="font-body text-[#A67C52] max-w-xl text-justify">Cada história é única e personalizada para seu filho.</p>
+                                    <h3 class="font-heading font-bold text-xl text-secondary-dark mb-2 text-center">Arte e Cultura Ribeirinha</h3>
+                                    <p class="font-body text-[#A67C52] max-w-xl text-center">Uma fábula que começa no chão e mistura com a água.</p>
                                 </div>
                             </div>
                             
                             <!-- Card 2 -->
-                            <div class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-md border border-neutral-dark transform transition hover:scale-[1.02] min-h-[220px]">
+                            <div class="bg-neutral-light/70 rounded-lg overflow-hidden shadow-md border border-neutral-dark card-rustic">
                                 <div class="p-6 flex flex-col items-center h-full">
                                     <div class="text-primary mb-3 flex justify-center">
-                                        <i class="fas fa-globe-americas text-4xl"></i>
+                                        <i class="fas fa-paint-brush text-4xl"></i>
                                     </div>
-                                    <h3 class="font-heading font-bold text-xl text-secondary-dark mb-2 text-center">Fauna Brasileira</h3>
-                                    <p class="font-body text-[#A67C52] max-w-xl text-justify">Conectando crianças com a rica biodiversidade do Brasil de forma lúdica e educativa.</p>
+                                    <h3 class="font-heading font-bold text-xl text-secondary-dark mb-2 text-center">Caxixi</h3>
+                                    <p class="font-body text-[#A67C52] max-w-xl text-center">Brinquedos, miniaturas e presentes. A primeira peça de um oleiro.</p>
                                 </div>
                             </div>
                         </div>
