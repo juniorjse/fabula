@@ -45,16 +45,18 @@ window.IndexPage = {
                         
                         <!-- CTA section -->
                         <div class="flex flex-col items-center w-full gap-2">
-                        <button @click="$router.push('/create')" 
-                                class="flex justify-center items-center gap-2 py-3 px-6 w-full md:w-auto md:min-w-[250px] h-14 
-                                       bg-primary hover:bg-primary-dark btn-rustic
-                                       shadow-md transition-all duration-200 
-                                       font-heading font-bold text-xl text-white">
-                                <span class="flex items-center justify-center">
-                                <i class="fas fa-feather-alt mr-2"></i>
-                                </span>
-                            Criar Uma História
+                        <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                            <button @click="$router.push('/create')" 
+                                    class="flex justify-center items-center gap-2 py-3 px-6 w-full md:w-auto md:min-w-[250px] h-14 
+                                           bg-primary hover:bg-primary-dark btn-rustic shadow-md transition-all duration-200 
+                                           font-heading font-bold text-xl text-white">
+                                    <span class="flex items-center justify-center">
+                                    <i class="fas fa-feather-alt mr-2"></i>
+                                    </span>
+                                Criar Uma História
                             </button>
+                            
+                        </div>
                         <p class="font-body font-normal text-sm leading-[1.67] text-[#A67C52] m-0 mt-2">Embarque em uma nova história! Das tradições, das gerações, do coração.</p>
                                     </div>
                                     

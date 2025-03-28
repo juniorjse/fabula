@@ -5,14 +5,14 @@ window.StoryPage = {
     template: `
         <div v-if="sdkAvailable" class="min-h-screen pb-16 bg-[#F4F4F5]">
             <!-- Navigation -->
-            <nav class="h-16 px-8 flex items-center relative max-w-3xl mx-auto">
-                <div class="flex justify-between items-center w-full">
+            <nav class="relative z-10 py-3 px-4 sm:px-6 mb-4">
+                <div class="flex justify-between items-center">
+                    <!-- Back button with rustic style -->
                     <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200">
                         <i class="fas fa-arrow-left mr-1"></i> Voltar
                     </router-link>
-                    <router-link to="/create" class="flex items-center gap-1 py-2 px-4 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
-                        <i class="fas fa-plus mr-1"></i> Nova História
-                    </router-link>
+                    <!-- Spacer to ensure justify-between works properly -->
+                    <div></div>
                 </div>
             </nav>
 
@@ -44,7 +44,7 @@ window.StoryPage = {
                     </router-link>
                     <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
                         <i class="fas fa-book mr-1"></i> Minhas Histórias
-                    </router-link>
+                </router-link>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@ window.StoryPage = {
                                         :src="story.imageUrl || story.image || story.imageBase64" 
                                         :alt="story ? formatTitle(story.title) : ''" 
                                         class="w-full h-full object-cover" 
-                                        @error="handleCoverImageError" 
+                                        @error="handleImageError" 
                                     />
                                 </div>
                                 <div v-else class="w-full h-full bg-tertiary flex items-center justify-center">
@@ -131,7 +131,7 @@ window.StoryPage = {
                             <i class="fa-solid fa-download"></i>
                             {{ $t('ui.downloadAudio') }}
                         </a>
-                        <router-link to="/create" class="bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2">
+                        <router-link to="/create" class="bg-[#17557a] hover:bg-[#0f3f5c] btn-rustic text-white px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-plus"></i>
                             {{ $t('ui.createNewStory') }}
                         </router-link>
@@ -865,7 +865,7 @@ window.StoryPage = {
                         const coverAccessible = await this.checkFileAccessibility(this.story.coverUrl);
                         if (coverAccessible) {
                             console.log("[ACESSIBILIDADE] Imagem de capa está acessível");
-                            this.coverReady = true;
+                        this.coverReady = true;
                         } else {
                             console.log("[ACESSIBILIDADE] Imagem de capa não está acessível ainda");
                         }
@@ -882,7 +882,7 @@ window.StoryPage = {
                         const audioAccessible = await this.checkFileAccessibility(this.story.audioUrl);
                         if (audioAccessible) {
                             console.log("[ACESSIBILIDADE] Áudio está acessível");
-                            this.audioReady = true;
+                        this.audioReady = true;
                         } else {
                             console.log("[ACESSIBILIDADE] Áudio não está acessível ainda");
                         }
@@ -1232,37 +1232,15 @@ window.StoryPage = {
         formatStoryText(text) {
             if (!text) return "";
             
-            // Check if the text already contains HTML formatting
-            if (this.hasHtmlContent(text)) {
-                return text; // Return as-is if it contains HTML
-            }
-            
-            // Remove the title if it appears at the beginning of the story
-            // This way the title only appears in the blue header above
-            if (this.story && this.story.title) {
-                const title = this.story.title.trim();
+            // Split by paragraphs and wrap in <p> tags with improved styling
+            const paragraphs = text.split("\n\n");
+            return paragraphs.map(p => {
+                // Add special styling for dialogue (text starting with quotes)
+                const formattedText = p.replace(/("[^"]+?")/g, '<span class="text-secondary-dark font-medium italic">$1</span>');
                 
-                // Check for common title patterns at the beginning of the text
-                // 1. Exact title match at beginning
-                text = text.replace(new RegExp(`^\\s*${title}\\s*[\n\r]+`), '');
-                
-                // 2. Title with markdown heading format (# Title)
-                text = text.replace(new RegExp(`^\\s*#\\s*${title}\\s*[\n\r]+`), '');
-                
-                // 3. Title with double line or other formatting
-                text = text.replace(new RegExp(`^\\s*${title}\\s*[\n\r]+[-=]+[\n\r]+`), '');
-            }
-            
-            // Ensure proper paragraph breaks
-            let formattedText = text
-                // Replace single newlines with spaces (if they're not part of a paragraph break)
-                .replace(/([^\n])\n([^\n])/g, '$1 $2')
-                // Ensure paragraphs have proper spacing
-                .replace(/\n\n+/g, '\n\n')
-                // Trim extra whitespace
-                .trim();
-                
-            return formattedText;
+                // Add proper line breaks
+                return `<p class="mb-6 leading-relaxed">${formattedText.replace(/\n/g, '<br>')}</p>`;
+            }).join("");
         },
         
         hasHtmlContent(text) {
@@ -1482,135 +1460,288 @@ window.StoryPage = {
                 alert(this.$t('story.errorDownloadingAudio'));
             }
         },
-        handleCoverImageError(event) {
-            console.error("Error loading cover image");
+        handleImageError(event) {
+            console.error("Error loading image:", event);
+            console.log("Image that failed to load:", event.target.src);
             
-            // Try alternative image sources if available
-            if (this.story) {
-                if (event.target.src !== this.story.imageBase64 && this.story.imageBase64) {
-                    event.target.src = this.story.imageBase64;
-                    return;
-                } else if (event.target.src !== this.story.image && this.story.image) {
-                    event.target.src = this.story.image;
-                    return;
-                } else if (event.target.src !== this.story.imageUrl && this.story.imageUrl) {
-                    event.target.src = this.story.imageUrl;
-                    return;
-                }
-            }
-            
-            // If all image sources fail, show the fallback icon
-            const parentElement = event.target.parentElement;
-            if (parentElement) {
-                event.target.style.display = 'none'; 
-                parentElement.classList.add('flex', 'items-center', 'justify-center');
-                
-                // Create and append the icon if it doesn't exist
-                if (!parentElement.querySelector('.fallback-icon')) {
-                    const icon = document.createElement('i');
-                    icon.className = 'fas fa-book-open text-5xl text-white fallback-icon';
-                    parentElement.appendChild(icon);
-                }
-            }
-        },
-        // Método para carregar uma história a partir do localStorage
-        async loadStoryFromLocalStorage() {
-            console.log("Executando loadStoryFromLocalStorage()");
-            const currentStoryJson = localStorage.getItem("currentStory");
-            
-            if (!currentStoryJson) {
-                console.error("Nenhuma história encontrada no localStorage");
-                this.error = "Nenhuma história encontrada no armazenamento local";
-                this.loading = false;
+            // Se temos o base64 na própria história, usar isso primeiro
+            if (this.story && this.story.imageBase64) {
+                console.log("🖼️ Usando imageBase64 da história como fallback");
+                event.target.src = this.story.imageBase64;
                 return;
             }
             
+            // Se temos o storyData original no localStorage, tentar usar imageBase64
+            if (typeof localStorage !== 'undefined') {
+                try {
+                    const storyJson = localStorage.getItem('currentStory');
+                    if (storyJson) {
+                        const storyData = JSON.parse(storyJson);
+                        if (storyData.imageBase64) {
+                            console.log("📦 Usando imageBase64 do localStorage");
+                            event.target.src = storyData.imageBase64;
+                            // Atualizar também na história atual para futuras referências
+                            if (this.story) {
+                                this.story.imageBase64 = storyData.imageBase64;
+                                this.story.image = storyData.imageBase64;
+                            }
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error("❌ Erro ao tentar usar imageBase64 do localStorage:", error);
+                }
+            }
+            
+            // Se estamos usando URL do filesystem, tentar recriar a URL
+            const currentSrc = event.target.src;
+            if (currentSrc && currentSrc.includes('fs.webdraw.com')) {
+                console.log("🔄 Tentando recriar URL do filesystem");
+                const path = currentSrc.replace('https://fs.webdraw.com', '');
+                // Verificar se o caminho é válido
+                if (path && path.length > 1) {
+                    console.log("👷‍♂️ Reconstruindo URL do filesystem");
+                    // Tentar novamente com parâmetro de cache
+                    const newSrc = `https://fs.webdraw.com${path}?cache=${Date.now()}`;
+                    console.log("🔄 Nova URL:", newSrc);
+                    event.target.src = newSrc;
+                    return;
+                }
+            }
+            
+            // Use fallback image if everything else fails
+            console.log("🚨 Usando imagem de fallback");
+            event.target.src = this.getRandomFallbackImage();
+        },
+        // Método para carregar uma história a partir do localStorage
+        async loadStoryFromLocalStorage() {
             try {
-                const currentStory = JSON.parse(currentStoryJson);
-                console.log("História carregada do localStorage:", currentStory);
-                console.log("Estrutura da história do localStorage:", {
-                    id: currentStory.id,
-                    title: currentStory.title,
-                    content: typeof currentStory.content === 'string' ? 
-                        `${currentStory.content.substring(0, 50)}... (${currentStory.content.length} caracteres)` : 
-                        `tipo: ${typeof currentStory.content}`,
-                    story: typeof currentStory.story === 'string' ? 
-                        `${currentStory.story.substring(0, 50)}... (${currentStory.story.length} caracteres)` : 
-                        `tipo: ${typeof currentStory.story}`,
-                    audio: currentStory.audio,
-                    image: currentStory.image
-                });
+                const storyJson = localStorage.getItem('currentStory');
+                console.log("📄 JSON da história carregado do localStorage:", storyJson);
                 
-                // Configura a história a partir do localStorage
+                if (!storyJson) {
+                    console.error("❌ Nenhuma história encontrada no localStorage");
+                    alert("Não foi possível encontrar a história selecionada.");
+                    this.$router.push('/my-stories');
+                    return;
+                }
+                
+                // Parse the story data
+                const storyData = JSON.parse(storyJson);
+                console.log("📚 Objeto da história:", storyData);
+                
+                // SEMPRE prioritize imageBase64 se disponível (mesmo se já houver image)
+                if (storyData.imageBase64) {
+                    console.log("🖼️ Usando imageBase64 como imagem principal (estratégia prioritária)");
+                    // Analisar o base64 antes de usar
+                    this.analyzeBase64Image(storyData.imageBase64);
+                    console.log("📊 Tamanho do imageBase64:", this.formatFileSize(Math.round((storyData.imageBase64.length * 3) / 4)));
+                    storyData.image = storyData.imageBase64;
+                } else if (storyData.image && storyData.image.startsWith('data:')) {
+                    // Se não tem imageBase64 específico, mas image já é base64
+                    console.log("🖼️ A URL da imagem já é base64");
+                    this.analyzeBase64Image(storyData.image);
+                    console.log("📊 Tamanho da image base64:", this.formatFileSize(Math.round((storyData.image.length * 3) / 4)));
+                } else if (storyData.image) {
+                    console.log("🔗 URL da imagem (não base64):", storyData.image);
+                }
+                
+                // Set up the story and UI
                 this.story = {
-                    id: currentStory.id || null,
-                    title: currentStory.title || "",
-                    content: currentStory.content || "",
-                    // Usar content como story se story não estiver definido
-                    story: currentStory.content || currentStory.story || "",
-                    audioUrl: currentStory.audio || null,
-                    coverUrl: currentStory.image || "/assets/image/bg.webp",
-                    imageBase64: currentStory.imageBase64 || null,
-                    createdAt: currentStory.createdAt || new Date().toISOString(),
-                    updatedAt: currentStory.updatedAt || new Date().toISOString(),
-                    isNew: false,
-                    childName: currentStory.childName || "",
-                    themes: currentStory.animal || "",
-                    voice: ""
+                    id: storyData.id,
+                    title: storyData.title,
+                    content: storyData.content || storyData.story || "",
+                    image: storyData.image || null,
+                    imageUrl: storyData.image || storyData.imageBase64 || null, // A UI espera imageUrl para exibir
+                    audio: storyData.audio || null,
+                    audioUrl: storyData.audio ? this.fixAudioUrl(storyData.audio) : null, // A UI espera audioUrl para reproduzir
+                    imageBase64: storyData.imageBase64 || null, // Manter uma referência ao base64 original
+                    childName: storyData.childName || "",
+                    animal: storyData.animal || "",
+                    location: storyData.location || "",
+                    createdAt: storyData.createdAt || new Date().toISOString()
                 };
                 
-                console.log("História configurada:", this.story);
-                console.log("Texto da história:", this.story.story?.substring(0, 100) + "...");
-                console.log("Texto da história via getStoryText():", this.getStoryText()?.substring(0, 100) + "...");
+                console.log("📸 URL final da imagem:", this.story.imageUrl);
+                console.log("🔊 URL final do áudio:", this.story.audioUrl);
                 
-                // Fix URLs for coverUrl and audioUrl if they're relative paths
-                if (this.story.coverUrl && !this.story.coverUrl.startsWith('http') && !this.story.coverUrl.startsWith('data:')) {
-                    this.story.coverUrl = `${this.BASE_FS_URL}${this.story.coverUrl.startsWith('/') ? '' : '/'}${this.story.coverUrl}`;
-                }
+                // Format the story text
+                this.formattedStory = this.formatStoryText(this.story.content);
+                console.log("📝 Texto formatado:", this.formattedStory ? "Presente (comprimento: " + this.formattedStory.length + ")" : "Ausente");
                 
-                if (this.story.audioUrl && !this.story.audioUrl.startsWith('http') && !this.story.audioUrl.startsWith('data:')) {
-                    this.story.audioUrl = `${this.BASE_FS_URL}${this.story.audioUrl.startsWith('/') ? '' : '/'}${this.story.audioUrl}`;
-                }
-                
-                console.log("URLs ajustadas:", {
-                    coverUrl: this.story.coverUrl,
-                    audioUrl: this.story.audioUrl
-                });
-                
-                // Fix permissions and verify accessibility of media files
-                if (this.story.coverUrl || this.story.audioUrl) {
-                    console.log("Verificando e corrigindo permissões de arquivos de mídia");
-                    await this.verifyAndFixMediaFiles();
-                } else {
-                    console.log("Nenhum arquivo de mídia para verificar");
-                    this.coverReady = true;
-                    this.audioReady = true;
-                }
-                
+                // IMPORTANTE: Desativar a tela de carregamento!
                 this.loading = false;
+                console.log("🔄 Tela de carregamento desativada, this.loading = false");
                 
-                // Initialize audio player
-                this.$nextTick(() => {
-                    if (this.$refs.audioPlayer && this.story.audioUrl) {
-                        console.log("Carregando player de áudio");
-                        this.$refs.audioPlayer.load();
-                    }
-                });
+                // Forçar atualização da UI
+                this.$forceUpdate();
                 
-                return true;
+                // Setup the audio player if audio is available
+                if (this.story.audioUrl) {
+                  try {
+                    this.setupAudioPlayer();
+                    console.log("🔊 Player de áudio configurado");
+                  } catch (audioError) {
+                    console.error("❌ Erro ao configurar o player de áudio:", audioError);
+                  }
+                }
+                
+                // Verificar o estado final após carregamento
+                console.log("📊 Estado final após carregamento:");
+                console.log("- loading:", this.loading);
+                console.log("- story:", this.story);
+                console.log("- formattedStory:", this.formattedStory ? "Presente" : "Ausente");
             } catch (error) {
-                console.error("Erro ao processar história do localStorage:", error);
-                this.error = `Erro ao processar história: ${error.message}`;
+                console.error("❌ Erro ao carregar história:", error);
+                this.error = "Erro ao processar a história: " + error.message;
                 this.loading = false;
-                return false;
             }
+        },
+        // Método para formatar o tamanho do arquivo
+        formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + ' MB';
+            else return (bytes / 1073741824).toFixed(2) + ' GB';
+        },
+        // Método para analisar base64
+        analyzeBase64Image(base64String) {
+            if (!base64String || typeof base64String !== 'string') {
+                console.error("❌ String base64 inválida ou não fornecida");
+                return;
+            }
+            
+            // Extrair informações do formato
+            let format = "desconhecido";
+            let mimeType = "desconhecido";
+            
+            if (base64String.startsWith('data:')) {
+                // É uma data URL
+                const matches = base64String.match(/^data:([^;]+);base64,/);
+                if (matches && matches.length > 1) {
+                    mimeType = matches[1];
+                    format = mimeType.split('/')[1];
+                }
+                
+                // Remover o prefixo para calcular o tamanho real
+                const base64Data = base64String.split(',')[1];
+                const sizeInBytes = Math.floor((base64Data.length * 3) / 4);
+                
+                console.log(`📝 === ANÁLISE DE IMAGEM BASE64 ===`);
+                console.log(`📝 MIME Type: ${mimeType}`);
+                console.log(`📝 Formato: ${format}`);
+                console.log(`📝 Tamanho: ${this.formatFileSize(sizeInBytes)}`);
+                console.log(`📝 Comprimento total da string: ${base64String.length} caracteres`);
+                console.log(`📝 Primeiros 30 caracteres da data: ${base64Data.substring(0, 30)}...`);
+                console.log(`📝 Últimos 30 caracteres da data: ...${base64Data.substring(base64Data.length - 30)}`);
+            } else {
+                // Não é uma data URL
+                console.log(`📝 === ANÁLISE DE STRING BASE64 (formato bruto) ===`);
+                console.log(`📝 Formato: String base64 bruta (sem prefixo data:))`);
+                console.log(`📝 Tamanho aproximado: ${this.formatFileSize(Math.floor((base64String.length * 3) / 4))}`);
+                console.log(`📝 Comprimento total da string: ${base64String.length} caracteres`);
+                console.log(`📝 Primeiros 30 caracteres: ${base64String.substring(0, 30)}...`);
+                console.log(`📝 Últimos 30 caracteres: ...${base64String.substring(base64String.length - 30)}`);
+            }
+        },
+        // Método para corrigir URLs de áudio potencialmente problemáticas
+        fixAudioUrl(url) {
+            if (!url) return url;
+            
+            // Manter URLs de dados como estão
+            if (url.startsWith('data:')) return url;
+            
+            // Verificar se a URL já tem um proxy e removê-lo
+            if (url.includes('corsproxy.io') || url.includes('cors-anywhere')) {
+                const match = url.match(/https?:\/\/corsproxy\.io\/\?(https?:\/\/.+)$/);
+                if (match && match[1]) {
+                    console.log("🔄 Removendo proxy desnecessário da URL de áudio");
+                    return decodeURIComponent(match[1]);
+                }
+            }
+            
+            // Garantir que URLs do WebDraw começam com https
+            if (url.includes('fs.webdraw.com') && !url.startsWith('https://')) {
+                if (url.startsWith('http://')) {
+                    console.log("🔒 Convertendo URL de HTTP para HTTPS");
+                    return url.replace('http://', 'https://');
+                } else if (!url.startsWith('//')) {
+                    console.log("🔗 Adicionando protocolo HTTPS à URL");
+                    return `https://${url}`;
+                }
+            }
+            
+            return url;
         },
         // Função utilitária para obter o texto da história de qualquer fonte disponível
         getStoryText() {
-            if (!this.story) return "";
+            if (!this.story) return '';
+            return this.formattedStory || this.story.content || this.story.story || '';
+        },
+        // Method to set up the audio player
+        setupAudioPlayer() {
+            this.$nextTick(() => {
+                const audioPlayer = this.$refs.audioPlayer;
+                if (audioPlayer && this.story.audio) {
+                    console.log("🔊 Configurando player de áudio com URL:", this.story.audio);
+                    
+                    // Clear existing sources
+                    while (audioPlayer.firstChild) {
+                        audioPlayer.removeChild(audioPlayer.firstChild);
+                    }
+                    
+                    // Verificar tipo de URL de áudio
+                    if (this.story.audio.includes('fs.webdraw.com')) {
+                        // Para URLs WebDraw, usar diretamente
+                        console.log("🔊 Usando URL direta do WebDraw");
+                        const source = document.createElement('source');
+                        source.type = "audio/mp3";
+                        source.src = this.story.audio;
+                        audioPlayer.appendChild(source);
+                    } else {
+                        // Para outras URLs, tentar múltiplos formatos
+                        console.log("🔊 Adicionando múltiplas fontes para compatibilidade");
+                        
+                        // Add direct URL with different formats
+                        [
+                            { type: "audio/mp3", src: this.story.audio },
+                            { type: "audio/mpeg", src: this.story.audio },
+                            { type: "audio/wav", src: this.story.audio }
+                        ].forEach(format => {
+                            const source = document.createElement('source');
+                            source.type = format.type;
+                            source.src = format.src;
+                            audioPlayer.appendChild(source);
+                        });
+                    }
+                    
+                    // Add fallback text
+                    const fallbackText = document.createTextNode('Seu navegador não suporta o elemento de áudio.');
+                    audioPlayer.appendChild(fallbackText);
+                    
+                    // Load the audio
+                    audioPlayer.load();
+                    
+                    console.log("🔊 Player de áudio configurado com sucesso");
+                } else {
+                    console.warn("⚠️ Elemento de áudio não encontrado ou áudio não disponível");
+                }
+            });
+        },
+        // Get a random fallback image
+        getRandomFallbackImage() {
+            // List of fallback images available
+            const fallbackImages = [
+                '/assets/image/ex1.webp',
+                '/assets/image/ex2.webp',
+                '/assets/image/ex3.webp',
+                '/assets/image/ex4.webp',
+                '/assets/image/bg.webp'
+            ];
             
-            // Prioridade: story.story > story.content > ""
-            return this.story.story || this.story.content || "";
+            // Select a random image
+            const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+            return fallbackImages[randomIndex];
         }
     }
 };
