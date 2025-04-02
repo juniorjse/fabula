@@ -445,13 +445,13 @@ window.CreatePage = {
             try {
               // Create image prompt from translation
               const imagePrompt = `Create a hand-drawn, rustic illustration for a children's story titled "${storyObject.title}". 
-IMPORTANT DETAILS:
-- If the story mentions "Guará", it's referring to the Brazilian RED BIRD (Guará vermelho/Eudocimus ruber), NOT a wolf or dog
-- The child named "${this.childName}" must be depicted as a ${this.childName.toLowerCase().includes('a') && !['junior', 'jr'].includes(this.childName.toLowerCase()) ? 'girl' : 'boy'}
-- The style should resemble a hand-drawn children's book illustration with visible pencil/crayon strokes
-- Use a warm color palette with earthy tones like browns, soft reds, and yellows
-- The scene should show the main character interacting with elements of Brazilian riverside culture from ${this.selectedLocation.name}
-- Include visual elements of artisanal crafts, clay pottery, and traditional Brazilian riverside themes`;
+              IMPORTANT DETAILS:
+              - If the story mentions "Guará", it's referring to the Brazilian RED BIRD (Guará vermelho/Eudocimus ruber), NOT a wolf or dog
+              - The child named "${this.childName}" must be depicted as a ${this.childName.toLowerCase().includes('a') && !['junior', 'jr'].includes(this.childName.toLowerCase()) ? 'girl' : 'boy'}
+              - The style should resemble a hand-drawn children's book illustration with visible pencil/crayon strokes
+              - Use a warm color palette with earthy tones like browns, soft reds, and yellows
+              - The scene should show the main character interacting with elements of Brazilian riverside culture from ${this.selectedLocation.name}
+              - Include visual elements of artisanal crafts, clay pottery, and traditional Brazilian riverside themes`;
               
               console.log("Starting image generation with prompt:", imagePrompt);
               
@@ -548,7 +548,7 @@ IMPORTANT DETAILS:
                       this.storyImage = replicateUrl;
                       console.log("⚠️ Falha ao salvar imagem localmente, usando URL original");
                     }
-        } catch (error) {
+                  } catch (error) {
                     console.error("❌ Erro ao baixar imagem do Replicate:", error);
                     this.storyImage = replicateUrl; // Usar URL original como fallback
                   }
@@ -606,7 +606,7 @@ IMPORTANT DETAILS:
                       this.storyData.imageBase64 = imageData;
                       console.log("✅ Imagem baixada e salva com sucesso como base64");
                       console.log("💾 URL de backup no filesystem:", `https://fs.webdraw.com${picturePath.replace('~', '')}`);
-            } else {
+                    } else {
                       // Fallback para URL original do Replicate se falhar
                       this.storyImage = replicateUrl;
                       console.log("⚠️ Falha ao salvar imagem localmente, usando URL original");
@@ -615,7 +615,7 @@ IMPORTANT DETAILS:
                     console.error("❌ Erro ao baixar imagem do Replicate:", error);
                     this.storyImage = replicateUrl; // Usar URL original como fallback
                   }
-          } else {
+                } else {
                   this.storyImage = replicateUrl;
                 }
               } else if (imageResult && imageResult.filepath) {
@@ -633,20 +633,20 @@ IMPORTANT DETAILS:
               console.error("Error generating image:", error);
               // Use fallback image
               this.storyImage = this.getRandomFallbackImage();
-        }
+            }
 
-        this.taskStatus.image = "done";
+            this.taskStatus.image = "done";
 
             // Start audio generation
             this.taskStatus.audio = "processing";
             
             try {
-        console.log("Starting audio generation...");
+             console.log("Starting audio generation...");
         
               // Prepare the audio text - start with the title followed by the story
               const audioText = `${storyObject.title}. ${storyObject.plot}`;
         
-        console.log(`Audio text length: ${audioText.length} characters`);
+              console.log(`Audio text length: ${audioText.length} characters`);
 
               // Generate audio using the SDK
         const audioResponse = await sdk.ai.generateAudio({
@@ -1264,17 +1264,247 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
     },
     
     shareStory() {
-      if (navigator.share) {
-        navigator.share({
-          title: this.storyData.title,
-          text: 'Confira esta história incrível que criei com IA!',
-          url: window.location.href
-        })
-          .then(() => console.log('Successful share'))
-          .catch((error) => console.log('Error sharing:', error));
-      } else {
-        alert('Compartilhamento não disponível neste navegador.');
+      try {
+        console.log("Setting permissions for story files before sharing...");
+        
+        // First set permissions on any files before trying to share
+        this.ensureStoryIsPubliclyAccessible();
+        
+        // Define the production URL for sharing
+        const PRODUCTION_ORIGIN = "https://webdraw.com/apps/ai-storyteller";
+        
+        // Determine if we're on localhost for development
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.hostname.includes('192.168.');
+        
+        // Use localhost for development, production URL otherwise
+        let baseUrl;
+        if (isLocalhost) {
+            baseUrl = window.location.origin;
+            console.log("Using localhost URL for sharing (development mode):", baseUrl);
+        } else {
+            baseUrl = PRODUCTION_ORIGIN;
+            console.log("Using production URL for sharing:", baseUrl);
+        }
+        
+        // Default to current URL
+        let shareUrl = window.location.href;
+        
+        // Track share event with PostHog
+        if (sdk && sdk.posthogEvent) {
+            sdk.posthogEvent("story_shared", {
+                story_title: this.storyData.title || "Untitled Story"
+            });
+        }
+        
+        // Try to use the Web Share API if available
+        if (navigator.share) {
+            console.log("Web Share API is available, attempting to share...");
+            
+            navigator.share({
+                title: this.storyData.title || "Shared Story",
+                text: 'Confira esta história incrível que criei com IA!',
+                url: shareUrl
+            })
+            .then(() => console.log('Successful share'))
+            .catch((error) => {
+                console.error("Error sharing:", error);
+                this.fallbackShare(shareUrl);
+            });
+        } else {
+            console.log("Web Share API not available, using fallback...");
+            this.fallbackShare(shareUrl);
+        }
+      } catch (overallError) {
+          console.error("Unexpected error in shareStory:", overallError);
+          alert('Erro ao compartilhar. Por favor, tente novamente.');
       }
+    },
+    
+    // New method to ensure the story is publicly accessible
+    async ensureStoryIsPubliclyAccessible() {
+      try {
+        console.log("Ensuring story is publicly accessible...");
+        
+        // Get current working directory
+        if (sdk && sdk.fs && typeof sdk.fs.cwd === 'function') {
+          const cwdPath = await sdk.fs.cwd();
+          console.log("Current working directory:", cwdPath);
+          
+          // First, let's make sure the AI Storyteller directory exists and has correct permissions
+          // Extract the user directory from the path
+          const userDirMatch = cwdPath.match(/^\/users\/([^\/]+)/);
+          if (!userDirMatch) {
+            console.warn("Could not determine user directory from path:", cwdPath);
+            return false;
+          }
+          
+          const userId = userDirMatch[1];
+          console.log("User ID:", userId);
+          
+          // Try different possible locations for the AI Storyteller directory
+          const possibleDirectories = [
+            `/users/${userId}/AI Storyteller`,
+            `/users/${userId}/Apps/AI Storyteller`,
+            `/users/${userId}/Apps/fabula/AI Storyteller`,
+            cwdPath + "/AI Storyteller"
+          ];
+          
+          // Try to find and set permissions on any directories we can
+          let foundDirectories = 0;
+          for (const dir of possibleDirectories) {
+            try {
+              const exists = await sdk.fs.exists(dir);
+              if (exists) {
+                console.log(`Found AI Storyteller directory: ${dir}`);
+                const success = await this.setFileAccess(dir);
+                if (success) {
+                  console.log(`✅ Set permissions for directory: ${dir}`);
+                  foundDirectories++;
+                }
+                
+                // Also check for localStorage file in this directory
+                const localStoragePath = `${dir}/localStorage`;
+                const localStorageExists = await sdk.fs.exists(localStoragePath);
+                if (localStorageExists) {
+                  console.log(`Found localStorage file: ${localStoragePath}`);
+                  const success = await this.setFileAccess(localStoragePath);
+                  if (success) {
+                    console.log(`✅ Set permissions for localStorage file: ${localStoragePath}`);
+                  }
+                }
+                
+                // Check for any JSON files in this directory
+                try {
+                  const files = await sdk.fs.list(dir);
+                  if (Array.isArray(files)) {
+                    console.log(`Found ${files.length} files in ${dir}`);
+                    let jsonCount = 0;
+                    
+                    // Process each file
+                    for (const file of files) {
+                      // Handle different return formats
+                      let filePath;
+                      if (typeof file === 'string') {
+                        filePath = file;
+                      } else if (file && typeof file === 'object') {
+                        filePath = file.path || `${dir}/${file.name}`;
+                      } else {
+                        continue;
+                      }
+                      
+                      // Check if it's a JSON file
+                      if (filePath.endsWith('.json')) {
+                        console.log(`Found JSON file: ${filePath}`);
+                        const success = await this.setFileAccess(filePath);
+                        if (success) {
+                          console.log(`✅ Set permissions for JSON file: ${filePath}`);
+                          jsonCount++;
+                        }
+                      }
+                    }
+                    
+                    console.log(`Set permissions for ${jsonCount} JSON files in ${dir}`);
+                  }
+                } catch (listError) {
+                  console.warn(`Could not list files in ${dir}:`, listError);
+                }
+              }
+            } catch (dirError) {
+              console.warn(`Error checking directory ${dir}:`, dirError);
+            }
+          }
+          
+          // If we found and fixed permissions on any directories, consider it a success
+          if (foundDirectories > 0) {
+            console.log(`✅ Set permissions for ${foundDirectories} AI Storyteller directories`);
+            
+            // Additionally, check for image and audio files that might need permissions
+            const mediaDirectories = [
+              `/users/${userId}/Pictures`,
+              `/users/${userId}/Audio`
+            ];
+            
+            for (const mediaDir of mediaDirectories) {
+              try {
+                const exists = await sdk.fs.exists(mediaDir);
+                if (exists) {
+                  console.log(`Found media directory: ${mediaDir}`);
+                  await this.setFileAccess(mediaDir);
+                  
+                  // If this story has image or audio, make sure those files have permissions
+                  if (this.storyImage && this.storyImage.includes('fs.webdraw.com')) {
+                    try {
+                      const imageUrl = new URL(this.storyImage);
+                      const imagePath = imageUrl.pathname;
+                      console.log(`Setting permissions for image: ${imagePath}`);
+                      await this.setFileAccess(imagePath);
+                    } catch (imageError) {
+                      console.warn("Error setting permissions for image:", imageError);
+                    }
+                  }
+                  
+                  if (this.audioSource && this.audioSource.includes('fs.webdraw.com')) {
+                    try {
+                      const audioUrl = new URL(this.audioSource);
+                      const audioPath = audioUrl.pathname;
+                      console.log(`Setting permissions for audio: ${audioPath}`);
+                      await this.setFileAccess(audioPath);
+                    } catch (audioError) {
+                      console.warn("Error setting permissions for audio:", audioError);
+                    }
+                  }
+                }
+              } catch (mediaError) {
+                console.warn(`Error checking media directory ${mediaDir}:`, mediaError);
+              }
+            }
+            
+            return true;
+          }
+          
+          console.warn("Could not find any AI Storyteller directories");
+          return false;
+        } else {
+          console.warn("sdk.fs.cwd is not available");
+          return false;
+        }
+      } catch (error) {
+        console.error("Error ensuring story is publicly accessible:", error);
+        return false;
+      }
+    },
+    
+    fallbackShare(url) {
+      // Fallback to copying to clipboard
+      navigator.clipboard.writeText(url).then(() => {
+          // Show toast notification
+          alert('Link copiado para a área de transferência!');
+      }).catch(err => {
+          console.error('Failed to copy:', err);
+          // Alternative fallback using document.execCommand
+          try {
+              const textArea = document.createElement('textarea');
+              textArea.value = url;
+              textArea.style.position = 'fixed';  // Avoid scrolling to bottom
+              document.body.appendChild(textArea);
+              textArea.focus();
+              textArea.select();
+              
+              const successful = document.execCommand('copy');
+              document.body.removeChild(textArea);
+              
+              if (successful) {
+                  alert('Link copiado para a área de transferência!');
+              } else {
+                  alert('Não foi possível copiar o link automaticamente. Por favor, copie manualmente: ' + url);
+              }
+          } catch (execError) {
+              console.error('Failed to copy using execCommand:', execError);
+              alert('Não foi possível copiar o link automaticamente. Por favor, copie manualmente: ' + url);
+          }
+      });
     },
     
     formatTime(seconds) {
@@ -1442,6 +1672,37 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
       }
     },
     
+    // Method for setting file access to public using ACL
+    async setFileAccess(filepath) {
+      if (!filepath) return false;
+      
+      try {
+        // Normalize path, remove leading/trailing spaces and ensure it starts with "/"
+        const normalizedPath = filepath.trim().startsWith('/') ? filepath.trim() : `/${filepath.trim()}`;
+        console.log(`Setting public permissions for file: ${normalizedPath}`);
+        
+        // Check if the file exists
+        const exists = await sdk.fs.exists(normalizedPath);
+        if (!exists) {
+          console.warn(`File does not exist: ${normalizedPath}`);
+          return false;
+        }
+        
+        // Set file permissions using chmod only - the other methods aren't available
+        if (sdk && sdk.fs && typeof sdk.fs.chmod === 'function') {
+          await sdk.fs.chmod(normalizedPath, 0o644); // Use 0o644 (rw-r--r--) to ensure web server can access the files
+          console.log(`✅ Set public permissions (0o644) for: ${normalizedPath}`);
+          return true;
+        } else {
+          console.warn(`⚠️ chmod method not available in sdk.fs`);
+          return false;
+        }
+      } catch (error) {
+        console.error(`❌ Error setting permissions for file: ${error.message}`);
+        return false;
+      }
+    },
+    
     async checkAudioReady(url, attempts = 3, delay = 2000) {
       if (!url) return false;
       
@@ -1499,7 +1760,7 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
           
           if (response.ok || response.status === 206) {
             console.log(`Audio file is now accessible! Status: ${response.status}`);
-      this.audioLoading = false;
+            this.audioLoading = false;
             clearInterval(this.audioCheckInterval);
             
             // If we're already on the result screen, prepare the audio
@@ -1593,8 +1854,8 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
                 }
               } catch (statError) {
                 console.warn("⚠️ Não foi possível obter estatísticas do arquivo:", statError);
-        }
-      } else {
+              }
+            } else {
               console.warn("⚠️ Arquivo não encontrado após salvar:", savePath);
             }
           } catch (checkError) {

@@ -37,11 +37,11 @@ window.IndexPage = {
                         <img src="/assets/image/caxixi.png" alt="caxixi" class="w-[33rem] h-auto" />
                     </div>
                     
-                    <!-- Main heading with handmade text style -->
-                    <h1 class="font-heading font-bold text-3xl md:text-4xl leading-tight text-center m-0 text-primary-dark">{{ $t('home.welcome') }}</h1>
+                    <!-- Main heading with handmade text style - mobile optimized for exactly 2 lines -->
+                    <h1 class="font-heading font-bold text-[18px] xs:text-xl sm:text-2xl md:text-4xl leading-tight text-center m-0 text-primary-dark max-w-[240px] xs:max-w-[280px] sm:max-w-none mx-auto">{{ $t('home.welcome') }}</h1>
                     
-                    <!-- Subheading -->
-                    <p class="font-body text-lg text-[#A67C52] text-center max-w-md">Uma viagem até Maragogipinho e Jaguaripe, Bahia, que embarca pelo rio, seja ele na beira, no mangue ou em cima de um saveiro.</p>
+                    <!-- Subheading - more compact on mobile -->
+                    <p class="font-body text-sm sm:text-base md:text-lg text-[#A67C52] text-center max-w-[300px] sm:max-w-md mx-auto leading-snug sm:leading-normal">Uma viagem até Maragogipinho e Jaguaripe, Bahia, que embarca pelo rio, seja ele na beira, no mangue ou em cima de um saveiro.</p>
                         
                         <!-- CTA section -->
                         <div class="flex flex-col items-center w-full gap-2">
@@ -57,7 +57,7 @@ window.IndexPage = {
                             </button>
                             
                         </div>
-                        <p class="font-body font-normal text-sm leading-[1.67] text-[#A67C52] m-0 mt-2">Embarque em uma nova história! Das tradições, das gerações, do coração.</p>
+                        <p class="font-body font-normal text-xs sm:text-sm leading-[1.67] text-[#A67C52] m-0 mt-2 text-center max-w-[280px] mx-auto">Embarque em uma nova história! Das tradições, das gerações, do coração.</p>
                                     </div>
                                     
                     <!-- Nosso Diferencial Section -->

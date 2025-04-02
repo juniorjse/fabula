@@ -27,7 +27,6 @@ window.MyStoriesPage = {
       <main class="max-w-4xl mx-auto px-4 pt-4 relative z-10">
         <div class="mb-8 text-center">
           <h1 class="font-heading font-bold text-3xl text-secondary-dark mb-2">Minhas Histórias</h1>
-          <p class="text-black font-body">Histórias personalizadas da fauna brasileira criadas para você</p>
                 </div>
 
         <!-- Stories Grid -->

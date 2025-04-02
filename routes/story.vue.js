@@ -1018,8 +1018,8 @@ window.StoryPage = {
                 
                 // Determine if we're on localhost for development
                 const isLocalhost = window.location.hostname === 'localhost' || 
-                                    window.location.hostname === '127.0.0.1' ||
-                                    window.location.hostname.includes('192.168.');
+                                   window.location.hostname === '127.0.0.1' ||
+                                   window.location.hostname.includes('192.168.');
                 
                 // Use localhost for development, production URL otherwise
                 let baseUrl;
@@ -1049,7 +1049,83 @@ window.StoryPage = {
                 // Create a query parameter with the story path
                 let shareUrl;
                 
-                if (this.fileUrl) {
+                // Check if the current story is loaded from localStorage
+                const isLocalStorageStory = this.fileUrl && (
+                    this.fileUrl.endsWith('/localStorage') || 
+                    this.fileUrl.includes('/localStorage/') || 
+                    this.fileUrl === 'localStorage'
+                );
+                
+                if (isLocalStorageStory) {
+                    console.log("This is a localStorage story - handling specially for sharing");
+                    
+                    // For localStorage stories, we need to save them to a file first to be shareable
+                    if (this.story && sdk && sdk.fs && typeof sdk.fs.write === 'function') {
+                        try {
+                            // Create a filename from the story title
+                            let safeFilename = this.story.title 
+                                ? this.story.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.json'
+                                : 'shared_story_' + new Date().getTime() + '.json';
+                            
+                            // Full path to save the story
+                            let saveFilePath = `~/AI Storyteller/${safeFilename}`;
+                            
+                            // Create the story data to save
+                            const storyData = {
+                                title: this.story.title || "",
+                                content: this.story.content || "",
+                                story: this.story.story || "",
+                                audioUrl: this.story.audioUrl || null,
+                                coverUrl: this.story.coverUrl || "/assets/image/bg.webp",
+                                imageBase64: this.story.imageBase64 || null,
+                                createdAt: this.story.createdAt || new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                                childName: this.story.childName || "",
+                                themes: this.story.themes || this.story.interests || "",
+                                voice: this.story.voice || ""
+                            };
+                            
+                            // Save the story to a file
+                            await sdk.fs.write(saveFilePath, JSON.stringify(storyData, null, 2));
+                            console.log("Saved localStorage story to file for sharing:", saveFilePath);
+                            
+                            // Set permissions for just this file
+                            if (sdk && sdk.fs && typeof sdk.fs.chmod === 'function') {
+                                await sdk.fs.chmod(saveFilePath, 0o644);
+                                console.log("Set permissions for shared story file:", saveFilePath);
+                            }
+                            
+                            // Get user ID from current working directory
+                            let userId = null;
+                            try {
+                                if (typeof sdk.fs.cwd === 'function') {
+                                    const cwdPath = await sdk.fs.cwd();
+                                    const cwdMatch = cwdPath.match(/\/users\/([^\/]+)/);
+                                    if (cwdMatch && cwdMatch[1]) {
+                                        userId = cwdMatch[1];
+                                    }
+                                }
+                            } catch (cwdError) {
+                                console.error("Error getting current working directory:", cwdError);
+                            }
+                            
+                            // Fallback user ID if needed
+                            if (!userId) {
+                                userId = "a4896ea5-db22-462e-a239-22641f27118c"; // Default ID
+                            }
+                            
+                            // Create the share URL with the new file - usando apenas o userId e o filename, sem duplicar AI Storyteller
+                            shareUrl = `${baseUrl}?story=${encodeURIComponent(userId + '/' + safeFilename)}`;
+                        } catch (saveError) {
+                            console.error("Failed to save localStorage story to file:", saveError);
+                            // Fallback to current URL
+                            shareUrl = window.location.href;
+                        }
+                    } else {
+                        console.warn("Cannot share localStorage story properly - missing SDK or story data");
+                        shareUrl = window.location.href;
+                    }
+                } else if (this.fileUrl) {
                     let userId = null;
                     let storyId = null;
                     
@@ -1133,7 +1209,21 @@ window.StoryPage = {
                         storyId = "story.json";
                     }
                     
-                    // Always use story parameter format for sharing
+                    // Set permissions for just this specific file
+                    if (sdk && sdk.fs && typeof sdk.fs.chmod === 'function') {
+                        try {
+                            let filePath = this.fileUrl;
+                            if (filePath.startsWith('~')) {
+                                filePath = filePath.substring(1);
+                            }
+                            await sdk.fs.chmod(filePath, 0o644);
+                            console.log("Set permissions for specific story file:", filePath);
+                        } catch (chmodError) {
+                            console.warn("Error setting permissions for story file:", chmodError);
+                        }
+                    }
+                    
+                    // Always use story parameter format for sharing - usando apenas o userId e o storyId, sem duplicar AI Storyteller 
                     shareUrl = `${baseUrl}?story=${encodeURIComponent(userId + '/' + storyId)}`;
                     
                     // If we also have an index, include it
@@ -1169,7 +1259,9 @@ window.StoryPage = {
                             text: `Check out this story: ${this.story?.title || ""}`,
                             url: shareUrl
                         });
+                        console.log("Successfully shared via Web Share API");
                     } catch (err) {
+                        // Don't use navigator.share again if it fails
                         console.error("Error sharing:", err);
                         this.fallbackShare(shareUrl);
                     }
