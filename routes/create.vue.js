@@ -251,7 +251,7 @@ window.CreatePage = {
         <!-- Story Result Screen -->
         <div v-if="screen === 'result'" class="relative flex items-center justify-center min-h-[80vh]">
           <!-- Story Container -->
-          <div class="bg-[#fae1b1]/60 rounded-lg p-8 shadow-lg border-2 border-[#e2c08c] relative overflow-hidden card-rustic w-full">
+          <div class="bg-[#fef0d6] rounded-lg p-8 shadow-lg border-2 border-[#e2c08c] relative overflow-hidden card-rustic w-full">
             <div class="flex flex-col items-center gap-8">
               <!-- Story Header -->
               <div class="flex flex-col items-center text-center">

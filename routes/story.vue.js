@@ -4,11 +4,16 @@ import i18n from "../i18n/index.js";
 window.StoryPage = {
     template: `
         <div v-if="sdkAvailable" class="min-h-screen pb-16 bg-[#F4F4F5]">
+            <!-- Background pattern -->
+            <div class="absolute inset-0 z-0">
+                <img src="/assets/image/caxixi2.png" alt="African Pattern Background" class="w-full h-full object-cover fixed opacity-30 filter sepia-[0.3] brightness-[1.1] saturate-[1.2]" />
+            </div>
+
             <!-- Navigation -->
             <nav class="relative z-10 py-3 px-4 sm:px-6 mb-4">
                 <div class="flex justify-between items-center">
                     <!-- Back button with rustic style -->
-                    <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200">
+                    <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-transparent border-2 border-[#3e2212] text-[#3e2212] hover:bg-[#3e2212]/10 rounded-xl font-heading font-medium text-xs md:text-sm flex items-center justify-center gap-1 transition-all duration-200 chalk-texture">
                         <i class="fas fa-arrow-left mr-1"></i> Voltar
                     </router-link>
                     <!-- Spacer to ensure justify-between works properly -->
@@ -39,24 +44,24 @@ window.StoryPage = {
                 <p class="text-center text-gray-700 mb-6">Isso pode ocorrer quando a história não está mais disponível ou os arquivos de mídia não podem ser acessados.</p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 mt-4">
-                    <router-link to="/" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200">
+                    <router-link to="/" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200 chalk-texture">
                         <i class="fas fa-home mr-1"></i> Voltar ao Início
                     </router-link>
-                    <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200">
+                    <router-link to="/my-stories" class="flex items-center gap-1 py-2 px-4 bg-primary hover:bg-primary-dark btn-rustic text-white font-heading font-medium text-sm shadow-md transition-all duration-200 chalk-texture drop-shadow-[2px_2px_0_#3e2212]">
                         <i class="fas fa-book mr-1"></i> Minhas Histórias
                 </router-link>
                 </div>
             </div>
 
             <!-- Story Display -->
-            <main v-else class="max-w-4xl mx-auto bg-neutral-light/70 rounded-lg shadow-lg border border-neutral-dark card-rustic">
-                <div class="px-6 md:p-8 relative">                    
+            <main v-else class="max-w-4xl mx-auto bg-[#fef0d6] rounded-lg shadow-lg border-2 border-[#e2c08c] card-rustic">
+                <div class="px-6 md:p-8 relative bg-[#fef0d6]">                    
                     <!-- Story Content -->
                     <div class="mb-8">
                         <div class="flex flex-col items-center mb-8">
                             <!-- Book Cover -->
                             <div class="relative w-full max-w-xs aspect-[138/138] rounded-lg mb-6 overflow-hidden shadow-[0_1px_2px_0_rgba(22,109,149,0.2),0_3px_3px_0_rgba(22,109,149,0.17),0_7px_4px_0_rgba(22,109,149,0.1),0_12px_5px_0_rgba(22,109,149,0.03)]">
-                                <div v-if="story && (story.imageUrl || story.image || story.imageBase64)" class="w-full h-full bg-tertiary">
+                                <div v-if="story && (story.imageUrl || story.image || story.imageBase64)" class="w-full h-full bg-[#fef1d6]">
                                     <img 
                                         :src="story.imageUrl || story.image || story.imageBase64" 
                                         :alt="story ? formatTitle(story.title) : ''" 
@@ -64,15 +69,15 @@ window.StoryPage = {
                                         @error="handleImageError" 
                                     />
                                 </div>
-                                <div v-else class="w-full h-full bg-tertiary flex items-center justify-center">
-                                    <i class="fas fa-book-open text-5xl text-white"></i>
+                                <div v-else class="w-full h-full bg-[#fef1d6] flex items-center justify-center">
+                                    <i class="fas fa-book-open text-5xl text-[#4b2707]"></i>
                                 </div>
                                 <div class="absolute inset-0 bg-[url('/assets/image/book-texture.svg')] bg-cover bg-no-repeat opacity-30 mix-blend-multiply pointer-events-none"></div>
                             </div>
                             
                             <!-- Author and Title -->
                             <div class="text-center w-full">
-                                <h1 class="text-2xl font-semibold text-[#A67C52] mb-4">{{ story ? formatTitle(story.title) : '' }}</h1>
+                                <h1 class="text-2xl font-semibold text-[#4b2707] mb-4">{{ story ? formatTitle(story.title) : '' }}</h1>
                             </div>
                         </div>
 
@@ -80,41 +85,38 @@ window.StoryPage = {
                         <div v-if="story" class="flex flex-col gap-2 mb-6">
                             <!-- Progress Bar -->
                             <div class="w-full relative">
-                                <div class="w-full h-1 bg-neutral-dark rounded-full cursor-pointer" @click="seekAudio($event)">
-                                    <div class="h-1 bg-primary rounded-full" :style="{ width: audioProgress + '%' }"></div>
+                                <div class="w-full h-1 bg-[#e2c08c] rounded-full cursor-pointer" @click="seekAudio($event)">
+                                    <div class="h-1 bg-[#4b2707] rounded-full" :style="{ width: audioProgress + '%' }"></div>
                                 </div>
                             </div>
                             
                             <!-- Time Display -->
                             <div class="flex justify-between w-full">
-                                <span class="text-xs text-secondary-dark opacity-80">{{ formatTime(currentTime) }}</span>
-                                <span class="text-xs text-secondary-dark opacity-80">{{ formatTime(duration) }}</span>
+                                <span class="text-xs text-[#4b2707] opacity-80">{{ formatTime(currentTime) }}</span>
+                                <span class="text-xs text-[#4b2707] opacity-80">{{ formatTime(duration) }}</span>
                             </div>
                             
                             <!-- Controls -->
                             <div class="flex justify-center items-center gap-4 mt-1">
-                                <button @click="shareStory" class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white">
+                                <button @click="shareStory" class="w-10 h-10 rounded-full bg-[#4b2707] flex items-center justify-center text-white">
                                     <i class="fas fa-share-alt"></i>
                                 </button>
                                 
-                                <button @click="toggleAudio" class="w-16 h-16 rounded-full bg-primary border border-primary-dark shadow-md flex items-center justify-center p-4 text-white">
+                                <button @click="toggleAudio" class="w-16 h-16 rounded-full bg-[#4b2707] border-2 border-[#e2c08c] shadow-md flex items-center justify-center p-4 text-white">
                                     <i :class="isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play'" class="text-xl"></i>
                                 </button>
                                 
-                                <button @click="scrollToText" class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center text-white">
+                                <button @click="scrollToText" class="w-10 h-10 rounded-full bg-[#4b2707] flex items-center justify-center text-white">
                                     <i class="fas fa-file-alt"></i>
                                 </button>
                             </div>
                             
                             <audio ref="audioPlayer" :src="story.audioUrl" @timeupdate="updateProgress" @ended="audioEnded" @loadedmetadata="onAudioLoaded"></audio>
                         </div>
-                        <div v-else class="mb-4">
-                            <!-- Placeholder for audio player when story is not loaded -->
-                        </div>
                         
                         <!-- Story Text Container -->
                         <div class="story-text-container">
-                            <div v-if="story" class="w-full text-secondary-dark text-sm">
+                            <div v-if="story" class="w-full text-[#4b2707] text-sm">
                                 <div v-if="hasHtmlContent(getStoryText())" v-html="getStoryText()" class="prose prose-sky max-w-none"></div>
                                 <div v-else-if="getStoryText()" class="whitespace-pre-wrap">{{ getStoryText() }}</div>
                                 <div v-else class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-yellow-700">
@@ -127,25 +129,14 @@ window.StoryPage = {
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                        <a @click.prevent="downloadAudio" class="bg-primary hover:bg-primary-dark btn-rustic text-white px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-download"></i>
+                        <button @click="downloadAudio" class="flex-1 py-2 px-3 bg-transparent border-2 border-[#3e2212] text-[#3e2212] hover:bg-[#3e2212]/10 rounded-xl font-heading font-medium text-xs md:text-sm flex items-center justify-center gap-1 transition-all duration-200 chalk-texture">
+                            <i class="fas fa-download"></i>
                             {{ $t('ui.downloadAudio') }}
-                        </a>
-                        <router-link to="/create" class="bg-[#17557a] hover:bg-[#0f3f5c] btn-rustic text-white px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <router-link to="/create" class="flex-1 py-2 px-3 bg-[#eecd88] border-2 border-[#3e2212] text-[#3e2212] hover:bg-[#eecd88]/90 rounded-xl font-heading font-medium text-xs md:text-sm flex items-center justify-center gap-1 transition-all duration-200 chalk-texture drop-shadow-[2px_2px_0_#3e2212]">
+                            <i class="fas fa-plus"></i>
                             {{ $t('ui.createNewStory') }}
                         </router-link>
-                        <!-- Add as Example Button (Admin Only) -->
-                        <button 
-                            v-if="isAdmin && translationsFileExists" 
-                            @click="addAsExample" 
-                            class="bg-secondary hover:bg-secondary-dark btn-rustic text-white px-6 py-3 font-heading font-medium text-sm shadow-md transition-all duration-200 flex items-center justify-center gap-2"
-                            :disabled="addingAsExample"
-                        >
-                            <i class="fa-solid fa-bookmark"></i>
-                            <span v-if="!addingAsExample">{{ $t('ui.addAsExample') }}</span>
-                            <span v-else>{{ $t('ui.adding') }}</span>
-                        </button>
                     </div>
                     
                     <!-- Example Added Message -->
@@ -154,32 +145,32 @@ window.StoryPage = {
                     </div>
                     
                     <!-- Story Settings (Collapsible) -->
-                    <details v-if="story" class="bg-neutral-light/70 border border-neutral-dark rounded-lg p-4 shadow-sm mb-8 group card-rustic">
-                        <summary class="text-secondary-dark font-medium cursor-pointer flex items-center justify-between">
+                    <details v-if="story" class="bg-[#fef1d6] border-2 border-[#e2c08c] rounded-lg p-4 shadow-sm mb-8 group card-rustic">
+                        <summary class="text-[#4b2707] font-medium cursor-pointer flex items-center justify-between">
                             <div class="flex items-center">
-                                <i class="fa-solid fa-gear mr-2 text-primary"></i>
+                                <i class="fa-solid fa-gear mr-2 text-[#4b2707]"></i>
                                 {{ $t('ui.storySettings') }}
                             </div>
-                            <i class="fa-solid fa-chevron-down text-primary group-open:rotate-180 transition-transform duration-300"></i>
+                            <i class="fa-solid fa-chevron-down text-[#4b2707] group-open:rotate-180 transition-transform duration-300"></i>
                         </summary>
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-neutral-dark">
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-[#e2c08c]">
                             <div v-if="story.childName" class="space-y-2">
-                                <label class="block text-sm font-medium text-secondary-dark">{{ $t('ui.childName') }}</label>
-                                <div class="bg-neutral rounded-full px-4 py-2 text-secondary-dark">
+                                <label class="block text-sm font-medium text-[#4b2707]">{{ $t('ui.childName') }}</label>
+                                <div class="bg-[#fef1d6] rounded-full px-4 py-2 text-[#4b2707] border-2 border-[#e2c08c]">
                                     {{ story.childName }}
                                 </div>
                             </div>
                             
                             <div v-if="story.themes || story.interests" class="space-y-2">
-                                <label class="block text-sm font-medium text-secondary-dark">{{ $t('ui.themes') }}</label>
-                                <div class="bg-neutral rounded-full px-4 py-2 text-secondary-dark">
+                                <label class="block text-sm font-medium text-[#4b2707]">{{ $t('ui.themes') }}</label>
+                                <div class="bg-[#fef1d6] rounded-full px-4 py-2 text-[#4b2707] border-2 border-[#e2c08c]">
                                     {{ story.themes || story.interests }}
                                 </div>
                             </div>
 
                             <div v-if="story.voice" class="space-y-2">
-                                <label class="block text-sm font-medium text-secondary-dark">{{ $t('ui.voice') }}</label>
-                                <div class="bg-neutral rounded-full p-2 text-secondary-dark flex items-center gap-2">
+                                <label class="block text-sm font-medium text-[#4b2707]">{{ $t('ui.voice') }}</label>
+                                <div class="bg-[#fef1d6] rounded-full p-2 text-[#4b2707] border-2 border-[#e2c08c] flex items-center gap-2">
                                     <img v-if="typeof story.voice === 'object' && story.voice.avatar" :src="story.voice.avatar" class="w-8 h-8 rounded-full" />
                                     <span>{{ typeof story.voice === 'object' ? story.voice.name : story.voice }}</span>
                                 </div>

@@ -31,12 +31,12 @@ window.IndexPage = {
                         </div>
                         <!-- My Stories Button -->
                         <div class="flex justify-end flex-1">
-                            <button
+                            <router-link
+                                to="/my-stories"
                                 class="px-6 py-2 text-[#3e2212] bg-transparent border-2 border-[#3e2212] rounded-xl hover:bg-[#3e2212]/10 transition-colors duration-200 chalk-texture ml-4"
-                                @click="nav('/minhas-historias')"
                             >
                                 Minhas Histórias
-                            </button>
+                            </router-link>
                         </div>
                     </div>
                 </nav>
@@ -152,7 +152,7 @@ window.IndexPage = {
     },
 
     nav(path) {
-      window.location.href = path;
+      this.$router.push(path);
     }
   },
   beforeUnmount() {
