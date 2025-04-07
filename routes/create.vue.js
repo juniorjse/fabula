@@ -23,74 +23,125 @@ window.CreatePage = {
     <div class="min-h-screen bg-neutral-light pb-16">
       <!-- Background pattern -->
       <div class="absolute inset-0 z-0">
-        <img src="/assets/image/background.jpg" alt="African Pattern Background" class="w-full h-full object-cover fixed opacity-15" />
+        <img src="/assets/image/caxixi2.png" alt="African Pattern Background" class="w-full h-full object-cover fixed opacity-30 filter sepia-[0.3] brightness-[1.1] saturate-[1.2]" />
       </div>
       
       <!-- Navigation Header -->
       <nav class="relative z-10 py-3 px-4 sm:px-6 mb-4">
         <div class="flex justify-between items-center">
           <!-- Back button with rustic style -->
-          <button @click="$router.push('/')" class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200">
+          <button 
+            v-if="screen !== 'form'"
+            @click="goBack" 
+            class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200"
+          >
             <i class="fas fa-arrow-left mr-1"></i> Voltar
           </button>
+          <a 
+            v-else
+            href="javascript:history.back()" 
+            class="flex items-center gap-1 py-2 px-4 bg-neutral hover:bg-neutral-dark btn-rustic text-secondary-dark font-heading font-medium text-sm shadow-md transition-all duration-200"
+          >
+            <i class="fas fa-arrow-left mr-1"></i> Voltar
+          </a>
         </div>
       </nav>
       
       <!-- Main Content -->
       <main class="max-w-4xl mx-auto px-4 pt-4 relative z-10">
         <!-- Form Content - Only shown when not generating story -->
-        <div v-if="screen === 'form'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark card-rustic">
+        <div v-if="screen === 'form'" class="bg-[#fae1b1]/60 rounded-lg p-8 shadow-lg border-2 border-[#e2c08c] card-rustic">
           <div class="mb-8 text-center">
-            <h1 class="font-heading font-bold text-3xl text-secondary-dark mb-2">Criar Uma História</h1>
-            <p class="text-black font-body">Personalize a história com o nome do seu filho e suas preferências</p>
+            <h1 class="font-heading font-bold text-3xl text-[#4b2707] mb-2">Criar Uma História</h1>
+            <p class="text-[#4b2707] font-body">Personalize a história com o nome do seu filho e suas preferências</p>
           </div>
           
           <!-- Input Form -->
           <div class="space-y-8">
             <!-- Child's Name Input -->
             <div class="form-group">
-              <label for="childName" class="block font-heading font-bold text-lg text-secondary-dark mb-2">Nome da Criança</label>
+              <label for="childName" class="block font-heading font-bold text-lg text-[#4b2707] mb-2">Nome da Criança</label>
               <input 
                 type="text" 
                 id="childName" 
                 v-model="childName" 
-                class="w-full p-3 bg-neutral-light border border-neutral-dark rounded-md font-body focus:border-primary focus:outline-none"
+                class="w-full p-3 bg-[#fef1d6] border-2 border-[#e2c08c] rounded-md font-body focus:border-primary focus:outline-none text-[#4b2707]"
                 placeholder="Digite o nome da criança" 
               />
             </div>
             
             <!-- Brazilian Fauna Selection -->
             <div class="form-group">
-              <label class="block font-heading font-bold text-lg text-secondary-dark mb-2">Elemento da Cultura Baiana</label>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <label class="block font-heading font-bold text-lg text-[#4b2707] mb-2">Elemento Cultural</label>
+              <div class="grid grid-cols-2 gap-3">
                 <div v-for="animal in brazilianAnimals" :key="animal.id" 
                      @click="selectAnimal(animal)"
                      :class="[
-                       'bg-neutral-light/90 p-3 rounded-md border cursor-pointer transition-all transform hover:scale-105 flex flex-col items-center text-center gap-2',
-                       selectedAnimal && selectedAnimal.id === animal.id ? 'border-primary shadow-md' : 'border-neutral-dark'
+                       'bg-[#fef1d6] p-3 rounded-md border-2 cursor-pointer transition-all transform hover:scale-105 flex flex-col items-center text-center gap-2',
+                       selectedAnimal && selectedAnimal.id === animal.id ? 'border-primary shadow-md' : 'border-[#e2c08c]'
                      ]">
                   <div class="w-16 h-16 flex items-center justify-center text-primary">
-                    <i :class="animal.icon" class="text-3xl"></i>
+                    <img v-if="animal.image" :src="animal.image" :alt="animal.name" class="w-12 h-12 rounded-full object-cover">
+                    <i v-else :class="animal.icon" class="text-3xl"></i>
                   </div>
-                  <span class="font-heading font-bold text-sm text-secondary-dark">{{ animal.name }}</span>
+                  <span class="font-heading font-bold text-sm text-[#4b2707]">{{ animal.name }}</span>
                 </div>
               </div>
             </div>
             
             <!-- Story Location Selection -->
             <div class="form-group">
-              <label class="block font-heading font-bold text-lg text-secondary-dark mb-2">Onde a História Acontece?</label>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <label class="block font-heading font-bold text-lg text-[#4b2707] mb-2">Onde a História Acontece?</label>
+              <div class="grid grid-cols-2 gap-3">
                 <div v-for="location in storyLocations" :key="location.id" 
                      @click="selectLocation(location)"
                      :class="[
-                       'bg-neutral-light/90 p-3 rounded-md border cursor-pointer transition-all transform hover:scale-105 flex flex-col items-center text-center gap-2',
-                       selectedLocation && selectedLocation.id === location.id ? 'border-primary shadow-md' : 'border-neutral-dark'
+                       'bg-[#fef1d6] p-3 rounded-md border-2 cursor-pointer transition-all transform hover:scale-105 flex flex-col items-center text-center gap-2',
+                       selectedLocation && selectedLocation.id === location.id ? 'border-primary shadow-md' : 'border-[#e2c08c]'
                      ]">
                   <div class="w-16 h-16 flex items-center justify-center text-tertiary">
-                    <i :class="location.icon" class="text-3xl"></i>
+                    <img v-if="location.image" :src="location.image" :alt="location.name" class="w-12 h-12 rounded-full object-cover">
+                    <i v-else :class="location.icon" class="text-3xl"></i>
                   </div>
-                  <span class="font-heading font-bold text-sm text-secondary-dark">{{ location.name }}</span>
+                  <span class="font-heading font-bold text-sm text-[#4b2707]">{{ location.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Voice Selection -->
+            <div class="form-group mt-8">
+              <label class="block font-heading font-bold text-lg text-[#4b2707] mb-2">Escolha o Narrador</label>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-for="voice in voiceOptions" :key="voice.id" 
+                     @click="selectVoice(voice)"
+                     :class="[
+                       'bg-[#fef1d6] p-4 rounded-lg border-2 transition-all hover:shadow-lg',
+                       selectedVoice && selectedVoice.id === voice.id ? 'border-primary shadow-md' : 'border-[#e2c08c]'
+                     ]">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <div class="flex-shrink-0">
+                        <img 
+                          :src="voice.avatar"
+                          :alt="voice.name"
+                          class="w-12 h-12 rounded-full"
+                        />
+                      </div>
+                      <span class="text-lg font-medium text-[#4b2707]">{{ voice.name }}</span>
+                    </div>
+                    <button 
+                      @click.stop="playVoicePreview(voice)"
+                      :disabled="voice.isLoading"
+                      class="bg-teal-500 hover:bg-teal-600 w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors duration-200 flex-shrink-0"
+                      title="Ouvir prévia da voz"
+                    >
+                      <i :class="[
+                        'text-lg',
+                        voice.isLoading ? 'fas fa-spinner fa-spin' : 
+                        isPreviewPlaying === voice.id ? 'fas fa-pause' : 'fas fa-play'
+                      ]"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -101,179 +152,178 @@ window.CreatePage = {
                 @click="generateStory" 
                 :disabled="!canGenerateStory"
                 :class="['w-full py-4 font-heading font-bold text-xl transition-all btn-rustic', 
-                  canGenerateStory ? 'bg-primary hover:bg-primary-dark text-white' : 'bg-neutral text-neutral-dark cursor-not-allowed']">
+                  canGenerateStory ? 'bg-primary hover:bg-primary-dark text-white' : 'bg-[#fef1d6] text-[#4b2707] cursor-not-allowed border-2 border-[#e2c08c]']">
                 Criar História
               </button>
-              <p v-if="!canGenerateStory" class="text-center text-primary-dark mt-2 font-body text-sm">
+              <p v-if="!canGenerateStory" class="text-center text-[#4b2707] mt-2 font-body text-sm">
                 Por favor, preencha todos os campos para continuar
               </p>
             </div>
           </div>
         </div>
         
+        <!-- Hidden audio elements for voice previews -->
+        <div style="display: none;">
+          <audio 
+            v-for="voice in voiceOptions" 
+            :key="'preview-' + voice.id"
+            :id="'preview-audio-' + voice.id"
+            preload="none"
+            @ended="audioEnded(voice)"
+          >
+            <source :src="voice.previewAudio" type="audio/mp3">
+          </audio>
+        </div>
+        
         <!-- Loading Screen - Shown when generating story -->
-        <div v-if="screen === 'generating'" class="bg-neutral-light/80 rounded-lg p-8 shadow-lg border border-neutral-dark text-center card-rustic">
-          <div class="mb-8">
+        <div v-if="screen === 'generating'" class="bg-[#fae1b1]/60 rounded-lg p-8 shadow-lg border-2 border-[#e2c08c] card-rustic flex flex-col items-center justify-center min-h-[80vh]">
+          <div class="text-center">
             <div class="w-24 h-24 mx-auto mb-4 relative overflow-hidden rounded-full">
-              <div class="absolute inset-0 rounded-full bg-primary/20 animate-pulse duration-1000"></div>
-              <div class="absolute inset-4 rounded-full bg-primary/40 animate-pulse duration-2000"></div>
-              <i class="fas fa-feather-alt text-primary text-4xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+              <div class="absolute inset-0 rounded-full bg-[#4b2707]/20 animate-pulse duration-1000"></div>
+              <div class="absolute inset-4 rounded-full bg-[#4b2707]/40 animate-pulse duration-2000"></div>
+              <i class="fas fa-feather-alt text-[#4b2707] text-4xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
             </div>
-            <h2 class="font-heading font-bold text-2xl text-secondary-dark">Criando Sua História...</h2>
+            <h2 class="font-heading font-bold text-2xl text-[#4b2707] mb-8">Criando Sua História...</h2>
           </div>
           
           <!-- Progress Status -->
-          <div class="max-w-md mx-auto">
-            <div class="grid grid-cols-1 gap-4">
+          <div class="max-w-md w-full">
+            <div class="grid grid-cols-1 gap-6">
               <div class="flex items-center gap-3">
                 <div :class="['w-8 h-8 rounded-full flex items-center justify-center', 
-                  taskStatus.plot === 'done' ? 'bg-primary text-white' : 
-                  taskStatus.plot === 'processing' ? 'bg-primary-light text-white animate-pulse' : 
-                  'bg-neutral text-neutral-dark']">
+                  taskStatus.plot === 'done' ? 'bg-[#4b2707] text-white' : 
+                  taskStatus.plot === 'processing' ? 'bg-[#4b2707]/60 text-white animate-pulse' : 
+                  'bg-[#fef1d6] text-[#4b2707] border-2 border-[#e2c08c]']">
                   <i :class="[
                     taskStatus.plot === 'done' ? 'fas fa-check' : 
                     taskStatus.plot === 'processing' ? 'fas fa-spinner fa-spin' : 
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-black">Criando Enredo</span>
+                <span class="font-body text-[#4b2707] text-lg">Criando Enredo</span>
               </div>
               
               <div class="flex items-center gap-3">
                 <div :class="['w-8 h-8 rounded-full flex items-center justify-center', 
-                  taskStatus.story === 'done' ? 'bg-primary text-white' : 
-                  taskStatus.story === 'processing' ? 'bg-primary-light text-white animate-pulse' : 
-                  'bg-neutral text-neutral-dark']">
+                  taskStatus.story === 'done' ? 'bg-[#4b2707] text-white' : 
+                  taskStatus.story === 'processing' ? 'bg-[#4b2707]/60 text-white animate-pulse' : 
+                  'bg-[#fef1d6] text-[#4b2707] border-2 border-[#e2c08c]']">
                   <i :class="[
                     taskStatus.story === 'done' ? 'fas fa-check' : 
                     taskStatus.story === 'processing' ? 'fas fa-spinner fa-spin' : 
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-black">Escrevendo História</span>
+                <span class="font-body text-[#4b2707] text-lg">Escrevendo História</span>
               </div>
               
               <div class="flex items-center gap-3">
                 <div :class="['w-8 h-8 rounded-full flex items-center justify-center', 
-                  taskStatus.image === 'done' ? 'bg-primary text-white' : 
-                  taskStatus.image === 'processing' ? 'bg-primary-light text-white animate-pulse' : 
-                  'bg-neutral text-neutral-dark']">
+                  taskStatus.image === 'done' ? 'bg-[#4b2707] text-white' : 
+                  taskStatus.image === 'processing' ? 'bg-[#4b2707]/60 text-white animate-pulse' : 
+                  'bg-[#fef1d6] text-[#4b2707] border-2 border-[#e2c08c]']">
                   <i :class="[
                     taskStatus.image === 'done' ? 'fas fa-check' : 
                     taskStatus.image === 'processing' ? 'fas fa-spinner fa-spin' : 
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-black">Criando Ilustração</span>
+                <span class="font-body text-[#4b2707] text-lg">Criando Ilustração</span>
               </div>
               
               <div class="flex items-center gap-3">
                 <div :class="['w-8 h-8 rounded-full flex items-center justify-center', 
-                  taskStatus.audio === 'done' ? 'bg-primary text-white' : 
-                  taskStatus.audio === 'processing' ? 'bg-primary-light text-white animate-pulse' : 
-                  'bg-neutral text-neutral-dark']">
+                  taskStatus.audio === 'done' ? 'bg-[#4b2707] text-white' : 
+                  taskStatus.audio === 'processing' ? 'bg-[#4b2707]/60 text-white animate-pulse' : 
+                  'bg-[#fef1d6] text-[#4b2707] border-2 border-[#e2c08c]']">
                   <i :class="[
                     taskStatus.audio === 'done' ? 'fas fa-check' : 
                     taskStatus.audio === 'processing' ? 'fas fa-spinner fa-spin' : 
                     'fas fa-hourglass'
                   ]"></i>
                 </div>
-                <span class="font-body text-black">Gerando Narração</span>
+                <span class="font-body text-[#4b2707] text-lg">Gerando Narração</span>
               </div>
             </div>
           </div>
         </div>
         
         <!-- Story Result Screen -->
-        <div v-if="screen === 'result'" class="relative">
+        <div v-if="screen === 'result'" class="relative flex items-center justify-center min-h-[80vh]">
           <!-- Story Container -->
-          <div class="bg-neutral-light/90 rounded-lg p-8 shadow-lg border border-neutral-dark relative overflow-hidden card-rustic">
-            <div class="flex flex-col gap-8">
+          <div class="bg-[#fae1b1]/60 rounded-lg p-8 shadow-lg border-2 border-[#e2c08c] relative overflow-hidden card-rustic w-full">
+            <div class="flex flex-col items-center gap-8">
               <!-- Story Header -->
-              <div class="flex flex-col items-center">
+              <div class="flex flex-col items-center text-center">
                 <!-- Story Image with Book Texture -->
                 <div v-if="storyImage" class="relative w-full max-w-xs aspect-square rounded-lg mb-6 overflow-hidden shadow-lg">
                   <img :src="storyImage" alt="Story Illustration" class="w-full h-full object-cover absolute inset-0" @error="handleImageError" />
                   <div class="absolute inset-0 bg-[url('/assets/image/book-texture.svg')] bg-cover bg-no-repeat opacity-30 mix-blend-multiply pointer-events-none"></div>
                 </div>
-                <div v-else class="w-full max-w-xs rounded-lg shadow-md border border-neutral-dark aspect-square bg-tertiary-light flex items-center justify-center mb-6">
-                  <i class="fas fa-book-open text-5xl text-secondary"></i>
+                <div v-else class="w-full max-w-xs rounded-lg shadow-md border-2 border-[#e2c08c] aspect-square bg-[#fef1d6] flex items-center justify-center mb-6">
+                  <i class="fas fa-book-open text-5xl text-[#4b2707]"></i>
                 </div>
                 
                 <!-- Story Title -->
                 <div class="text-center w-full">
-                  <h1 class="font-heading font-bold text-2xl text-secondary-dark mb-4">{{ storyData?.title || 'Uma História Encantadora' }}</h1>
+                  <h1 class="font-heading font-bold text-2xl text-[#4b2707] mb-4">{{ storyData?.title || 'Uma História Encantadora' }}</h1>
                 </div>
               </div>
               
               <!-- Audio Player (show only if audio is available) -->
-              <div v-if="audioSource" class="flex flex-col gap-2 mb-6">
+              <div v-if="audioSource" class="flex flex-col gap-2 mb-6 w-full max-w-md">
                 <!-- Progress Bar -->
                 <div class="w-full relative">
-                  <div class="w-full h-1 bg-neutral-dark rounded-full cursor-pointer" @click="seekAudio">
-                    <div class="h-1 bg-primary rounded-full" :style="{ width: audioProgress + '%' }"></div>
+                  <div class="w-full h-1 bg-[#e2c08c] rounded-full cursor-pointer" @click="seekAudio">
+                    <div class="h-1 bg-[#4b2707] rounded-full" :style="{ width: audioProgress + '%' }"></div>
                   </div>
                 </div>
                 
                 <!-- Time Display -->
                 <div class="flex justify-between w-full">
-                  <span class="text-xs text-black">{{ formatTime(audioCurrentTime) }}</span>
-                  <span class="text-xs text-black">{{ formatTime(audioDuration) }}</span>
+                  <span class="text-xs text-[#4b2707]">{{ formatTime(audioCurrentTime) }}</span>
+                  <span class="text-xs text-[#4b2707]">{{ formatTime(audioDuration) }}</span>
                 </div>
                 
                 <!-- Controls -->
                 <div class="flex justify-center items-center gap-4 mt-4">
-                  <button @click="downloadAudio" class="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+                  <button @click="downloadAudio" class="w-10 h-10 rounded-full bg-[#4b2707] flex items-center justify-center hover:bg-[#3e2212] transition-colors">
                     <i class="fas fa-download text-white"></i>
                   </button>
-                  <button @click="toggleAudio" :disabled="audioLoading" class="w-16 h-16 rounded-full bg-primary border border-primary-light shadow-md flex items-center justify-center p-4 relative">
+                  <button @click="toggleAudio" :disabled="audioLoading" class="w-16 h-16 rounded-full bg-[#4b2707] border-2 border-[#e2c08c] shadow-md flex items-center justify-center p-4 relative hover:bg-[#3e2212] transition-colors">
                     <i v-if="!audioLoading" :class="['fas', isPlaying ? 'fa-pause' : 'fa-play', 'text-white text-xl']"></i>
                     <!-- Loading spinner when audio is preparing -->
                     <div v-if="audioLoading" class="absolute inset-0 flex items-center justify-center">
                       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                     </div>
                   </button>
-                  <button @click="shareStory" class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center">
+                  <button @click="shareStory" class="w-10 h-10 rounded-full bg-[#4b2707] flex items-center justify-center hover:bg-[#3e2212] transition-colors">
                     <i class="fas fa-share-alt text-white"></i>
                   </button>
                 </div>
                 
                 <!-- Audio loading message -->
-                <div v-if="audioLoading" class="text-center text-xs text-black font-medium mt-2">
+                <div v-if="audioLoading" class="text-center text-xs text-[#4b2707] font-medium mt-2">
                   Preparando áudio... por favor aguarde
                 </div>
               </div>
               
-              <!-- Story Text com espaçamento superior -->
-              <div class="prose prose-sm md:prose-base text-black font-body mt-8 max-w-full">
-                <div v-html="formattedStory" class="text-black space-y-4 px-2"></div>
+              <!-- Story Text -->
+              <div class="prose prose-sm md:prose-base text-[#4b2707] font-body max-w-full">
+                <div v-html="formattedStory" class="text-[#4b2707] space-y-4 px-2"></div>
               </div>
               
               <!-- Action Buttons -->
-              <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                <button @click="goBack" class="btn-rustic bg-primary hover:bg-primary-dark text-white font-heading font-bold py-3 px-6 flex-1 flex items-center justify-center gap-2">
+              <div class="flex flex-col sm:flex-row gap-4 mt-6 w-full max-w-md">
+                <button @click="goBack" class="btn-rustic bg-[#4b2707] hover:bg-[#3e2212] text-white font-heading font-bold py-3 px-6 flex-1 flex items-center justify-center gap-2 transition-colors">
                   <i class="fas fa-plus"></i> Criar Nova História
                 </button>
-                <router-link to="/my-stories" class="btn-rustic bg-secondary hover:bg-secondary-dark text-white font-heading font-bold py-3 px-6 flex items-center justify-center gap-2">
+                <router-link to="/my-stories" class="btn-rustic bg-[#4b2707] hover:bg-[#3e2212] text-white font-heading font-bold py-3 px-6 flex items-center justify-center gap-2 transition-colors">
                   <i class="fas fa-book"></i> Minhas Histórias
                 </router-link>
               </div>
             </div>
           </div>
-          
-          <!-- Hidden Audio Element -->
-          <audio 
-            ref="audioPlayer" 
-            preload="auto"
-            crossorigin="anonymous"
-            @loadedmetadata="onAudioLoaded" 
-            @timeupdate="updateAudioProgress" 
-            @ended="onAudioEnded">
-            <source :src="audioSource" type="audio/mp3">
-            <source :src="audioSource" type="audio/mpeg">
-            <source :src="audioSource" type="audio/wav">
-            Your browser does not support the audio element.
-          </audio>
         </div>
       </main>
       
@@ -296,6 +346,7 @@ window.CreatePage = {
       childName: "",
       selectedAnimal: null,
       selectedLocation: null,
+      selectedVoice: null, // Nova propriedade para a voz selecionada
       storyData: null,
       storyImage: null,
       audioSource: null,
@@ -314,37 +365,107 @@ window.CreatePage = {
       streamingText: "",
       formattedStory: "",
       
+      // Adicionar opções de voz
+      voiceOptions: [
+        {
+          id: "D38z5RcWu1voky8WS1ja",
+          name: "Tião",
+          description: "O Guará Contador",
+          animal: "Guará",
+          avatar: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/guara.png",
+          icon: "fas fa-feather-alt",
+          voiceId: "D38z5RcWu1voky8WS1ja",
+          previewAudio: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/audio/sample/tiao.mp3",
+          isPlaying: false,
+          isLoading: false,
+          settings: {
+            stability: 0.75,
+            similarity_boost: 0.85,
+            style: 0,
+            speed: 1.0
+          }
+        },
+        {
+          id: "jsCqWAovK2LkecY7zXl4",
+          name: "Nala",
+          description: "A Onça Narradora",
+          animal: "Onça",
+          avatar: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/onca.png",
+          icon: "fas fa-paw",
+          voiceId: "jsCqWAovK2LkecY7zXl4",
+          previewAudio: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/audio/sample/nala.mp3",
+          isPlaying: false,
+          isLoading: false,
+          settings: {
+            stability: 0.75,
+            similarity_boost: 0.85,
+            style: 0,
+            speed: 1.0
+          }
+        },
+        {
+          id: "VR6AewLTigWG4xSOukaG",
+          name: "Aruanã",
+          description: "O Tatu Canastra",
+          animal: "Tatu",
+          avatar: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/tatu.png",
+          icon: "fas fa-shield-alt",
+          voiceId: "VR6AewLTigWG4xSOukaG",
+          previewAudio: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/audio/sample/tatu.mp3",
+          isPlaying: false,
+          isLoading: false,
+          settings: {
+            stability: 0.75,
+            similarity_boost: 0.85,
+            style: 0,
+            speed: 1.0
+          }
+        },
+        {
+          id: "S9EY1qVDizdxKWghP5FL",
+          name: "Nina",
+          description: "A Arara Contadora",
+          animal: "Arara",
+          avatar: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/arara.png",
+          icon: "fas fa-dove",
+          voiceId: "S9EY1qVDizdxKWghP5FL",
+          previewAudio: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/audio/sample/nina.mp3",
+          isPlaying: false,
+          isLoading: false,
+          settings: {
+            stability: 0.75,
+            similarity_boost: 0.85,
+            style: 0,
+            speed: 1.0
+          }
+        }
+      ],
+      
       // Brazilian Fauna Options with Font Awesome icons instead of images
       brazilianAnimals: [
         {
           id: 1,
           name: "Caxixi",
-          icon: "fas fa-drum"
+          icon: null,
+          image: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/caxixi.png"
         },
         {
           id: 2,
-          name: "Saveiro",
-          icon: "fas fa-ship"
+          name: "Cerâmica",
+          icon: "fas fa-paint-brush",
+          image: null
         },
         {
           id: 3,
-          name: "Olaria",
-          icon: "fas fa-hands"
+          name: "Samba de Roda",
+          icon: "fas fa-music",
+          image: null
         },
         {
           id: 4,
-          name: "Guará",
-          icon: "fas fa-feather-alt"
-        },
-        {
-          id: 5,
-          name: "Samba de Roda",
-          icon: "fas fa-music"
-        },
-        {
-          id: 6,
-          name: "Cerâmica",
-          icon: "fas fa-paint-brush"
+          name: "Berinbau",
+          icon: "fas fa-guitar",
+          image: null
         }
       ],
       
@@ -352,40 +473,38 @@ window.CreatePage = {
       storyLocations: [
         {
           id: 1,
-          name: "Maragogipinho",
-          icon: "fas fa-home"
+          name: "Mangue",
+          icon: "fas fa-tree",
+          image: null
         },
         {
           id: 2,
-          name: "Jaguaripe",
-          icon: "fas fa-map-marker-alt"
+          name: "Aldeia",
+          icon: "fas fa-home",
+          image: null
         },
         {
           id: 3,
           name: "Rio",
-          icon: "fas fa-water"
+          icon: null,
+          image: "https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/rio.png"
         },
         {
           id: 4,
-          name: "Mangue",
-          icon: "fas fa-tree"
-        },
-        {
-          id: 5,
-          name: "Em Cima do Saveiro",
-          icon: "fas fa-anchor"
-        },
-        {
-          id: 6,
-          name: "Beira do Rio",
-          icon: "fas fa-umbrella-beach"
+          name: "Praia",
+          icon: "fas fa-umbrella-beach",
+          image: null
         }
-      ]
+      ],
+      isPreviewPlaying: null, // Track which voice preview is currently playing
     };
   },
   computed: {
     canGenerateStory() {
-      return this.childName.trim() !== "" && this.selectedAnimal !== null && this.selectedLocation !== null;
+      return this.childName.trim() !== "" && 
+             this.selectedAnimal !== null && 
+             this.selectedLocation !== null &&
+             this.selectedVoice !== null; // Adicionar verificação da voz
     }
   },
   mounted() {
@@ -399,6 +518,20 @@ window.CreatePage = {
     
     selectLocation(location) {
       this.selectedLocation = location;
+    },
+    
+    selectVoice(voice) {
+      // Parar qualquer preview que esteja tocando
+      if (this.isPreviewPlaying) {
+        const audioElement = document.getElementById(`preview-audio-${this.isPreviewPlaying}`);
+        if (audioElement) {
+          audioElement.pause();
+          audioElement.currentTime = 0;
+        }
+        this.isPreviewPlaying = null;
+      }
+      
+      this.selectedVoice = voice;
     },
     
     async generateStory() {
@@ -444,14 +577,15 @@ window.CreatePage = {
             // Generate image using AI
             try {
               // Create image prompt from translation
-              const imagePrompt = `Create a hand-drawn, rustic illustration for a children's story titled "${storyObject.title}". 
+              const imagePrompt = `Create a hand-drawn, rustic illustration showing a young girl interacting with clay pots. 
               IMPORTANT DETAILS:
-              - If the story mentions "Guará", it's referring to the Brazilian RED BIRD (Guará vermelho/Eudocimus ruber), NOT a wolf or dog
-              - The child named "${this.childName}" must be depicted as a ${this.childName.toLowerCase().includes('a') && !['junior', 'jr'].includes(this.childName.toLowerCase()) ? 'girl' : 'boy'}
-              - The style should resemble a hand-drawn children's book illustration with visible pencil/crayon strokes
+              - Focus on the girl and the clay pots, with no text or words in the image
+              - The girl should be depicted in a simple, child-friendly style
+              - Show various clay pots of different sizes and shapes
               - Use a warm color palette with earthy tones like browns, soft reds, and yellows
-              - The scene should show the main character interacting with elements of Brazilian riverside culture from ${this.selectedLocation.name}
-              - Include visual elements of artisanal crafts, clay pottery, and traditional Brazilian riverside themes`;
+              - The style should resemble a hand-drawn children's book illustration with visible pencil/crayon strokes
+              - Keep the background simple and uncluttered
+              - No text, words, or speech bubbles should appear in the image`;
               
               console.log("Starting image generation with prompt:", imagePrompt);
               
@@ -641,91 +775,82 @@ window.CreatePage = {
             this.taskStatus.audio = "processing";
             
             try {
-             console.log("Starting audio generation...");
-        
-              // Prepare the audio text - start with the title followed by the story
+              console.log("Starting audio generation with voice:", this.selectedVoice.name);
+              
               const audioText = `${storyObject.title}. ${storyObject.plot}`;
-        
-              console.log(`Audio text length: ${audioText.length} characters`);
-
-              // Generate audio using the SDK
-        const audioResponse = await sdk.ai.generateAudio({
-          model: "elevenlabs:tts",
-          prompt: audioText,
-          providerOptions: {
-            elevenLabs: {
-                    voiceId: "IKne3meq5aSn9XLyUdCD", // Uncle Joe voice
-              model_id: "eleven_turbo_v2_5",
-              optimize_streaming_latency: 0,
-                    output_format: "mp3", // Specify MP3 format explicitly
-              voice_settings: {
-                speed: 1.0,
-                similarity_boost: 0.85,
-                stability: 0.75,
-                style: 0,
-              },
-            },
-          },
-        });
-
+              
+              const audioResponse = await sdk.ai.generateAudio({
+                model: "elevenlabs:tts",
+                prompt: audioText,
+                providerOptions: {
+                  elevenLabs: {
+                    voiceId: this.selectedVoice.voiceId,
+                    model_id: "eleven_turbo_v2_5",
+                    optimize_streaming_latency: 0,
+                    output_format: "mp3",
+                    voice_settings: this.selectedVoice.settings
+                  },
+                },
+              });
+              
               console.log("Audio generation response:", audioResponse);
               
               // Process the audio response
-        let audioPath = null;
+              let audioPath = null;
 
-        if (audioResponse.filepath && audioResponse.filepath.length > 0) {
-          audioPath = audioResponse.filepath[0];
-        } else if (audioResponse.audios && audioResponse.audios.length > 0) {
-          audioPath = audioResponse.audios[0];
-        } else if (audioResponse.url) {
-          audioPath = audioResponse.url;
+              if (audioResponse.filepath && audioResponse.filepath.length > 0) {
+                audioPath = audioResponse.filepath[0];
+              } else if (audioResponse.audios && audioResponse.audios.length > 0) {
+                audioPath = audioResponse.audios[0];
+              } else if (audioResponse.url) {
+                audioPath = audioResponse.url;
               } else if (audioResponse.audio && typeof audioResponse.audio === 'string') {
                 // Handle base64 encoded audio
                 audioPath = `data:audio/mp3;base64,${audioResponse.audio}`;
-        }
+              }
 
               // Set the audio source
-        let fullAudioUrl = null;
-        if (audioPath) {
-          if (!audioPath.startsWith('http') && !audioPath.startsWith('data:')) {
-            fullAudioUrl = `https://fs.webdraw.com${audioPath.startsWith('/') ? '' : '/'}${audioPath}`;
-          } else {
-            fullAudioUrl = audioPath;
-          }
+              let fullAudioUrl = null;
+              if (audioPath) {
+                if (!audioPath.startsWith('http') && !audioPath.startsWith('data:')) {
+                  fullAudioUrl = `https://fs.webdraw.com${audioPath.startsWith('/') ? '' : '/'}${audioPath}`;
+                } else {
+                  fullAudioUrl = audioPath;
+                }
                 console.log("Final audio source:", fullAudioUrl);
 
-          // Set permissions for the audio file immediately
-          try {
+                // Set permissions for the audio file immediately
+                try {
                   if (!audioPath.startsWith('data:')) {
-            await this.setFilePermissions(audioPath);
-            console.log("Set permissions for audio file:", audioPath);
+                    await this.setFilePermissions(audioPath);
+                    console.log("Set permissions for audio file:", audioPath);
                   }
-          } catch (permError) {
-            console.warn("Error setting permissions for audio file:", permError);
-          }
+                } catch (permError) {
+                  console.warn("Error setting permissions for audio file:", permError);
+                }
 
-          // Set audio source immediately but mark as loading
-          this.audioSource = fullAudioUrl;
-          this.audioLoading = true;
+                // Set audio source immediately but mark as loading
+                this.audioSource = fullAudioUrl;
+                this.audioLoading = true;
 
                 // Wait a bit to allow the file to be processed
-          await new Promise(resolve => setTimeout(resolve, 4000));
+                await new Promise(resolve => setTimeout(resolve, 4000));
 
                 // Only perform additional checks for network URLs, not data URLs
                 if (!fullAudioUrl.startsWith('data:')) {
-          const isAudioReady = await this.checkAudioReady(fullAudioUrl, 2, 3000);
+                  const isAudioReady = await this.checkAudioReady(fullAudioUrl, 2, 3000);
 
-          if (isAudioReady) {
-            console.log("Audio file is confirmed ready");
-            this.audioLoading = false;
+                  if (isAudioReady) {
+                    console.log("Audio file is confirmed ready");
+                    this.audioLoading = false;
                     this.taskStatus.audio = "done";
-          } else {
-            console.log("Audio file not immediately available, will continue checking in background");
+                  } else {
+                    console.log("Audio file not immediately available, will continue checking in background");
                     // Mark as done but continue checking in background
                     this.taskStatus.audio = "done";
-            // Start background checking
-            this.startBackgroundAudioCheck(fullAudioUrl);
-          }
+                    // Start background checking
+                    this.startBackgroundAudioCheck(fullAudioUrl);
+                  }
                 } else {
                   // For data URLs, we're ready immediately
                   this.audioLoading = false;
@@ -799,11 +924,59 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
     },
     
     goBack() {
-      // Instead of redirecting to home, reset form and return to form screen
+      // Limpar áudio em reprodução
+      if (this.isPreviewPlaying) {
+        const audioElement = document.getElementById(`preview-audio-${this.isPreviewPlaying}`);
+        if (audioElement) {
+          audioElement.pause();
+          audioElement.currentTime = 0;
+        }
+        this.isPreviewPlaying = null;
+      }
+
+      // Limpar áudio principal se estiver tocando
+      const audioPlayer = this.$refs.audioPlayer;
+      if (audioPlayer && !audioPlayer.paused) {
+        audioPlayer.pause();
+      }
+
+      // Resetar o estado do formulário
       this.childName = "";
       this.selectedAnimal = null;
       this.selectedLocation = null;
+      this.selectedVoice = null;
+      this.storyData = null;
+      this.storyImage = null;
+      this.audioSource = null;
+      this.audioLoading = false;
+      this.isPlaying = false;
+      this.audioProgress = 0;
+      this.audioDuration = 0;
+      this.audioCurrentTime = 0;
+
+      // Limpar intervalos de verificação
+      if (this.audioCheckInterval) {
+        clearInterval(this.audioCheckInterval);
+        this.audioCheckInterval = null;
+      }
+
+      // Resetar status das tasks
+      this.taskStatus = {
+        plot: "waiting",
+        story: "waiting",
+        image: "waiting",
+        audio: "waiting"
+      };
+
+      // Voltar para a tela do formulário
       this.screen = "form";
+
+      // Usar nextTick para garantir que a mudança de tela seja processada antes de qualquer outra operação
+      this.$nextTick(() => {
+        // Limpar qualquer texto formatado ou streaming
+        this.streamingText = "";
+        this.formattedStory = "";
+      });
     },
 
     async saveStory(isAutoSave = false) {
@@ -879,120 +1052,38 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
             localStorage.setItem("savedStories", storiesJson);
             console.log("✅ História salva com sucesso no localStorage");
           } catch (quotaError) {
-            console.warn("⚠️ Erro de cota excedida ao salvar, tentando comprimir imagem:", quotaError);
+            console.warn("⚠️ Erro de cota excedida ao salvar, tentando gerenciar armazenamento");
             
-            // Remover a história adicionada para tentar novamente
+            // Remover a história que tentamos adicionar
             savedStories.pop();
             
-            // Se temos base64, tentar comprimir
-            if (compressedStory.imageBase64) {
-              // Tentar comprimir a imagem para 50% da qualidade
-              const compressedImage = await this.compressImage(compressedStory.imageBase64, 0.5);
-              if (compressedImage) {
-                const originalSize = Math.round((compressedStory.imageBase64.length * 3) / 4);
-                const compressedSize = Math.round((compressedImage.length * 3) / 4);
-                
-                console.log(`🗜️ Imagem comprimida: ${this.formatFileSize(originalSize)} → ${this.formatFileSize(compressedSize)}`);
-                compressedStory.imageBase64 = compressedImage;
-                compressedStory.image = compressedImage;
-                
-                // Tentar salvar com a imagem comprimida
+            // Tentar gerenciar o armazenamento
+            const storageManaged = await this.manageStorage();
+            
+            if (storageManaged) {
+              // Tentar salvar novamente após liberar espaço
+              try {
                 savedStories.push(compressedStory);
-                const compressedJson = JSON.stringify(savedStories);
-                
-                try {
-                  localStorage.setItem("savedStories", compressedJson);
-                  console.log("✅ História salva com imagem comprimida");
-                } catch (compressError) {
-                  console.error("❌ Erro ao salvar mesmo com imagem comprimida:", compressError);
-                  
-                  // Remover a história adicionada
-                  savedStories.pop();
-                  
-                  // Se ainda não conseguimos, tentar remover a imagem completamente
-                  console.log("🔄 Tentando salvar sem a imagem base64");
-                  const noImageStory = {...compressedStory, imageBase64: null};
-                  
-                  if (compressedStory.image && compressedStory.image.startsWith('data:')) {
-                    noImageStory.image = this.getRandomFallbackImage();
-                  }
-                  
-                  savedStories.push(noImageStory);
-                  const noImageJson = JSON.stringify(savedStories);
-                  
-                  try {
-                    localStorage.setItem("savedStories", noImageJson);
-                    console.log("⚠️ História salva, mas sem a imagem base64");
-                    
-                    if (!isAutoSave) {
-                      alert("História salva, mas devido a limitações de armazenamento, a imagem não pôde ser salva localmente.");
-                    }
-                  } catch (finalError) {
-                    console.error("❌ Não foi possível salvar a história de nenhuma forma:", finalError);
-                    
-                    // Última tentativa: limpar histórias antigas
-                    if (savedStories.length > 1) {
-                      console.log("🔄 Tentando remover histórias antigas para fazer espaço");
-                      
-                      // Remover a história mais antiga
-                      savedStories.shift();
-                      const reducedJson = JSON.stringify(savedStories);
-                      
-                      try {
-                        localStorage.setItem("savedStories", reducedJson);
-                        // Agora tentar adicionar a nova história novamente
-                        savedStories.push(noImageStory);
-                        const finalJson = JSON.stringify(savedStories);
-                        localStorage.setItem("savedStories", finalJson);
-                        console.log("✅ História salva após remover histórias antigas");
-                      } catch (ultimateError) {
-                        console.error("❌ Falha total ao salvar história:", ultimateError);
-                        if (!isAutoSave) {
-                          alert("Não foi possível salvar sua história. O armazenamento local está cheio. Por favor, exclua algumas histórias antigas.");
-                        }
-                        return; // Sair da função
-                      }
-                    } else {
-                      if (!isAutoSave) {
-                        alert("Não foi possível salvar sua história. O armazenamento local está cheio.");
-                      }
-                      return; // Sair da função
-                    }
-                  }
-                }
-              } else {
-                console.error("❌ Falha ao comprimir imagem");
+                localStorage.setItem("savedStories", JSON.stringify(savedStories));
+                console.log("✅ História salva com sucesso após gerenciar armazenamento");
+              } catch (retryError) {
+                console.error("❌ Erro ao salvar mesmo após gerenciar armazenamento:", retryError);
                 if (!isAutoSave) {
-                  alert("Não foi possível salvar sua história devido a limitações de armazenamento.");
+                  alert("Não foi possível salvar sua história. O armazenamento local está cheio mesmo após otimização.");
                 }
-                return; // Sair da função
               }
             } else {
-              console.warn("⚠️ Sem base64 para comprimir, tentando salvar sem a imagem");
-              compressedStory.imageBase64 = null;
-              
-              // Tentar salvar sem a imagem
-              savedStories.push(compressedStory);
-              const noImageJson = JSON.stringify(savedStories);
-              
-              try {
-                localStorage.setItem("savedStories", noImageJson);
-                console.log("⚠️ História salva sem a imagem base64");
-              } catch (noImageError) {
-                console.error("❌ Não foi possível salvar a história de nenhuma forma:", noImageError);
-                if (!isAutoSave) {
-                  alert("Não foi possível salvar sua história. O armazenamento local está cheio.");
-                }
-                return; // Sair da função
+              console.error("❌ Não foi possível liberar espaço suficiente");
+              if (!isAutoSave) {
+                alert("Não foi possível salvar sua história. O armazenamento local está completamente cheio.");
               }
             }
           }
-        } catch (storageError) {
-          console.error("❌ Erro ao acessar localStorage:", storageError);
+        } catch (error) {
+          console.error("❌ Erro ao acessar localStorage:", error);
           if (!isAutoSave) {
-            alert("Não foi possível salvar sua história devido a um erro de armazenamento.");
+            alert("Ocorreu um erro ao tentar salvar sua história. Por favor, tente novamente.");
           }
-          return; // Sair da função
         }
         
         // Set proper permissions for image and audio files if they are filesystem URLs
@@ -1971,6 +2062,138 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
         }
       }
     },
+    
+    playVoicePreview(voice) {
+      // Get the audio element for this voice
+      const audioElement = document.getElementById(`preview-audio-${voice.id}`);
+      if (!audioElement) {
+        console.error(`Audio element for voice ${voice.name} not found`);
+        return;
+      }
+
+      if (this.isPreviewPlaying === voice.id) {
+        // User clicked the same voice that's currently playing - pause it
+        audioElement.pause();
+        this.isPreviewPlaying = null;
+        return;
+      }
+
+      // If another voice preview is playing, stop it first
+      if (this.isPreviewPlaying) {
+        const previousAudio = document.getElementById(`preview-audio-${this.isPreviewPlaying}`);
+        if (previousAudio) {
+          previousAudio.pause();
+          previousAudio.currentTime = 0;
+        }
+        this.isPreviewPlaying = null;
+      }
+
+      voice.isLoading = true;
+
+      // Try to play the audio
+      audioElement.play()
+        .then(() => {
+          voice.isLoading = false;
+          this.isPreviewPlaying = voice.id;
+          console.log(`Successfully playing audio for ${voice.name}`);
+        })
+        .catch(playError => {
+          console.error(`Error playing audio for ${voice.name}:`, playError);
+          voice.isLoading = false;
+          alert(`Não foi possível reproduzir o preview de áudio para ${voice.name}. O arquivo de áudio pode estar indisponível.`);
+        });
+    },
+    
+    audioEnded(voice) {
+      if (this.isPreviewPlaying === voice.id) {
+        this.isPreviewPlaying = null;
+      }
+    },
+    
+    stopVoicePreview(voice) {
+      const audioElement = document.getElementById(`preview-audio-${voice.id}`);
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+      }
+    },
+
+    // Método para obter uma imagem de fallback aleatória
+    getRandomFallbackImage() {
+      const fallbackImages = [
+        'https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/fallback/story_1.jpg',
+        'https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/fallback/story_2.jpg',
+        'https://fs.webdraw.com/users/a4896ea5-db22-462e-a239-22641f27118c/Apps/Staging%20AI%20Storyteller/assets/image/fallback/story_3.jpg'
+      ];
+      return fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+    },
+
+    // Método para gerenciar o armazenamento quando exceder a cota
+    async manageStorage() {
+      try {
+        // Obter histórias salvas
+        const savedStories = JSON.parse(localStorage.getItem("savedStories") || "[]");
+        
+        if (savedStories.length === 0) return true;
+        
+        console.log(`📦 Gerenciando armazenamento - ${savedStories.length} histórias encontradas`);
+        
+        // Se temos mais de 10 histórias, remover as mais antigas
+        if (savedStories.length > 10) {
+          console.log("🔄 Removendo histórias antigas para liberar espaço");
+          // Ordenar por data de criação e manter apenas as 10 mais recentes
+          savedStories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          const storiestoKeep = savedStories.slice(0, 10);
+          
+          try {
+            localStorage.setItem("savedStories", JSON.stringify(storiestoKeep));
+            console.log(`✅ Armazenamento otimizado - mantidas ${storiestoKeep.length} histórias mais recentes`);
+            return true;
+          } catch (error) {
+            console.warn("⚠️ Ainda sem espaço após remover histórias antigas");
+          }
+        }
+        
+        // Se ainda não temos espaço, tentar remover imagens base64 das histórias mais antigas
+        console.log("🔄 Tentando remover imagens base64 das histórias mais antigas");
+        for (let i = 0; i < savedStories.length; i++) {
+          if (savedStories[i].imageBase64) {
+            delete savedStories[i].imageBase64;
+            // Garantir que temos uma URL de fallback se necessário
+            if (savedStories[i].image && savedStories[i].image.startsWith('data:')) {
+              savedStories[i].image = this.getRandomFallbackImage();
+            }
+            
+            try {
+              localStorage.setItem("savedStories", JSON.stringify(savedStories));
+              console.log(`✅ Espaço liberado removendo base64 da história ${i + 1}`);
+              return true;
+            } catch (error) {
+              console.warn(`⚠️ Ainda sem espaço após remover base64 da história ${i + 1}`);
+              continue;
+            }
+          }
+        }
+        
+        // Se ainda não temos espaço, remover a história mais antiga
+        if (savedStories.length > 0) {
+          savedStories.shift();
+          try {
+            localStorage.setItem("savedStories", JSON.stringify(savedStories));
+            console.log("✅ Espaço liberado removendo a história mais antiga");
+            return true;
+          } catch (error) {
+            console.error("❌ Não foi possível liberar espaço mesmo removendo história");
+            return false;
+          }
+        }
+        
+        return false;
+      } catch (error) {
+        console.error("❌ Erro ao gerenciar armazenamento:", error);
+        return false;
+      }
+    },
   },
   beforeUnmount() {
     // Clean up any intervals
@@ -1984,6 +2207,23 @@ ${this.childName} voltou para casa ${childDescriptor2} de histórias incríveis 
     if (audioPlayer && !audioPlayer.paused) {
       audioPlayer.pause();
       console.log("Paused audio playback");
+    }
+    
+    // Limpar todos os previews de áudio
+    this.voiceOptions.forEach(voice => {
+      const audioElement = document.getElementById(`preview-audio-${voice.id}`);
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+      }
+    });
+    
+    // Stop any playing preview
+    if (this.isPreviewPlaying) {
+      const audioElement = document.getElementById(`preview-audio-${this.isPreviewPlaying}`);
+      if (audioElement) {
+        audioElement.pause();
+      }
     }
   }
 };

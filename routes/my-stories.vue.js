@@ -5,7 +5,7 @@ window.MyStoriesPage = {
     <div class="min-h-screen bg-neutral-light pb-16">
       <!-- Background pattern -->
       <div class="absolute inset-0 z-0">
-        <img src="/assets/image/background.jpg" alt="African Pattern Background" class="w-full h-full object-cover fixed opacity-15" />
+        <img src="/assets/image/caxixi2.png" alt="African Pattern Background" class="w-full h-full object-cover fixed opacity-15" />
       </div>
       
       <!-- Navigation Header -->
